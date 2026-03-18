@@ -1,8 +1,10 @@
 scenario_id: industry_whitepaper
 display_name: Industry White Paper
-category: general
+category: business
 objective: Produce a high-quality Industry White Paper that meets professional standards
-  for the general domain. Cross-industry analytical white paper.
+  for the general domain. Cross-industry analytical white paper. Follows systematic
+  analysis standards. Follows evidence-based methodology standards. Adheres to McKinsey
+  standards. Emphasizes strategic.
 max_iterations: 5
 target_score: 0.85
 min_score: 0.6
@@ -30,8 +32,10 @@ search:
   apis:
   - semantic_scholar
   - openalex
+  - google_scholar
   recency_years: 3
-  min_sources: 15
+  min_sources: 30
+  max_sources: 50
 style:
   formality: 0.9
   voice: third_person
@@ -43,6 +47,12 @@ style:
   - findings
   - recommendations
   - conclusion
+  - background
+  - methodology
+  terminology_registry: general_professional
 tags:
 - general
 - industry-whitepaper
+time_budget_minutes: 30
+experiment:
+  enabled: true

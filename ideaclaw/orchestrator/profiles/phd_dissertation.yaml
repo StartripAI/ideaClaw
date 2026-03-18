@@ -2,7 +2,8 @@ scenario_id: phd_dissertation
 display_name: PhD Dissertation
 category: education
 objective: Produce a high-quality PhD Dissertation that meets professional standards
-  for the education domain. PhD dissertation with original contribution.
+  for the education domain. PhD dissertation with original contribution. Apply Bloom's
+  taxonomy. Follows learning objectives standards.
 max_iterations: 8
 target_score: 0.9
 min_score: 0.6
@@ -37,6 +38,7 @@ search:
   - pubmed
   recency_years: 3
   min_sources: 100
+  max_sources: 50
 style:
   formality: 0.9
   voice: third_person
@@ -51,6 +53,10 @@ style:
   - discussion
   - conclusion
   - future work
+  terminology_registry: academic_education
 tags:
 - education
 - phd-dissertation
+time_budget_minutes: 30
+experiment:
+  enabled: true

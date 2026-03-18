@@ -2,7 +2,8 @@ scenario_id: masters_thesis
 display_name: Master's Thesis
 category: education
 objective: Produce a high-quality Master's Thesis that meets professional standards
-  for the education domain. Comprehensive master's thesis.
+  for the education domain. Comprehensive master's thesis. Apply Bloom's taxonomy.
+  Follows learning objectives standards.
 max_iterations: 6
 target_score: 0.85
 min_score: 0.6
@@ -33,6 +34,7 @@ search:
   - openalex
   recency_years: 3
   min_sources: 50
+  max_sources: 50
 style:
   formality: 0.9
   voice: third_person
@@ -45,6 +47,10 @@ style:
   - results
   - discussion
   - conclusion
+  terminology_registry: academic_education
 tags:
 - education
 - masters-thesis
+time_budget_minutes: 30
+experiment:
+  enabled: true

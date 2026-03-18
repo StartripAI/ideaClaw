@@ -2,7 +2,8 @@ scenario_id: acm_computing
 display_name: ACM Computing Surveys
 category: science
 objective: Produce a high-quality ACM Computing Surveys that meets professional standards
-  for the science domain. ACM Computing Surveys review article.
+  for the science domain. ACM Computing Surveys review article. Apply peer-review
+  methodology.
 max_iterations: 5
 target_score: 0.85
 min_score: 0.6
@@ -30,8 +31,10 @@ search:
   apis:
   - arxiv
   - semantic_scholar
+  - openalex
   recency_years: 3
   min_sources: 60
+  max_sources: 50
 style:
   formality: 0.9
   voice: third_person
@@ -43,7 +46,13 @@ style:
   - survey
   - open problems
   - conclusion
+  - background
+  - methods
+  terminology_registry: scientific_research
 tags:
 - science
 - acm-computing
 - acm
+time_budget_minutes: 30
+experiment:
+  enabled: true

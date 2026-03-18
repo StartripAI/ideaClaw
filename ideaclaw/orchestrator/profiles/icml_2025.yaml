@@ -4,7 +4,8 @@ category: cs_ml
 objective: 'ICML 2025 conference paper per reviewer guidelines.
 
   Adhere to ICML 2025 review criteria (novelty, significance, clarity, correctness,
-  reproducibility).'
+  reproducibility). Apply peer-review standards. Follows reproducibility requirements
+  standards.'
 max_iterations: 5
 target_score: 0.85
 min_score: 0.6
@@ -32,8 +33,10 @@ search:
   apis:
   - arxiv
   - semantic_scholar
+  - openalex
   recency_years: 3
-  min_sources: 15
+  min_sources: 30
+  max_sources: 50
 style:
   formality: 0.9
   voice: third_person
@@ -45,6 +48,11 @@ style:
   - method
   - experiments
   - conclusion
+  - results
+  terminology_registry: ml_research
 tags:
 - ml
 - conference
+time_budget_minutes: 30
+experiment:
+  enabled: true

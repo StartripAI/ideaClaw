@@ -2,7 +2,7 @@ scenario_id: moodys_credit
 display_name: Moody's Credit Report
 category: finance
 objective: Produce a high-quality Moody's Credit Report that meets professional standards
-  for the finance domain. Moody's-style credit rating report.
+  for the finance domain. Moody's-style credit rating report. Apply valuation methodology.
 max_iterations: 5
 target_score: 0.85
 min_score: 0.6
@@ -30,8 +30,10 @@ search:
   apis:
   - arxiv
   - semantic_scholar
+  - openalex
   recency_years: 3
-  min_sources: 15
+  min_sources: 30
+  max_sources: 50
 style:
   formality: 0.95
   voice: third_person
@@ -42,7 +44,14 @@ style:
   - credit challenges
   - rating outlook
   - financial data
+  - executive_summary
+  - market_overview
+  - analysis
+  terminology_registry: financial_analysis
 tags:
 - finance
 - moodys-credit
 - moody
+time_budget_minutes: 30
+experiment:
+  enabled: true

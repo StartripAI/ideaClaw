@@ -2,7 +2,8 @@ scenario_id: podcast_script
 display_name: Podcast Script
 category: creative
 objective: Produce a high-quality Podcast Script that meets professional standards
-  for the creative domain. Podcast episode script.
+  for the creative domain. Podcast episode script. Apply narrative structure. Follows
+  screenplay conventions standards. Adheres to Final Draft standards.
 max_iterations: 5
 target_score: 0.7
 min_score: 0.6
@@ -27,8 +28,10 @@ search:
   apis:
   - arxiv
   - semantic_scholar
+  - openalex
   recency_years: 3
-  min_sources: 15
+  min_sources: 30
+  max_sources: 50
 style:
   formality: 0.4
   voice: first_person
@@ -40,6 +43,12 @@ style:
   - segment 2
   - outro
   - show notes
+  - opening
+  - setup
+  terminology_registry: creative_writing
 tags:
 - creative
 - podcast-script
+time_budget_minutes: 30
+experiment:
+  enabled: true

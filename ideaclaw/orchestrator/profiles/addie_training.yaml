@@ -2,7 +2,7 @@ scenario_id: addie_training
 display_name: ADDIE Training Design
 category: hr_ops
 objective: Produce a high-quality ADDIE Training Design that meets professional standards
-  for the hr_ops domain. Training program per ADDIE model.
+  for the hr_ops domain. Training program per ADDIE model. Apply SMART goals.
 max_iterations: 5
 target_score: 0.85
 min_score: 0.6
@@ -27,8 +27,10 @@ search:
   apis:
   - arxiv
   - semantic_scholar
+  - openalex
   recency_years: 3
-  min_sources: 15
+  min_sources: 30
+  max_sources: 50
 style:
   formality: 0.75
   voice: third_person
@@ -39,7 +41,14 @@ style:
   - development
   - implementation
   - evaluation
+  - objective
+  - current_state
+  - recommendations
+  terminology_registry: hr_operations
 tags:
 - hr_ops
 - addie-training
 - addie
+time_budget_minutes: 30
+experiment:
+  enabled: true

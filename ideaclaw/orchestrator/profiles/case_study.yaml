@@ -6,7 +6,7 @@ tags:
 - hbs
 objective: Produce a high-quality Business Case Study (HBS) that meets professional
   standards for the business domain. HBS-style case study with exhibits and discussion
-  questions.
+  questions. Apply strategic analysis.
 max_iterations: 4
 target_score: 0.8
 min_score: 0.55
@@ -33,10 +33,13 @@ evaluation:
 search:
   apis:
   - semantic_scholar
+  - openalex
+  - google_scholar
   recency_years: 5
-  min_sources: 10
+  min_sources: 30
+  max_sources: 50
 style:
-  formality: 0.8
+  formality: 0.75
   voice: third_person
   tense: past
   citation_style: apa
@@ -48,3 +51,7 @@ style:
   - analysis
   - exhibits
   - discussion questions
+  terminology_registry: business_consulting
+time_budget_minutes: 30
+experiment:
+  enabled: true

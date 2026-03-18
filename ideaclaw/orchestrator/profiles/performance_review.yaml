@@ -2,7 +2,8 @@ scenario_id: performance_review
 display_name: Performance Review
 category: hr_ops
 objective: Produce a high-quality Performance Review that meets professional standards
-  for the hr_ops domain. Structured performance review.
+  for the hr_ops domain. Structured performance review. Apply SMART goals. Follows
+  performance management standards.
 max_iterations: 5
 target_score: 0.75
 min_score: 0.6
@@ -27,10 +28,12 @@ search:
   apis:
   - arxiv
   - semantic_scholar
+  - openalex
   recency_years: 3
-  min_sources: 15
+  min_sources: 30
+  max_sources: 50
 style:
-  formality: 0.8
+  formality: 0.7
   voice: third_person
   citation_style: natbib
   required_sections:
@@ -39,6 +42,13 @@ style:
   - areas for improvement
   - goals
   - development plan
+  - objective
+  - current_state
+  - analysis
+  terminology_registry: hr_operations
 tags:
 - hr_ops
 - performance-review
+time_budget_minutes: 30
+experiment:
+  enabled: true

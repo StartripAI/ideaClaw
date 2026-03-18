@@ -2,7 +2,8 @@ scenario_id: ipo_prospectus
 display_name: IPO Prospectus Summary
 category: finance
 objective: Produce a high-quality IPO Prospectus Summary that meets professional standards
-  for the finance domain. IPO prospectus executive summary.
+  for the finance domain. IPO prospectus executive summary. Apply valuation methodology.
+  Follows due diligence standards. Adheres to CFA standards.
 max_iterations: 5
 target_score: 0.85
 min_score: 0.6
@@ -30,8 +31,10 @@ search:
   apis:
   - arxiv
   - semantic_scholar
+  - openalex
   recency_years: 3
-  min_sources: 15
+  min_sources: 30
+  max_sources: 50
 style:
   formality: 0.98
   voice: third_person
@@ -43,6 +46,12 @@ style:
   - financials
   - risk factors
   - use of proceeds
+  - executive_summary
+  - market_overview
+  terminology_registry: financial_analysis
 tags:
 - finance
 - ipo-prospectus
+time_budget_minutes: 30
+experiment:
+  enabled: true

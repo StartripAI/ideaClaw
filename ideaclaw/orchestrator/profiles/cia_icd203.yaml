@@ -3,7 +3,7 @@ display_name: CIA Intelligence Assessment (ICD 203)
 category: government
 objective: Produce a high-quality CIA Intelligence Assessment (ICD 203) that meets
   professional standards for the government domain. Intelligence assessment per ICD
-  203 analytic standards.
+  203 analytic standards. Apply regulatory impact assessment.
 max_iterations: 5
 target_score: 0.85
 min_score: 0.6
@@ -31,8 +31,10 @@ search:
   apis:
   - arxiv
   - semantic_scholar
+  - openalex
   recency_years: 3
-  min_sources: 15
+  min_sources: 30
+  max_sources: 50
 style:
   formality: 0.95
   voice: third_person
@@ -44,8 +46,14 @@ style:
   - gaps
   - alternatives
   - confidence levels
+  - executive_summary
+  - background
+  terminology_registry: government_policy
 tags:
 - government
 - cia-icd203
 - cia
 - icd 203
+time_budget_minutes: 30
+experiment:
+  enabled: true

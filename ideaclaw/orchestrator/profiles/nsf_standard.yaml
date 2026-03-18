@@ -2,7 +2,8 @@ scenario_id: nsf_standard
 display_name: NSF Standard Grant
 category: grants
 objective: Produce a high-quality NSF Standard Grant that meets professional standards
-  for the grants domain. NSF per Intellectual Merit + Broader Impacts.
+  for the grants domain. NSF per Intellectual Merit + Broader Impacts. Apply merit
+  review criteria.
 max_iterations: 5
 target_score: 0.85
 min_score: 0.6
@@ -30,8 +31,10 @@ search:
   apis:
   - arxiv
   - semantic_scholar
+  - pubmed
   recency_years: 3
-  min_sources: 15
+  min_sources: 30
+  max_sources: 50
 style:
   formality: 0.9
   voice: third_person
@@ -41,7 +44,15 @@ style:
   - project description
   - broader impacts
   - references
+  - specific_aims
+  - significance
+  - innovation
+  - approach
+  terminology_registry: grant_writing
 tags:
 - grants
 - nsf-standard
 - nsf
+time_budget_minutes: 30
+experiment:
+  enabled: true

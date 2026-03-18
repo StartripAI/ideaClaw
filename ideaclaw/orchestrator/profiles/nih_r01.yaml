@@ -2,7 +2,7 @@ scenario_id: nih_r01
 display_name: NIH R01 Grant
 category: grants
 objective: Produce a high-quality NIH R01 Grant that meets professional standards
-  for the grants domain. NIH R01 per 5-criteria 1-9 scale.
+  for the grants domain. NIH R01 per 5-criteria 1-9 scale. Apply merit review criteria.
 max_iterations: 5
 target_score: 0.85
 min_score: 0.6
@@ -30,8 +30,10 @@ search:
   apis:
   - pubmed
   - semantic_scholar
+  - openalex
   recency_years: 3
-  min_sources: 15
+  min_sources: 30
+  max_sources: 50
 style:
   formality: 0.9
   voice: first_person
@@ -44,7 +46,11 @@ style:
   - timeline
   - preliminary data
   - budget justification
+  terminology_registry: grant_writing
 tags:
 - grants
 - nih-r01
 - nih
+time_budget_minutes: 30
+experiment:
+  enabled: true

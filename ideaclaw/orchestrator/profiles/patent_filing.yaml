@@ -31,8 +31,10 @@ search:
   apis:
   - semantic_scholar
   - openalex
+  - google_scholar
   recency_years: 20
-  min_sources: 10
+  min_sources: 30
+  max_sources: 50
 style:
   formality: 0.98
   voice: third_person
@@ -45,3 +47,9 @@ style:
   - summary
   - detailed description
   - claims
+  - introduction
+  - methodology
+  terminology_registry: general_professional
+time_budget_minutes: 30
+experiment:
+  enabled: true

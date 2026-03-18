@@ -2,7 +2,8 @@ scenario_id: runbook
 display_name: Operations Runbook
 category: professional
 objective: Produce a high-quality Operations Runbook that meets professional standards
-  for the professional domain. Production operations runbook.
+  for the professional domain. Production operations runbook. Apply technical specification.
+  Follows postmortem analysis standards. Adheres to SRE standards.
 max_iterations: 5
 target_score: 0.75
 min_score: 0.6
@@ -27,8 +28,10 @@ search:
   apis:
   - arxiv
   - semantic_scholar
+  - openalex
   recency_years: 3
-  min_sources: 15
+  min_sources: 30
+  max_sources: 50
 style:
   formality: 0.75
   voice: third_person
@@ -40,6 +43,12 @@ style:
   - troubleshooting
   - escalation
   - rollback
+  - summary
+  - context
+  terminology_registry: technical_professional
 tags:
 - professional
 - runbook
+time_budget_minutes: 30
+experiment:
+  enabled: true

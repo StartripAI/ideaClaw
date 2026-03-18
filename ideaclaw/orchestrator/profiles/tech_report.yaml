@@ -30,8 +30,10 @@ search:
   apis:
   - arxiv
   - semantic_scholar
+  - openalex
   recency_years: 5
-  min_sources: 15
+  min_sources: 30
+  max_sources: 50
 style:
   formality: 0.9
   voice: third_person
@@ -46,3 +48,7 @@ style:
   - evaluation
   - related work
   - conclusion
+  terminology_registry: general_professional
+time_budget_minutes: 30
+experiment:
+  enabled: true

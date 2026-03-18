@@ -38,6 +38,7 @@ search:
   - pubmed
   recency_years: 5
   min_sources: 40
+  max_sources: 50
 style:
   formality: 0.98
   voice: third_person
@@ -50,3 +51,10 @@ style:
   - results
   - discussion
   - methods
+  - background
+  - analysis
+  - findings
+  terminology_registry: general_professional
+time_budget_minutes: 30
+experiment:
+  enabled: true

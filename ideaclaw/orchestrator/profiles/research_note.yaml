@@ -2,7 +2,9 @@ scenario_id: research_note
 display_name: Research Note
 category: general
 objective: Produce a high-quality Research Note that meets professional standards
-  for the general domain. Quick research note or memo.
+  for the general domain. Quick research note or memo. Follows systematic analysis
+  standards. Follows evidence-based methodology standards. Adheres to APA standards.
+  Emphasizes rubric.
 max_iterations: 2
 target_score: 0.7
 min_score: 0.6
@@ -26,8 +28,11 @@ evaluation:
 search:
   apis:
   - semantic_scholar
+  - openalex
+  - google_scholar
   recency_years: 3
-  min_sources: 15
+  min_sources: 30
+  max_sources: 50
 style:
   formality: 0.75
   voice: third_person
@@ -37,6 +42,14 @@ style:
   - background
   - analysis
   - implications
+  - introduction
+  - findings
+  - recommendations
+  - conclusion
+  terminology_registry: general_professional
 tags:
 - general
 - research-note
+time_budget_minutes: 30
+experiment:
+  enabled: true

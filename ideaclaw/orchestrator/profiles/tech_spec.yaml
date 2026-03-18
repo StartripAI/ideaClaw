@@ -2,7 +2,8 @@ scenario_id: tech_spec
 display_name: Technical Specification
 category: professional
 objective: Produce a high-quality Technical Specification that meets professional
-  standards for the professional domain. IEEE/ISO-style technical specification.
+  standards for the professional domain. IEEE/ISO-style technical specification. Apply
+  postmortem analysis.
 max_iterations: 5
 target_score: 0.85
 min_score: 0.6
@@ -27,8 +28,10 @@ search:
   apis:
   - arxiv
   - semantic_scholar
+  - openalex
   recency_years: 3
-  min_sources: 15
+  min_sources: 30
+  max_sources: 50
 style:
   formality: 0.9
   voice: third_person
@@ -40,8 +43,14 @@ style:
   - requirements
   - design
   - verification
+  - summary
+  - context
+  terminology_registry: technical_professional
 tags:
 - professional
 - tech-spec
 - ieee
 - iso
+time_budget_minutes: 30
+experiment:
+  enabled: true

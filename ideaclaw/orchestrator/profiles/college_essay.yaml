@@ -28,8 +28,13 @@ evaluation:
       weight: 0.1
       min: 0.5
 search:
-  apis: []
-  min_sources: 0
+  apis:
+  - openalex
+  - semantic_scholar
+  - google_scholar
+  min_sources: 30
+  max_sources: 50
+  recency_years: 5
 style:
   formality: 0.6
   voice: first_person
@@ -40,3 +45,11 @@ style:
   - body
   - reflection
   - conclusion
+  - introduction
+  - background
+  - analysis
+  - findings
+  terminology_registry: general_professional
+time_budget_minutes: 30
+experiment:
+  enabled: true

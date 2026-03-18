@@ -2,7 +2,8 @@ scenario_id: mckinsey_report
 display_name: McKinsey-Style Report
 category: business
 objective: Produce a high-quality McKinsey-Style Report that meets professional standards
-  for the business domain. McKinsey Pyramid+MECE structured report.
+  for the business domain. McKinsey Pyramid+MECE structured report. Apply strategic
+  analysis.
 max_iterations: 5
 target_score: 0.85
 min_score: 0.6
@@ -29,8 +30,11 @@ evaluation:
 search:
   apis:
   - semantic_scholar
+  - openalex
+  - google_scholar
   recency_years: 3
-  min_sources: 15
+  min_sources: 30
+  max_sources: 50
 style:
   formality: 0.85
   voice: third_person
@@ -42,7 +46,13 @@ style:
   - findings
   - recommendations
   - conclusion
+  - situation
+  - implementation
+  terminology_registry: business_consulting
 tags:
 - business
 - mckinsey-report
 - mckinsey
+time_budget_minutes: 30
+experiment:
+  enabled: true

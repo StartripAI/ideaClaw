@@ -2,7 +2,9 @@ scenario_id: meeting_minutes
 display_name: Meeting Minutes
 category: general
 objective: Produce a high-quality Meeting Minutes that meets professional standards
-  for the general domain. Formal meeting minutes.
+  for the general domain. Formal meeting minutes. Follows systematic analysis standards.
+  Follows evidence-based methodology standards. Adheres to SMART standards. Emphasizes
+  okr.
 max_iterations: 2
 target_score: 0.65
 min_score: 0.6
@@ -27,8 +29,10 @@ search:
   apis:
   - arxiv
   - semantic_scholar
+  - openalex
   recency_years: 3
-  min_sources: 15
+  min_sources: 30
+  max_sources: 50
 style:
   formality: 0.7
   voice: third_person
@@ -40,6 +44,12 @@ style:
   - decisions
   - action items
   - next meeting
+  - introduction
+  - background
+  terminology_registry: general_professional
 tags:
 - general
 - meeting-minutes
+time_budget_minutes: 30
+experiment:
+  enabled: true

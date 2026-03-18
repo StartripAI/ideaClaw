@@ -2,7 +2,8 @@ scenario_id: grant_proposal_general
 display_name: General Grant Proposal
 category: general
 objective: Produce a high-quality General Grant Proposal that meets professional standards
-  for the general domain. General-purpose research grant.
+  for the general domain. General-purpose research grant. Follows systematic analysis
+  standards. Follows evidence-based methodology standards.
 max_iterations: 5
 target_score: 0.85
 min_score: 0.6
@@ -29,8 +30,11 @@ evaluation:
 search:
   apis:
   - semantic_scholar
+  - openalex
+  - google_scholar
   recency_years: 3
-  min_sources: 15
+  min_sources: 30
+  max_sources: 50
 style:
   formality: 0.9
   voice: first_person
@@ -41,6 +45,13 @@ style:
   - innovation
   - approach
   - timeline
+  - introduction
+  - background
+  - analysis
+  terminology_registry: general_professional
 tags:
 - general
 - grant-proposal-general
+time_budget_minutes: 30
+experiment:
+  enabled: true

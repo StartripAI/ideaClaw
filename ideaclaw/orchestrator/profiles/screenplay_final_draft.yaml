@@ -2,7 +2,8 @@ scenario_id: screenplay_final_draft
 display_name: Screenplay (Final Draft)
 category: creative
 objective: Produce a high-quality Screenplay (Final Draft) that meets professional
-  standards for the creative domain. Feature screenplay per Final Draft format.
+  standards for the creative domain. Feature screenplay per Final Draft format. Apply
+  narrative structure.
 max_iterations: 5
 target_score: 0.75
 min_score: 0.6
@@ -27,8 +28,10 @@ search:
   apis:
   - arxiv
   - semantic_scholar
+  - openalex
   recency_years: 3
-  min_sources: 15
+  min_sources: 30
+  max_sources: 50
 style:
   formality: 0.5
   voice: third_person
@@ -40,7 +43,13 @@ style:
   - action
   - dialogue
   - transitions
+  - opening
+  - setup
+  terminology_registry: creative_writing
 tags:
 - creative
 - screenplay-final-draft
 - final draft
+time_budget_minutes: 30
+experiment:
+  enabled: true

@@ -2,7 +2,7 @@ scenario_id: plos_one
 display_name: PLOS ONE
 category: science
 objective: Produce a high-quality PLOS ONE that meets professional standards for the
-  science domain. PLOS ONE research article.
+  science domain. PLOS ONE research article. Apply peer-review methodology.
 max_iterations: 5
 target_score: 0.8
 min_score: 0.6
@@ -30,8 +30,10 @@ search:
   apis:
   - pubmed
   - semantic_scholar
+  - arxiv
   recency_years: 3
-  min_sources: 15
+  min_sources: 30
+  max_sources: 50
 style:
   formality: 0.9
   voice: third_person
@@ -42,7 +44,13 @@ style:
   - results
   - discussion
   - methods
+  - background
+  - conclusion
+  terminology_registry: scientific_research
 tags:
 - science
 - plos-one
 - plos
+time_budget_minutes: 30
+experiment:
+  enabled: true

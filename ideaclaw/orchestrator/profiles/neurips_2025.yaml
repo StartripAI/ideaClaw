@@ -2,7 +2,8 @@ scenario_id: neurips_2025
 display_name: NeurIPS 2025
 category: cs_ml
 objective: Produce a high-quality NeurIPS 2025 that meets professional standards for
-  the cs_ml domain. NeurIPS 2025 with reproducibility checklist.
+  the cs_ml domain. NeurIPS 2025 with reproducibility checklist. Apply peer-review
+  standards. Follows reproducibility requirements standards.
 max_iterations: 5
 target_score: 0.85
 min_score: 0.6
@@ -36,8 +37,10 @@ search:
   apis:
   - arxiv
   - semantic_scholar
+  - openalex
   recency_years: 3
-  min_sources: 15
+  min_sources: 30
+  max_sources: 50
 style:
   formality: 0.9
   voice: third_person
@@ -51,7 +54,11 @@ style:
   - conclusion
   - broader impact
   - limitations
+  terminology_registry: ml_research
 tags:
 - cs_ml
 - neurips-2025
 - neurips
+time_budget_minutes: 30
+experiment:
+  enabled: true

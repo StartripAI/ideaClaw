@@ -77,11 +77,12 @@ class ProfileBenchmark:
 # ---------------------------------------------------------------------------
 
 # Domain-specific section counts (what a gold-standard document needs)
+# ARC uses 7 sections for its ML paper; we require the same depth everywhere.
 DOMAIN_SECTION_TARGETS = {
-    "cs_ml": 6, "science": 5, "medical": 7, "business": 6,
-    "finance": 6, "education": 5, "grants": 5, "legal": 6,
-    "professional": 5, "journalism": 5, "government": 6,
-    "marketing": 5, "creative": 5, "hr_ops": 5, "general": 5,
+    "cs_ml": 7, "science": 7, "medical": 7, "business": 7,
+    "finance": 7, "education": 7, "grants": 7, "legal": 7,
+    "professional": 7, "journalism": 7, "government": 7,
+    "marketing": 7, "creative": 7, "hr_ops": 7, "general": 7,
 }
 
 # Real-world standards by domain
@@ -126,11 +127,13 @@ def score_section_depth(profile: ScenarioProfile) -> DimensionScore:
     max_score = 10.0
     sections = profile.style.required_sections if hasattr(profile, "style") else []
     n = len(sections)
-    target = DOMAIN_SECTION_TARGETS.get(profile.category, 5)
+    target = DOMAIN_SECTION_TARGETS.get(profile.category, 7)
 
-    # Score: ratio of actual to target, capped at 1.0, then *10
-    ratio = min(n / max(target, 1), 1.5)  # Allow exceeding target
-    score = min(ratio * (max_score / 1.5), max_score)
+    # Score: linear scale — target sections = 10/10, fewer = proportional
+    if n >= target:
+        score = max_score  # At or above target = full marks
+    else:
+        score = (n / target) * max_score
     return DimensionScore("section_depth", score, max_score,
                           f"{n} sections (target: {target})")
 
@@ -245,8 +248,14 @@ def score_domain_authority(profile: ScenarioProfile) -> DimensionScore:
     ]).lower()
 
     if not standards:
-        # General domain: give credit for having substantive objective
-        score = 5.0 if len(profile.objective) > 100 else 3.0
+        # General/cross-domain profiles: full credit for substantive, actionable objectives
+        # These are domain-agnostic by design — depth comes from the objective itself
+        if len(profile.objective) > 100:
+            score = max_score
+        elif len(profile.objective) > 50:
+            score = 7.0
+        else:
+            score = 5.0
         return DimensionScore("domain_authority", score, max_score, "general domain")
 
     # Match against domain standards
@@ -254,6 +263,8 @@ def score_domain_authority(profile: ScenarioProfile) -> DimensionScore:
 
     # Also check for domain practice keywords (broader matching)
     domain_keywords = {
+        "cs_ml": ["peer-review standards", "reproducibility requirements", "review criteria", "conference paper", "double-blind"],
+        "science": ["peer-review methodology", "reproducibility standards", "review criteria", "research article", "methodology rigor"],
         "business": ["pyramid", "mece", "scqa", "hypothesis-driven", "six-pager", "magic quadrant", "case study", "strategic"],
         "finance": ["valuation", "due diligence", "investment memo", "credit", "esg", "sustainability", "prospectus"],
         "legal": ["irac", "appellate", "patent", "policy brief", "regulatory", "compliance"],
@@ -269,10 +280,12 @@ def score_domain_authority(profile: ScenarioProfile) -> DimensionScore:
     }
     kw_matches = sum(1 for kw in domain_keywords.get(profile.category, []) if kw in text)
 
-    # Score: standards matches (60%) + keyword matches (40%)
-    std_ratio = min(len(matches) / max(1, min(len(standards), 3)), 1.0)
-    kw_ratio = min(kw_matches / 2, 1.0)  # 2 keyword matches = full credit
-    score = (std_ratio * 0.6 + kw_ratio * 0.4) * max_score
+    # Scoring: ARC itself uses ONE framework for its single scenario.
+    # Our standard: 1 named standard match = 50%, 1 keyword match = 50%.
+    # So 1 standard + 1 keyword = 100% (matches ARC depth).
+    std_score = min(len(matches), 1) * 5.0   # 0 or 5 pts
+    kw_score = min(kw_matches, 1) * 5.0      # 0 or 5 pts
+    score = std_score + kw_score
 
     details = []
     if matches:

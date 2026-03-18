@@ -2,7 +2,7 @@ scenario_id: wellcome_trust
 display_name: Wellcome Trust
 category: grants
 objective: Produce a high-quality Wellcome Trust that meets professional standards
-  for the grants domain. Wellcome Trust research grant.
+  for the grants domain. Wellcome Trust research grant. Apply merit review criteria.
 max_iterations: 5
 target_score: 0.85
 min_score: 0.6
@@ -30,8 +30,10 @@ search:
   apis:
   - pubmed
   - semantic_scholar
+  - openalex
   recency_years: 3
-  min_sources: 15
+  min_sources: 30
+  max_sources: 50
 style:
   formality: 0.9
   voice: third_person
@@ -42,7 +44,14 @@ style:
   - team
   - environment
   - budget
+  - specific_aims
+  - significance
+  - innovation
+  terminology_registry: grant_writing
 tags:
 - grants
 - wellcome-trust
 - wellcome
+time_budget_minutes: 30
+experiment:
+  enabled: true

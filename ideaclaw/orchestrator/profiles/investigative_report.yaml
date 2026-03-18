@@ -2,7 +2,8 @@ scenario_id: investigative_report
 display_name: Investigative Report
 category: journalism
 objective: Produce a high-quality Investigative Report that meets professional standards
-  for the journalism domain. Long-form investigative journalism.
+  for the journalism domain. Long-form investigative journalism. Apply investigative
+  reporting. Follows fact-checking methodology standards.
 max_iterations: 5
 target_score: 0.85
 min_score: 0.6
@@ -27,10 +28,12 @@ search:
   apis:
   - arxiv
   - semantic_scholar
+  - openalex
   recency_years: 3
-  min_sources: 15
+  min_sources: 30
+  max_sources: 50
 style:
-  formality: 0.8
+  formality: 0.6
   voice: third_person
   citation_style: natbib
   required_sections:
@@ -40,6 +43,12 @@ style:
   - evidence
   - impact
   - conclusion
+  - headline
+  - lead
+  terminology_registry: journalism_media
 tags:
 - journalism
 - investigative-report
+time_budget_minutes: 30
+experiment:
+  enabled: true

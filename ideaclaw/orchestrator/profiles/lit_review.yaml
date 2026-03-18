@@ -35,6 +35,7 @@ search:
   - pubmed
   recency_years: 10
   min_sources: 80
+  max_sources: 50
 style:
   formality: 0.95
   voice: third_person
@@ -49,3 +50,7 @@ style:
   - discussion
   - limitations
   - conclusion
+  terminology_registry: general_professional
+time_budget_minutes: 30
+experiment:
+  enabled: true

@@ -2,7 +2,8 @@ scenario_id: literature_review
 display_name: Systematic Literature Review
 category: general
 objective: Produce a high-quality Systematic Literature Review that meets professional
-  standards for the general domain. PRISMA-compliant systematic review.
+  standards for the general domain. PRISMA-compliant systematic review. Follows systematic
+  analysis standards. Follows evidence-based methodology standards.
 max_iterations: 5
 target_score: 0.85
 min_score: 0.6
@@ -34,6 +35,7 @@ search:
   - pubmed
   recency_years: 3
   min_sources: 80
+  max_sources: 50
 style:
   formality: 0.9
   voice: third_person
@@ -47,6 +49,10 @@ style:
   - discussion
   - limitations
   - conclusion
+  terminology_registry: general_professional
 tags:
 - general
 - literature-review
+time_budget_minutes: 30
+experiment:
+  enabled: true

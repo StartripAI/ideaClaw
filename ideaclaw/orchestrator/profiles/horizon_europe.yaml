@@ -2,7 +2,7 @@ scenario_id: horizon_europe
 display_name: EU Horizon Europe
 category: grants
 objective: Produce a high-quality EU Horizon Europe that meets professional standards
-  for the grants domain. EU Horizon Europe per 0-5 scoring.
+  for the grants domain. EU Horizon Europe per 0-5 scoring. Apply merit review criteria.
 max_iterations: 5
 target_score: 0.85
 min_score: 0.6
@@ -29,8 +29,11 @@ evaluation:
 search:
   apis:
   - semantic_scholar
+  - pubmed
+  - openalex
   recency_years: 3
-  min_sources: 15
+  min_sources: 30
+  max_sources: 50
 style:
   formality: 0.9
   voice: third_person
@@ -41,7 +44,14 @@ style:
   - implementation
   - budget
   - ethics
+  - specific_aims
+  - significance
+  - innovation
+  terminology_registry: grant_writing
 tags:
 - grants
 - horizon-europe
 - horizon
+time_budget_minutes: 30
+experiment:
+  enabled: true

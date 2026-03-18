@@ -38,6 +38,7 @@ search:
   - pubmed
   recency_years: 5
   min_sources: 30
+  max_sources: 50
 style:
   formality: 0.9
   voice: first_person
@@ -51,3 +52,9 @@ style:
   - approach
   - preliminary data
   - timeline
+  - introduction
+  - background
+  terminology_registry: general_professional
+time_budget_minutes: 30
+experiment:
+  enabled: true

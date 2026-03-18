@@ -2,7 +2,8 @@ scenario_id: sre_postmortem
 display_name: SRE Postmortem (Google)
 category: professional
 objective: Produce a high-quality SRE Postmortem (Google) that meets professional
-  standards for the professional domain. Google SRE-style incident postmortem.
+  standards for the professional domain. Google SRE-style incident postmortem. Apply
+  technical specification. Follows postmortem analysis standards.
 max_iterations: 5
 target_score: 0.85
 min_score: 0.6
@@ -27,10 +28,12 @@ search:
   apis:
   - arxiv
   - semantic_scholar
+  - openalex
   recency_years: 3
-  min_sources: 15
+  min_sources: 30
+  max_sources: 50
 style:
-  formality: 0.8
+  formality: 0.7
   voice: third_person
   citation_style: natbib
   required_sections:
@@ -40,7 +43,13 @@ style:
   - timeline
   - action items
   - lessons learned
+  - context
+  - analysis
+  terminology_registry: technical_professional
 tags:
 - professional
 - sre-postmortem
 - sre
+time_budget_minutes: 30
+experiment:
+  enabled: true

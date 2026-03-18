@@ -2,7 +2,7 @@ scenario_id: lesson_plan_blooms
 display_name: Lesson Plan (Bloom's)
 category: education
 objective: Produce a high-quality Lesson Plan (Bloom's) that meets professional standards
-  for the education domain. Lesson plan using Bloom's Taxonomy.
+  for the education domain. Lesson plan using Bloom's Taxonomy. Apply learning objectives.
 max_iterations: 5
 target_score: 0.75
 min_score: 0.6
@@ -30,8 +30,10 @@ search:
   apis:
   - arxiv
   - semantic_scholar
+  - openalex
   recency_years: 3
-  min_sources: 15
+  min_sources: 30
+  max_sources: 50
 style:
   formality: 0.75
   voice: third_person
@@ -43,7 +45,13 @@ style:
   - assessment
   - differentiation
   - materials
+  - introduction
+  - literature_review
+  terminology_registry: academic_education
 tags:
 - education
 - lesson-plan-blooms
 - bloom
+time_budget_minutes: 30
+experiment:
+  enabled: true

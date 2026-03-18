@@ -5,7 +5,8 @@ tags:
 - legal
 - irac
 objective: Produce a high-quality Legal Memorandum that meets professional standards
-  for the legal domain. Legal memo with IRAC structure and Bluebook citations.
+  for the legal domain. Legal memo with IRAC structure and Bluebook citations. Apply
+  legal analysis following IRAC methodology.
 max_iterations: 4
 target_score: 0.8
 min_score: 0.55
@@ -29,8 +30,11 @@ evaluation:
 search:
   apis:
   - semantic_scholar
+  - openalex
+  - google_scholar
   recency_years: 20
-  min_sources: 10
+  min_sources: 30
+  max_sources: 50
 style:
   formality: 0.98
   voice: third_person
@@ -43,3 +47,9 @@ style:
   - facts
   - discussion
   - conclusion
+  - issue_statement
+  - rule
+  terminology_registry: legal_professional
+time_budget_minutes: 30
+experiment:
+  enabled: true

@@ -2,7 +2,7 @@ scenario_id: college_essay_common
 display_name: Common App Essay
 category: education
 objective: Produce a high-quality Common App Essay that meets professional standards
-  for the education domain. Common App personal essay (650 words).
+  for the education domain. Common App personal essay (650 words). Apply Bloom's taxonomy.
 max_iterations: 5
 target_score: 0.8
 min_score: 0.6
@@ -27,8 +27,10 @@ search:
   apis:
   - arxiv
   - semantic_scholar
+  - openalex
   recency_years: 3
-  min_sources: 15
+  min_sources: 30
+  max_sources: 50
 style:
   formality: 0.6
   voice: first_person
@@ -38,7 +40,15 @@ style:
   - body
   - reflection
   - conclusion
+  - introduction
+  - literature_review
+  - methodology
+  - analysis
+  terminology_registry: academic_education
 tags:
 - education
 - college-essay-common
 - common app
+time_budget_minutes: 30
+experiment:
+  enabled: true

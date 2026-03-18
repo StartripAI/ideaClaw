@@ -2,7 +2,7 @@ scenario_id: care_case_report
 display_name: CARE Case Report
 category: medical
 objective: Produce a high-quality CARE Case Report that meets professional standards
-  for the medical domain. Case report per CARE guidelines.
+  for the medical domain. Case report per CARE guidelines. Apply clinical trial methodology.
 max_iterations: 5
 target_score: 0.8
 min_score: 0.6
@@ -32,8 +32,11 @@ evaluation:
 search:
   apis:
   - pubmed
+  - semantic_scholar
+  - openalex
   recency_years: 3
-  min_sources: 15
+  min_sources: 30
+  max_sources: 50
 style:
   formality: 0.9
   voice: third_person
@@ -48,7 +51,11 @@ style:
   - therapeutic intervention
   - outcome
   - discussion
+  terminology_registry: medical_clinical
 tags:
 - medical
 - care-case-report
 - care
+time_budget_minutes: 30
+experiment:
+  enabled: true

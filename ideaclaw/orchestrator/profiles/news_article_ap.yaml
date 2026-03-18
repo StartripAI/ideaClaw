@@ -2,7 +2,8 @@ scenario_id: news_article_ap
 display_name: News Article (AP Style)
 category: journalism
 objective: Produce a high-quality News Article (AP Style) that meets professional
-  standards for the journalism domain. AP Stylebook news article.
+  standards for the journalism domain. AP Stylebook news article. Apply investigative
+  reporting. Follows fact-checking methodology standards.
 max_iterations: 5
 target_score: 0.85
 min_score: 0.6
@@ -27,8 +28,10 @@ search:
   apis:
   - arxiv
   - semantic_scholar
+  - openalex
   recency_years: 3
-  min_sources: 15
+  min_sources: 30
+  max_sources: 50
 style:
   formality: 0.75
   voice: third_person
@@ -40,7 +43,13 @@ style:
   - body
   - quotes
   - background
+  - lead
+  - context
+  terminology_registry: journalism_media
 tags:
 - journalism
 - news-article-ap
 - ap
+time_budget_minutes: 30
+experiment:
+  enabled: true

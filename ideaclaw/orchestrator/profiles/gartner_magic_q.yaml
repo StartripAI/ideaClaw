@@ -2,7 +2,7 @@ scenario_id: gartner_magic_q
 display_name: Gartner Magic Quadrant
 category: business
 objective: Produce a high-quality Gartner Magic Quadrant that meets professional standards
-  for the business domain. Gartner-style market analysis.
+  for the business domain. Gartner-style market analysis. Apply strategic analysis.
 max_iterations: 5
 target_score: 0.85
 min_score: 0.6
@@ -29,8 +29,11 @@ evaluation:
 search:
   apis:
   - semantic_scholar
+  - openalex
+  - google_scholar
   recency_years: 2
-  min_sources: 15
+  min_sources: 30
+  max_sources: 50
 style:
   formality: 0.9
   voice: third_person
@@ -43,7 +46,11 @@ style:
   - challengers
   - visionaries
   - niche
+  terminology_registry: business_consulting
 tags:
 - business
 - gartner-magic-q
 - gartner
+time_budget_minutes: 30
+experiment:
+  enabled: true

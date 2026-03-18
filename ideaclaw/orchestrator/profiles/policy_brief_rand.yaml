@@ -2,7 +2,8 @@ scenario_id: policy_brief_rand
 display_name: RAND Policy Brief
 category: legal
 objective: Produce a high-quality RAND Policy Brief that meets professional standards
-  for the legal domain. RAND-style evidence-based policy brief.
+  for the legal domain. RAND-style evidence-based policy brief. Apply legal analysis
+  following IRAC methodology.
 max_iterations: 5
 target_score: 0.85
 min_score: 0.6
@@ -29,8 +30,11 @@ evaluation:
 search:
   apis:
   - semantic_scholar
+  - openalex
+  - google_scholar
   recency_years: 3
-  min_sources: 15
+  min_sources: 30
+  max_sources: 50
 style:
   formality: 0.85
   voice: third_person
@@ -42,7 +46,13 @@ style:
   - evidence
   - recommendations
   - conclusion
+  - issue_statement
+  - facts
+  terminology_registry: legal_professional
 tags:
 - legal
 - policy-brief-rand
 - rand
+time_budget_minutes: 30
+experiment:
+  enabled: true

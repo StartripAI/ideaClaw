@@ -2,7 +2,8 @@ scenario_id: technical_report_ieee
 display_name: Technical Report (IEEE)
 category: general
 objective: Produce a high-quality Technical Report (IEEE) that meets professional
-  standards for the general domain. IEEE format technical report.
+  standards for the general domain. IEEE format technical report. Follows systematic
+  analysis standards. Follows evidence-based methodology standards.
 max_iterations: 5
 target_score: 0.85
 min_score: 0.6
@@ -27,8 +28,10 @@ search:
   apis:
   - arxiv
   - semantic_scholar
+  - openalex
   recency_years: 3
-  min_sources: 15
+  min_sources: 30
+  max_sources: 50
 style:
   formality: 0.9
   voice: third_person
@@ -42,6 +45,10 @@ style:
   - evaluation
   - related work
   - conclusion
+  terminology_registry: general_professional
 tags:
 - general
 - technical-report-ieee
+time_budget_minutes: 30
+experiment:
+  enabled: true

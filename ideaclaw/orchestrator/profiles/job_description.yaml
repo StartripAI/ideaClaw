@@ -2,7 +2,8 @@ scenario_id: job_description
 display_name: Job Description
 category: hr_ops
 objective: Produce a high-quality Job Description that meets professional standards
-  for the hr_ops domain. Professional job description.
+  for the hr_ops domain. Professional job description. Apply SMART goals. Follows
+  performance management standards.
 max_iterations: 5
 target_score: 0.7
 min_score: 0.6
@@ -27,8 +28,10 @@ search:
   apis:
   - arxiv
   - semantic_scholar
+  - openalex
   recency_years: 3
-  min_sources: 15
+  min_sources: 30
+  max_sources: 50
 style:
   formality: 0.75
   voice: third_person
@@ -40,6 +43,12 @@ style:
   - requirements
   - preferred qualifications
   - benefits
+  - objective
+  - current_state
+  terminology_registry: hr_operations
 tags:
 - hr_ops
 - job-description
+time_budget_minutes: 30
+experiment:
+  enabled: true

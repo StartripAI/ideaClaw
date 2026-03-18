@@ -2,7 +2,9 @@ scenario_id: market_analysis
 display_name: Market Analysis Report
 category: business
 objective: Produce a high-quality Market Analysis Report that meets professional standards
-  for the business domain. Comprehensive market analysis.
+  for the business domain. Comprehensive market analysis. Apply strategic analysis.
+  Follows hypothesis-driven standards. Follows MECE framework standards. Adheres to
+  Gartner standards.
 max_iterations: 5
 target_score: 0.85
 min_score: 0.6
@@ -30,8 +32,10 @@ search:
   apis:
   - semantic_scholar
   - openalex
+  - google_scholar
   recency_years: 2
-  min_sources: 15
+  min_sources: 30
+  max_sources: 50
 style:
   formality: 0.9
   voice: third_person
@@ -45,6 +49,10 @@ style:
   - conclusion
   - market sizing
   - competitive landscape
+  terminology_registry: business_consulting
 tags:
 - business
 - market-analysis
+time_budget_minutes: 30
+experiment:
+  enabled: true

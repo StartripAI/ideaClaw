@@ -2,7 +2,9 @@ scenario_id: comparison_analysis
 display_name: Comparison Analysis
 category: general
 objective: Produce a high-quality Comparison Analysis that meets professional standards
-  for the general domain. Side-by-side comparison document.
+  for the general domain. Side-by-side comparison document. Follows systematic analysis
+  standards. Follows evidence-based methodology standards. Adheres to McKinsey standards.
+  Emphasizes case study.
 max_iterations: 5
 target_score: 0.8
 min_score: 0.6
@@ -29,8 +31,11 @@ evaluation:
 search:
   apis:
   - semantic_scholar
+  - openalex
+  - google_scholar
   recency_years: 3
-  min_sources: 15
+  min_sources: 30
+  max_sources: 50
 style:
   formality: 0.9
   voice: third_person
@@ -41,6 +46,13 @@ style:
   - comparison matrix
   - analysis
   - recommendation
+  - background
+  - findings
+  - recommendations
+  terminology_registry: general_professional
 tags:
 - general
 - comparison-analysis
+time_budget_minutes: 30
+experiment:
+  enabled: true

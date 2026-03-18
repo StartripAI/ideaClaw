@@ -36,9 +36,11 @@ search:
   apis:
   - pubmed
   - semantic_scholar
+  - openalex
   recency_years: 5
   min_sources: 30
   require_doi: true
+  max_sources: 50
 style:
   formality: 0.98
   voice: third_person
@@ -52,3 +54,7 @@ style:
   - discussion
   - limitations
   - conclusion
+  terminology_registry: general_professional
+time_budget_minutes: 30
+experiment:
+  enabled: true

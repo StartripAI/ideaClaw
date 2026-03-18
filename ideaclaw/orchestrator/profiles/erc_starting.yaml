@@ -2,7 +2,8 @@ scenario_id: erc_starting
 display_name: ERC Starting Grant
 category: grants
 objective: Produce a high-quality ERC Starting Grant that meets professional standards
-  for the grants domain. European Research Council Starting Grant.
+  for the grants domain. European Research Council Starting Grant. Apply merit review
+  criteria.
 max_iterations: 5
 target_score: 0.9
 min_score: 0.6
@@ -30,8 +31,10 @@ search:
   apis:
   - arxiv
   - semantic_scholar
+  - pubmed
   recency_years: 3
-  min_sources: 15
+  min_sources: 30
+  max_sources: 50
 style:
   formality: 0.9
   voice: third_person
@@ -42,7 +45,14 @@ style:
   - objectives
   - methodology
   - resources
+  - specific_aims
+  - significance
+  - innovation
+  terminology_registry: grant_writing
 tags:
 - grants
 - erc-starting
 - erc
+time_budget_minutes: 30
+experiment:
+  enabled: true
