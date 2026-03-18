@@ -1,0 +1,49 @@
+scenario_id: lit_review
+display_name: Systematic Literature Review
+category: academic_review
+tags:
+- review
+- prisma
+objective: PRISMA-compliant systematic review with search strategy and gap identification.
+max_iterations: 5
+target_score: 0.85
+min_score: 0.6
+evaluation:
+  criteria:
+    depth:
+      weight: 0.3
+      min: 0.8
+    soundness:
+      weight: 0.25
+      min: 0.75
+    clarity:
+      weight: 0.15
+      min: 0.7
+    citations:
+      weight: 0.2
+      min: 0.85
+    structure:
+      weight: 0.1
+      min: 0.75
+search:
+  apis:
+  - arxiv
+  - semantic_scholar
+  - openalex
+  - pubmed
+  recency_years: 10
+  min_sources: 80
+style:
+  formality: 0.95
+  voice: third_person
+  tense: past
+  citation_style: apa
+  required_sections:
+  - abstract
+  - introduction
+  - methodology
+  - search strategy
+  - results
+  - discussion
+  - limitations
+  - conclusion

@@ -1,0 +1,50 @@
+scenario_id: masters_thesis
+display_name: Master's Thesis
+category: academic_thesis
+tags:
+- thesis
+- masters
+objective: Comprehensive master's thesis with literature review and methodology defense.
+max_iterations: 6
+target_score: 0.85
+min_score: 0.6
+evaluation:
+  criteria:
+    depth:
+      weight: 0.25
+      min: 0.75
+    soundness:
+      weight: 0.2
+      min: 0.7
+    clarity:
+      weight: 0.2
+      min: 0.7
+    citations:
+      weight: 0.15
+      min: 0.8
+    structure:
+      weight: 0.1
+      min: 0.75
+    novelty:
+      weight: 0.1
+      min: 0.5
+search:
+  apis:
+  - arxiv
+  - semantic_scholar
+  - openalex
+  recency_years: 10
+  min_sources: 50
+style:
+  formality: 0.9
+  voice: third_person
+  tense: past
+  citation_style: apa
+  required_sections:
+  - abstract
+  - introduction
+  - literature review
+  - methodology
+  - results
+  - discussion
+  - conclusion

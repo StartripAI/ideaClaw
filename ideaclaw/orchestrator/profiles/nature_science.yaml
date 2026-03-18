@@ -1,0 +1,50 @@
+scenario_id: nature_science
+display_name: Nature/Science Article
+category: academic_science
+tags:
+- journal
+- top-tier
+objective: Nature/Science quality article demonstrating major scientific advance.
+max_iterations: 6
+target_score: 0.9
+min_score: 0.65
+evaluation:
+  criteria:
+    novelty:
+      weight: 0.25
+      min: 0.8
+    soundness:
+      weight: 0.25
+      min: 0.8
+    significance:
+      weight: 0.2
+      min: 0.75
+    clarity:
+      weight: 0.15
+      min: 0.8
+    citations:
+      weight: 0.1
+      min: 0.85
+    depth:
+      weight: 0.05
+      min: 0.7
+search:
+  apis:
+  - arxiv
+  - semantic_scholar
+  - openalex
+  - pubmed
+  recency_years: 5
+  min_sources: 40
+style:
+  formality: 0.98
+  voice: third_person
+  tense: past
+  citation_style: natbib
+  max_pages: 6
+  required_sections:
+  - abstract
+  - introduction
+  - results
+  - discussion
+  - methods

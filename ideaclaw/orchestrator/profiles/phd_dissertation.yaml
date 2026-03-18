@@ -1,0 +1,53 @@
+scenario_id: phd_dissertation
+display_name: PhD Dissertation
+category: academic_thesis
+tags:
+- thesis
+- phd
+objective: PhD dissertation with original contribution and rigorous evaluation.
+max_iterations: 8
+target_score: 0.9
+min_score: 0.65
+evaluation:
+  criteria:
+    novelty:
+      weight: 0.25
+      min: 0.75
+    depth:
+      weight: 0.25
+      min: 0.8
+    soundness:
+      weight: 0.2
+      min: 0.75
+    clarity:
+      weight: 0.15
+      min: 0.7
+    citations:
+      weight: 0.1
+      min: 0.85
+    significance:
+      weight: 0.05
+      min: 0.6
+search:
+  apis:
+  - arxiv
+  - semantic_scholar
+  - openalex
+  - pubmed
+  recency_years: 15
+  min_sources: 100
+style:
+  formality: 0.95
+  voice: third_person
+  tense: past
+  citation_style: apa
+  required_sections:
+  - abstract
+  - introduction
+  - literature review
+  - theoretical framework
+  - methodology
+  - results
+  - discussion
+  - conclusion
+  - future work

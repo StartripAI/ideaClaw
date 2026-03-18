@@ -1,0 +1,41 @@
+scenario_id: tech_blog
+display_name: Technical Blog Post
+category: tech
+tags:
+- blog
+- technical
+objective: Engaging tech blog post with code examples for Medium/dev.to.
+max_iterations: 3
+target_score: 0.75
+min_score: 0.5
+evaluation:
+  criteria:
+    clarity:
+      weight: 0.3
+      min: 0.7
+    depth:
+      weight: 0.25
+      min: 0.6
+    structure:
+      weight: 0.2
+      min: 0.65
+    style:
+      weight: 0.15
+      min: 0.6
+    citations:
+      weight: 0.1
+      min: 0.4
+search:
+  apis:
+  - arxiv
+  - semantic_scholar
+  recency_years: 2
+  min_sources: 5
+style:
+  formality: 0.5
+  voice: first_person
+  citation_style: chicago
+  required_sections:
+  - introduction
+  - body
+  - conclusion

@@ -1,0 +1,47 @@
+scenario_id: tech_report
+display_name: Technical Report (IEEE/ACM)
+category: academic_tech
+tags:
+- report
+- ieee
+objective: IEEE/ACM format technical report with benchmarks.
+max_iterations: 4
+target_score: 0.8
+min_score: 0.55
+evaluation:
+  criteria:
+    soundness:
+      weight: 0.25
+      min: 0.7
+    depth:
+      weight: 0.25
+      min: 0.7
+    clarity:
+      weight: 0.2
+      min: 0.65
+    citations:
+      weight: 0.15
+      min: 0.7
+    structure:
+      weight: 0.15
+      min: 0.65
+search:
+  apis:
+  - arxiv
+  - semantic_scholar
+  recency_years: 5
+  min_sources: 15
+style:
+  formality: 0.9
+  voice: third_person
+  tense: past
+  citation_style: ieee
+  required_sections:
+  - abstract
+  - introduction
+  - background
+  - approach
+  - implementation
+  - evaluation
+  - related work
+  - conclusion

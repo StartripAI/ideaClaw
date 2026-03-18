@@ -1,0 +1,48 @@
+scenario_id: policy_brief
+display_name: Policy Brief
+category: policy
+tags:
+- policy
+- government
+objective: Brookings/RAND-style brief translating research into policy recommendations.
+max_iterations: 3
+target_score: 0.8
+min_score: 0.55
+evaluation:
+  criteria:
+    clarity:
+      weight: 0.25
+      min: 0.75
+    significance:
+      weight: 0.25
+      min: 0.7
+    soundness:
+      weight: 0.2
+      min: 0.65
+    structure:
+      weight: 0.15
+      min: 0.7
+    citations:
+      weight: 0.1
+      min: 0.6
+    style:
+      weight: 0.05
+      min: 0.6
+search:
+  apis:
+  - semantic_scholar
+  - openalex
+  recency_years: 5
+  min_sources: 15
+style:
+  formality: 0.85
+  voice: third_person
+  citation_style: apa
+  max_pages: 4
+  required_sections:
+  - executive summary
+  - issue
+  - background
+  - evidence
+  - recommendations
+  - conclusion

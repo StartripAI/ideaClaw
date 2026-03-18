@@ -1,0 +1,59 @@
+# ICLR 2026 — International Conference on Learning Representations
+scenario_id: iclr_2026
+display_name: "ICLR 2026 Conference Paper"
+category: academic_ml
+version: "1.0"
+tags: [ml, conference, top-tier, iclr]
+
+objective: |
+  Produce an ICLR 2026 submission under double-blind review.
+  Remove all author-identifying information. Focus on clear
+  motivation and strong empirical evidence.
+
+max_iterations: 5
+target_score: 0.85
+min_score: 0.60
+
+# Ref: https://iclr.cc/Conferences/2026/ReviewGuidelines
+evaluation:
+  criteria:
+    novelty:
+      weight: 0.20
+      min: 0.70
+    soundness:
+      weight: 0.25
+      min: 0.75
+    clarity:
+      weight: 0.20
+      min: 0.70
+    significance:
+      weight: 0.15
+      min: 0.60
+    citations:
+      weight: 0.10
+      min: 0.80
+    depth:
+      weight: 0.10
+      min: 0.70
+
+search:
+  apis: [arxiv, semantic_scholar, openalex]
+  domains: [cs.LG, cs.AI, cs.CL, cs.CV]
+  recency_years: 3
+  min_sources: 25
+  max_sources: 80
+
+style:
+  formality: 0.95
+  voice: third_person
+  tense: present
+  citation_style: natbib
+  max_pages: 9
+  required_sections:
+    - abstract
+    - introduction
+    - related work
+    - method
+    - experiments
+    - conclusion
+    - reproducibility statement

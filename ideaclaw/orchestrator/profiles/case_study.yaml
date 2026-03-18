@@ -1,0 +1,48 @@
+scenario_id: case_study
+display_name: Business Case Study (HBS)
+category: business
+tags:
+- case
+- hbs
+objective: HBS-style case study with exhibits and discussion questions.
+max_iterations: 4
+target_score: 0.8
+min_score: 0.55
+evaluation:
+  criteria:
+    clarity:
+      weight: 0.25
+      min: 0.7
+    depth:
+      weight: 0.25
+      min: 0.7
+    structure:
+      weight: 0.2
+      min: 0.75
+    significance:
+      weight: 0.15
+      min: 0.6
+    citations:
+      weight: 0.1
+      min: 0.5
+    style:
+      weight: 0.05
+      min: 0.6
+search:
+  apis:
+  - semantic_scholar
+  recency_years: 5
+  min_sources: 10
+style:
+  formality: 0.8
+  voice: third_person
+  tense: past
+  citation_style: apa
+  required_sections:
+  - introduction
+  - company background
+  - situation
+  - problem
+  - analysis
+  - exhibits
+  - discussion questions

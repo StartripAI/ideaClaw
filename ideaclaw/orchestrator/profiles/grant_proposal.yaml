@@ -1,0 +1,51 @@
+scenario_id: grant_proposal
+display_name: Grant Proposal (NSF/NIH)
+category: academic_funding
+tags:
+- grant
+- nsf
+- nih
+objective: Competitive NSF/NIH grant with specific aims, significance, innovation.
+max_iterations: 5
+target_score: 0.85
+min_score: 0.6
+evaluation:
+  criteria:
+    significance:
+      weight: 0.25
+      min: 0.75
+    novelty:
+      weight: 0.2
+      min: 0.7
+    soundness:
+      weight: 0.2
+      min: 0.75
+    clarity:
+      weight: 0.15
+      min: 0.7
+    depth:
+      weight: 0.1
+      min: 0.65
+    citations:
+      weight: 0.1
+      min: 0.75
+search:
+  apis:
+  - arxiv
+  - semantic_scholar
+  - pubmed
+  recency_years: 5
+  min_sources: 30
+style:
+  formality: 0.9
+  voice: first_person
+  tense: mixed
+  citation_style: apa
+  max_pages: 15
+  required_sections:
+  - specific aims
+  - significance
+  - innovation
+  - approach
+  - preliminary data
+  - timeline

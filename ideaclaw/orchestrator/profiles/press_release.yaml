@@ -1,0 +1,42 @@
+scenario_id: press_release
+display_name: Press Release (AP Style)
+category: communications
+tags:
+- pr
+- media
+objective: AP-style press release with inverted pyramid and quotes.
+max_iterations: 3
+target_score: 0.75
+min_score: 0.5
+evaluation:
+  criteria:
+    clarity:
+      weight: 0.3
+      min: 0.7
+    structure:
+      weight: 0.25
+      min: 0.7
+    style:
+      weight: 0.25
+      min: 0.65
+    significance:
+      weight: 0.1
+      min: 0.5
+    depth:
+      weight: 0.1
+      min: 0.4
+search:
+  apis: []
+  min_sources: 0
+style:
+  formality: 0.75
+  voice: third_person
+  citation_style: chicago
+  max_pages: 2
+  required_sections:
+  - headline
+  - dateline
+  - lead paragraph
+  - body
+  - quote
+  - boilerplate

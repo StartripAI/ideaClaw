@@ -1,0 +1,47 @@
+scenario_id: industry_report
+display_name: Industry White Paper
+category: business
+tags:
+- business
+- consulting
+objective: McKinsey/BCG-style report with exec summary and actionable recommendations.
+max_iterations: 4
+target_score: 0.8
+min_score: 0.55
+evaluation:
+  criteria:
+    clarity:
+      weight: 0.25
+      min: 0.75
+    depth:
+      weight: 0.2
+      min: 0.65
+    structure:
+      weight: 0.2
+      min: 0.7
+    citations:
+      weight: 0.15
+      min: 0.6
+    significance:
+      weight: 0.1
+      min: 0.6
+    style:
+      weight: 0.1
+      min: 0.65
+search:
+  apis:
+  - semantic_scholar
+  - openalex
+  recency_years: 2
+  min_sources: 10
+style:
+  formality: 0.85
+  voice: third_person
+  citation_style: apa
+  required_sections:
+  - executive summary
+  - introduction
+  - analysis
+  - findings
+  - recommendations
+  - conclusion
