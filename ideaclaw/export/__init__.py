@@ -81,6 +81,39 @@ class Exporter:
             except ImportError:
                 pass  # python-docx not installed
 
+        # LaTeX (NeurIPS/ICML/ICLR/generic)
+        if "latex" in self.formats:
+            from ideaclaw.export.latex import LaTeXExporter
+            template = self.config.get("export", {}).get("latex_template", "generic")
+            latex_path = output_dir / "pack.tex"
+            tex_meta = {
+                "title": metadata.get("idea", "IdeaClaw Pack"),
+                "authors": metadata.get("authors", ["IdeaClaw"]),
+                "abstract": metadata.get("abstract", ""),
+            }
+            sources = json_data.get("sources", [])
+            LaTeXExporter(template=template).export(
+                markdown_content, latex_path,
+                metadata=tex_meta, sources=sources,
+            )
+            exported.append(latex_path)
+            bib_path = latex_path.with_suffix(".bib")
+            if bib_path.exists():
+                exported.append(bib_path)
+
+        # Citation verification
+        if self.config.get("export", {}).get("verify_citations", True):
+            from ideaclaw.evidence.citation_verify import verify_citations, citation_summary
+            cites = verify_citations(markdown_content)
+            if cites:
+                summary = citation_summary(cites)
+                cite_path = output_dir / "citation_report.json"
+                cite_path.write_text(
+                    json.dumps(summary, indent=2, ensure_ascii=False),
+                    encoding="utf-8",
+                )
+                exported.append(cite_path)
+
         # Trust review report (audit trail)
         if self.include_audit and "trust_review" in pack_data:
             audit_path = output_dir / "trust_review.json"
