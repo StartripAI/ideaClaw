@@ -1,0 +1,37 @@
+meta:
+  id: general.proposal
+  name: Proposal Pack
+  domain: general
+format:
+  sections:
+  - name: executive_summary
+    required: true
+  - name: problem
+    required: true
+  - name: solution
+    required: true
+  - name: implementation
+    required: true
+  - name: risks
+    required: true
+  - name: resources
+    required: true
+  - name: sources
+    required: true
+rubric:
+  dimensions:
+    evidence_coverage:
+      weight: 20
+    claim_accuracy:
+      weight: 15
+    reasoning_quality:
+      weight: 15
+    actionability:
+      weight: 25
+    uncertainty_honesty:
+      weight: 10
+    structure_clarity:
+      weight: 10
+    counterargument_depth:
+      weight: 5
+  pass_threshold: 7.0

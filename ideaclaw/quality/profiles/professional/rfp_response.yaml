@@ -1,0 +1,5 @@
+meta:
+  id: professional.rfp_response
+  name: RFP Response
+  domain: professional
+  inherits: _base_professional

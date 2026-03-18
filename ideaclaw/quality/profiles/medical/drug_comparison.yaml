@@ -1,0 +1,5 @@
+meta:
+  id: medical.drug_comparison
+  name: Drug Comparison / Network Meta
+  domain: medical
+  inherits: _base_medical

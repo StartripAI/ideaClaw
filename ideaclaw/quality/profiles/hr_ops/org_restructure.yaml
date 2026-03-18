@@ -1,0 +1,5 @@
+meta:
+  id: hr_ops.org_restructure
+  name: Org Restructure Proposal
+  domain: hr_ops
+  inherits: _base_hr_ops

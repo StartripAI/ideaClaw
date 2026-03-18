@@ -1,0 +1,78 @@
+meta:
+  id: cs_ml._base
+  name: CS/ML Paper (Base)
+  domain: cs_ml
+  is_base: true
+format:
+  sections:
+  - name: abstract
+    required: true
+    max_words: 250
+  - name: introduction
+    required: true
+  - name: related_work
+    required: true
+  - name: methodology
+    required: true
+  - name: experiments
+    required: true
+  - name: results
+    required: true
+  - name: conclusion
+    required: true
+  - name: references
+    required: true
+    min_count: 15
+  constraints:
+    citation_style: author-year
+    language: en
+    math_notation: true
+rubric:
+  dimensions:
+    evidence_coverage:
+      weight: 20
+      description: Literature coverage and citation quality
+    claim_accuracy:
+      weight: 15
+      description: Technical claims correctly stated
+    reasoning_quality:
+      weight: 25
+      description: Methodological rigor and novelty
+    actionability:
+      weight: 5
+      description: Reproducibility of experiments
+    uncertainty_honesty:
+      weight: 10
+      description: Limitations clearly stated
+    structure_clarity:
+      weight: 15
+      description: Writing quality and organization
+    counterargument_depth:
+      weight: 10
+      description: Fair comparison with baselines
+  pass_threshold: 6.0
+review:
+  checklist:
+  - Abstract clearly states the contribution
+  - Related work is comprehensive and fairly cited
+  - Methodology described with enough detail to reproduce
+  - Experiments on standard benchmarks with proper baselines
+  - Limitations honestly discussed
+  - All figures and tables referenced in text
+  reject_if:
+  - No novel contribution over prior work
+  - Fabricated experimental results
+  - Missing comparison with obvious baselines
+  source_requirements:
+    min_sources: 15
+    preferred_databases:
+    - arxiv
+    - semantic_scholar
+    - google_scholar
+    recency_preference: last_3_years
+benchmark:
+  reference_scores:
+    top_paper: 8.5
+    accepted: 6.0
+    borderline: 5.0
+    rejected: 3.5

@@ -1,0 +1,13 @@
+meta:
+  id: education.phd_dissertation
+  name: PhD Dissertation
+  domain: education
+  inherits: _base_education
+rubric:
+  pass_threshold: 7.0
+review:
+  checklist:
+  - Original contribution to knowledge
+  - Comprehensive literature review
+  - Rigorous methodology
+  - Significant findings

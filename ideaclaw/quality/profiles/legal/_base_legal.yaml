@@ -1,0 +1,38 @@
+meta:
+  id: legal._base
+  name: Legal Document (Base)
+  domain: legal
+  is_base: true
+format:
+  constraints:
+    language: en
+rubric:
+  dimensions:
+    evidence_coverage:
+      weight: 20
+      description: Legal authority citations
+    claim_accuracy:
+      weight: 25
+      description: Legal precision
+    reasoning_quality:
+      weight: 25
+      description: Legal reasoning (IRAC)
+    actionability:
+      weight: 10
+    uncertainty_honesty:
+      weight: 10
+      description: Adverse authority disclosed
+    structure_clarity:
+      weight: 5
+    counterargument_depth:
+      weight: 5
+  pass_threshold: 7.0
+review:
+  reject_if:
+  - Fabricated case citations
+  - Failure to disclose adverse authority
+  source_requirements:
+    preferred_databases:
+    - westlaw
+    - lexisnexis
+    - google_scholar

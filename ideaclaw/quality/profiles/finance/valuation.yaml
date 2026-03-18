@@ -1,0 +1,10 @@
+meta:
+  id: finance.valuation
+  name: Valuation Report
+  domain: finance
+  inherits: _base_finance
+review:
+  checklist:
+  - DCF model included
+  - Comparable company analysis
+  - Assumptions clearly stated

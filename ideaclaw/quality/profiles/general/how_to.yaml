@@ -1,0 +1,31 @@
+meta:
+  id: general.how_to
+  name: How-To Guide
+  domain: general
+format:
+  sections:
+  - name: overview
+    required: true
+  - name: prerequisites
+    required: true
+  - name: steps
+    required: true
+  - name: troubleshooting
+    required: false
+rubric:
+  dimensions:
+    evidence_coverage:
+      weight: 10
+    claim_accuracy:
+      weight: 15
+    reasoning_quality:
+      weight: 10
+    actionability:
+      weight: 35
+    uncertainty_honesty:
+      weight: 5
+    structure_clarity:
+      weight: 20
+    counterargument_depth:
+      weight: 5
+  pass_threshold: 6.5

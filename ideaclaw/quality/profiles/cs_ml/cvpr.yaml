@@ -1,0 +1,8 @@
+meta:
+  id: cs_ml.cvpr
+  name: CVPR/ICCV Vision Paper
+  domain: cs_ml
+  inherits: _base_cs_ml
+format:
+  constraints:
+    max_pages: 8

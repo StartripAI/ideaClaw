@@ -1,0 +1,15 @@
+meta:
+  id: medical.nejm_case
+  name: NEJM Case Record
+  domain: medical
+  inherits: _base_medical
+format:
+  sections:
+  - name: presentation
+    required: true
+  - name: differential_diagnosis
+    required: true
+  - name: diagnosis
+    required: true
+  - name: discussion
+    required: true

@@ -1,0 +1,8 @@
+meta:
+  id: science.ieee_conf
+  name: IEEE Conference Paper
+  domain: science
+  inherits: _base_science
+format:
+  constraints:
+    max_pages: 6

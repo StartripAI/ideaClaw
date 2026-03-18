@@ -1,0 +1,10 @@
+meta:
+  id: business.competitive_analysis
+  name: Competitive Analysis
+  domain: business
+  inherits: _base_business
+review:
+  checklist:
+  - Competitor comparison matrix
+  - Feature-by-feature comparison
+  - Market positioning map

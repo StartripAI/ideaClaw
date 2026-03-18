@@ -1,0 +1,6 @@
+meta:
+  id: general.meeting_prep
+  name: Meeting Prep Pack
+  domain: general
+rubric:
+  pass_threshold: 6.0

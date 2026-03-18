@@ -1,0 +1,33 @@
+meta:
+  id: general.brief
+  name: Brief Pack
+  domain: general
+format:
+  sections:
+  - name: summary
+    required: true
+  - name: key_points
+    required: true
+  - name: details
+    required: true
+  - name: implications
+    required: true
+  - name: sources
+    required: true
+rubric:
+  dimensions:
+    evidence_coverage:
+      weight: 20
+    claim_accuracy:
+      weight: 20
+    reasoning_quality:
+      weight: 15
+    actionability:
+      weight: 15
+    uncertainty_honesty:
+      weight: 10
+    structure_clarity:
+      weight: 15
+    counterargument_depth:
+      weight: 5
+  pass_threshold: 7.0

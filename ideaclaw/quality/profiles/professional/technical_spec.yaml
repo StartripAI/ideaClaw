@@ -1,0 +1,5 @@
+meta:
+  id: professional.technical_spec
+  name: Technical Specification
+  domain: professional
+  inherits: _base_professional

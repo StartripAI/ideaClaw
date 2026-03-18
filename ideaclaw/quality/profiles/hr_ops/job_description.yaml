@@ -1,0 +1,5 @@
+meta:
+  id: hr_ops.job_description
+  name: Job Description
+  domain: hr_ops
+  inherits: _base_hr_ops

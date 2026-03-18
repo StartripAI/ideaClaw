@@ -1,0 +1,5 @@
+meta:
+  id: science.frontiers
+  name: Frontiers Journal
+  domain: science
+  inherits: _base_science

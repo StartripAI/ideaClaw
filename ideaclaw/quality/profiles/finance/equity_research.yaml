@@ -1,0 +1,6 @@
+meta:
+  id: finance.equity_research
+  name: Equity Research Report
+  domain: finance
+  inherits: _base_finance
+  description: CFA Institute standards

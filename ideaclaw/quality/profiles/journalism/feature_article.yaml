@@ -1,0 +1,5 @@
+meta:
+  id: journalism.feature_article
+  name: Feature Article
+  domain: journalism
+  inherits: _base_journalism

@@ -1,0 +1,5 @@
+meta:
+  id: professional.feasibility_study
+  name: Feasibility Study
+  domain: professional
+  inherits: _base_professional

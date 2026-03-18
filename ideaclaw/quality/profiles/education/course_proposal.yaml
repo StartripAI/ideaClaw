@@ -1,0 +1,5 @@
+meta:
+  id: education.course_proposal
+  name: Course Proposal
+  domain: education
+  inherits: _base_education

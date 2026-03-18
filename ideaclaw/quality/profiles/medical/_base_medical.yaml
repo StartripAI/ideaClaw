@@ -1,0 +1,66 @@
+meta:
+  id: medical._base
+  name: Medical Paper (Base)
+  domain: medical
+  is_base: true
+format:
+  sections:
+  - name: abstract
+    required: true
+  - name: introduction
+    required: true
+  - name: methods
+    required: true
+  - name: results
+    required: true
+  - name: discussion
+    required: true
+  - name: limitations
+    required: true
+  - name: conclusion
+    required: true
+  - name: conflict_of_interest
+    required: true
+  - name: references
+    required: true
+    min_count: 20
+  constraints:
+    citation_style: vancouver
+    language: en
+rubric:
+  dimensions:
+    evidence_coverage:
+      weight: 25
+      description: Systematic literature review
+    claim_accuracy:
+      weight: 25
+      description: Statistical claims, p-values, CI
+    reasoning_quality:
+      weight: 15
+      description: Study design and methodology
+    actionability:
+      weight: 10
+      description: Clinical applicability
+    uncertainty_honesty:
+      weight: 15
+      description: Limitations and bias assessment
+    structure_clarity:
+      weight: 5
+      description: CONSORT/STROBE compliance
+    counterargument_depth:
+      weight: 5
+      description: Alternative explanations
+  pass_threshold: 7.0
+review:
+  reject_if:
+  - No ethics approval statement
+  - Selective reporting indicators
+  - Fabricated patient data
+  - Missing conflict of interest
+  source_requirements:
+    min_sources: 20
+    preferred_databases:
+    - pubmed
+    - cochrane
+    - embase
+    - clinical_trials_gov

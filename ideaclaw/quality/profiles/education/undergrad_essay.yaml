@@ -1,0 +1,18 @@
+meta:
+  id: education.undergrad_essay
+  name: Undergraduate Essay
+  domain: education
+  inherits: _base_education
+format:
+  sections:
+  - name: introduction
+    required: true
+  - name: body
+    required: true
+  - name: conclusion
+    required: true
+  - name: references
+    required: true
+  constraints:
+    max_words: 3000
+    citation_style: apa

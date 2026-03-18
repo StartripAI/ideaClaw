@@ -1,0 +1,8 @@
+meta:
+  id: education.book_report
+  name: Book Report / Review
+  domain: education
+  inherits: _base_education
+format:
+  constraints:
+    max_words: 2000

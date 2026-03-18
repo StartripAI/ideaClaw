@@ -1,0 +1,12 @@
+meta:
+  id: business.bcg_deck
+  name: BCG-style Slide Deck
+  domain: business
+  inherits: _base_business
+  description: SCQA framework
+review:
+  checklist:
+  - SCQA structure (Situation-Complication-Question-Answer)
+  - Bold callouts on key data
+  - Minimal text per slide
+  - Strong data visualization

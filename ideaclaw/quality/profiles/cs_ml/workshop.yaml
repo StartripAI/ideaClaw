@@ -1,0 +1,10 @@
+meta:
+  id: cs_ml.workshop
+  name: Workshop Paper (4 pages)
+  domain: cs_ml
+  inherits: _base_cs_ml
+format:
+  constraints:
+    max_pages: 4
+rubric:
+  pass_threshold: 5.5

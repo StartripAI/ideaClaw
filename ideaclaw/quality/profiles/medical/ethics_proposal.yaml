@@ -1,0 +1,5 @@
+meta:
+  id: medical.ethics_proposal
+  name: Ethics / IRB Proposal
+  domain: medical
+  inherits: _base_medical

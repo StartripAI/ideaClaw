@@ -1,0 +1,28 @@
+meta:
+  id: creative._base
+  name: Creative Content (Base)
+  domain: creative
+  is_base: true
+format:
+  constraints:
+    language: en
+rubric:
+  dimensions:
+    evidence_coverage:
+      weight: 5
+    claim_accuracy:
+      weight: 5
+    reasoning_quality:
+      weight: 15
+      description: Depth of insight
+    actionability:
+      weight: 10
+    uncertainty_honesty:
+      weight: 5
+    structure_clarity:
+      weight: 30
+      description: Readability and engagement
+    counterargument_depth:
+      weight: 30
+      description: Nuance and perspective
+  pass_threshold: 6.0

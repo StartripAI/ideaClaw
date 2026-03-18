@@ -1,0 +1,34 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Virtual environments
+.venv/
+venv/
+.venv311/
+
+# macOS
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Run artifacts (keep structure placeholders)
+/artifacts/*
+!/artifacts/.gitkeep
+
+# Config with secrets
+config.ideaclaw.yaml
+
+# Runtime
+/.runtime/
+/.pipeline.lock

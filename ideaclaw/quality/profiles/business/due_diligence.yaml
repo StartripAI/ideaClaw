@@ -1,0 +1,5 @@
+meta:
+  id: business.due_diligence
+  name: Due Diligence Report
+  domain: business
+  inherits: _base_business

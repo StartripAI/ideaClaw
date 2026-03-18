@@ -1,0 +1,10 @@
+meta:
+  id: hr_ops.performance_review
+  name: Performance Review
+  domain: hr_ops
+  inherits: _base_hr_ops
+review:
+  checklist:
+  - SMART goals assessed
+  - Specific examples provided
+  - Development plan included

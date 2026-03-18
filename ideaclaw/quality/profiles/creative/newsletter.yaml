@@ -1,0 +1,5 @@
+meta:
+  id: creative.newsletter
+  name: Newsletter Issue
+  domain: creative
+  inherits: _base_creative

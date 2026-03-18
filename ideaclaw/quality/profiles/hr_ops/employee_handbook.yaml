@@ -1,0 +1,5 @@
+meta:
+  id: hr_ops.employee_handbook
+  name: Employee Handbook Section
+  domain: hr_ops
+  inherits: _base_hr_ops

@@ -1,0 +1,5 @@
+meta:
+  id: grants.nih_r21
+  name: NIH R21 Exploratory Grant
+  domain: grants
+  inherits: _base_grants

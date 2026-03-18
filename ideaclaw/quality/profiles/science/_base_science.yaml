@@ -1,0 +1,48 @@
+meta:
+  id: science._base
+  name: Scientific Paper (Base)
+  domain: science
+  is_base: true
+format:
+  sections:
+  - name: abstract
+    required: true
+  - name: introduction
+    required: true
+  - name: methods
+    required: true
+  - name: results
+    required: true
+  - name: discussion
+    required: true
+  - name: conclusion
+    required: true
+  - name: references
+    required: true
+    min_count: 20
+  constraints:
+    citation_style: numbered
+    language: en
+rubric:
+  dimensions:
+    evidence_coverage:
+      weight: 20
+    claim_accuracy:
+      weight: 20
+    reasoning_quality:
+      weight: 20
+    actionability:
+      weight: 5
+    uncertainty_honesty:
+      weight: 10
+    structure_clarity:
+      weight: 15
+    counterargument_depth:
+      weight: 10
+  pass_threshold: 6.0
+review:
+  reject_if:
+  - Fabricated data
+  - Plagiarism detected
+  source_requirements:
+    min_sources: 20

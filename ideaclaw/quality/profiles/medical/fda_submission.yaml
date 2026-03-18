@@ -1,0 +1,6 @@
+meta:
+  id: medical.fda_submission
+  name: FDA Regulatory Submission
+  domain: medical
+  inherits: _base_medical
+  description: ICH E3 / ICH M4 format

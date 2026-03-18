@@ -1,0 +1,5 @@
+meta:
+  id: legal.patent_analysis
+  name: Patent Analysis
+  domain: legal
+  inherits: _base_legal

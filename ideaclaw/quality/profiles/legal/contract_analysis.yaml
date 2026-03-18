@@ -1,0 +1,5 @@
+meta:
+  id: legal.contract_analysis
+  name: Contract Analysis
+  domain: legal
+  inherits: _base_legal

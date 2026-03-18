@@ -1,0 +1,6 @@
+meta:
+  id: medical.clinical_guideline
+  name: Clinical Practice Guideline
+  domain: medical
+  inherits: _base_medical
+  description: AGREE II instrument (23 items)

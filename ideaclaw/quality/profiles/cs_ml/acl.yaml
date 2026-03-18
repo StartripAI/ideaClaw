@@ -1,0 +1,9 @@
+meta:
+  id: cs_ml.acl
+  name: ACL/EMNLP NLP Paper
+  domain: cs_ml
+  inherits: _base_cs_ml
+  description: Association for Computational Linguistics — Soundness, Excitement, Reproducibility
+format:
+  constraints:
+    max_pages: 8

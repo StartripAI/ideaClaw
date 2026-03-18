@@ -1,0 +1,5 @@
+meta:
+  id: marketing.launch_brief
+  name: Product Launch Brief
+  domain: marketing
+  inherits: _base_marketing

@@ -1,0 +1,9 @@
+meta:
+  id: cs_ml.icml
+  name: ICML Conference Paper
+  domain: cs_ml
+  inherits: _base_cs_ml
+  description: International Conference on Machine Learning — Significance, Novelty, Soundness, Clarity, Reproducibility
+format:
+  constraints:
+    max_pages: 9

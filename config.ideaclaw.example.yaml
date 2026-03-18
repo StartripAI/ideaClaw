@@ -1,0 +1,84 @@
+# =============================================================================
+# IdeaClaw — Example Configuration
+# =============================================================================
+# Copy this file to config.ideaclaw.yaml and edit to match your setup.
+# =============================================================================
+
+# === Project ===
+project:
+  name: "my-idea"
+
+# === Idea Input ===
+idea:
+  text: "Your rough idea here"
+  pack_type: "auto"           # auto | decision | proposal | comparison | brief | study
+  language: "en"              # en | zh | auto
+
+# === Runtime ===
+runtime:
+  timezone: "UTC"
+  retry_limit: 2
+  approval_timeout_hours: 12
+
+# === Notifications ===
+notifications:
+  channel: "console"          # console | discord | slack
+  target: ""
+  on_stage_start: true
+  on_stage_fail: true
+  on_gate_required: true
+
+# === LLM ===
+llm:
+  provider: "openai-compatible"
+  base_url: "https://api.openai.com/v1"
+  api_key_env: "OPENAI_API_KEY"
+  api_key: ""                 # Or hardcode key here (not recommended)
+  primary_model: "gpt-4o"
+  fallback_models:
+    - "gpt-4o-mini"
+
+# === Source Discovery ===
+source:
+  search_engines: ["google", "bing"]
+  academic_apis: ["openalex", "semantic_scholar"]
+  local_paths: []             # Local PDF/DOCX/PPTX evidence files
+  quality_threshold: 4.0
+  daily_source_count: 10
+
+# === Evidence Verification ===
+evidence:
+  # Evidence profile determines primary source priority
+  #   "fulltext-only"      — only fulltext sources count
+  #   "fulltext-preferred"  — fulltext first, metadata fallback
+  #   "metadata-only"       — metadata/abstract sufficient
+  profile: "fulltext-preferred"
+
+  # Gate mode
+  #   "strict"  — missing required evidence blocks the pipeline
+  #   "lenient" — missing evidence produces warnings, pipeline continues
+  gate_mode: "strict"
+
+  # OCR for image/PDF evidence
+  #   "auto" | "paddleocr" | "easyocr" | "dual"
+  ocr_mode: "auto"
+
+# === Export ===
+export:
+  formats: ["markdown", "docx"]   # markdown | docx | pdf
+  include_audit: true
+  include_sources: true
+
+# === Security ===
+security:
+  hitl_required_stages: [5, 7, 14]  # Stages requiring human approval
+  auto_approve: false               # Override with --auto-approve CLI flag
+
+# === Prompts ===
+prompts:
+  custom_file: ""             # Path to custom prompts YAML (empty = defaults)
+
+# === Knowledge Base ===
+knowledge_base:
+  backend: "markdown"         # markdown | obsidian
+  root: "docs/kb"

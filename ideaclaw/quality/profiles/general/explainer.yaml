@@ -1,0 +1,6 @@
+meta:
+  id: general.explainer
+  name: Concept Explainer
+  domain: general
+rubric:
+  pass_threshold: 6.5

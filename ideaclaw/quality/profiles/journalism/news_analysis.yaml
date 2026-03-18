@@ -1,0 +1,5 @@
+meta:
+  id: journalism.news_analysis
+  name: News Analysis
+  domain: journalism
+  inherits: _base_journalism

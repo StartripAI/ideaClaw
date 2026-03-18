@@ -1,0 +1,6 @@
+meta:
+  id: marketing.seo_article
+  name: SEO Long-form Article
+  domain: marketing
+  inherits: _base_marketing
+  description: E-E-A-T compliance

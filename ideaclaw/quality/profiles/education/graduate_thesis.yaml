@@ -1,0 +1,24 @@
+meta:
+  id: education.graduate_thesis
+  name: Master's Thesis
+  domain: education
+  inherits: _base_education
+format:
+  sections:
+  - name: abstract
+    required: true
+  - name: introduction
+    required: true
+  - name: literature_review
+    required: true
+  - name: methodology
+    required: true
+  - name: results
+    required: true
+  - name: discussion
+    required: true
+  - name: conclusion
+    required: true
+  - name: references
+    required: true
+    min_count: 30

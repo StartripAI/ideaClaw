@@ -1,0 +1,13 @@
+meta:
+  id: marketing.case_study
+  name: Customer Case Study
+  domain: marketing
+  inherits: _base_marketing
+format:
+  sections:
+  - name: challenge
+    required: true
+  - name: solution
+    required: true
+  - name: results
+    required: true

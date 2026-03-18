@@ -1,0 +1,5 @@
+meta:
+  id: legal.compliance_report
+  name: Compliance Report
+  domain: legal
+  inherits: _base_legal

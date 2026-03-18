@@ -1,0 +1,6 @@
+meta:
+  id: medical.diagnostic
+  name: Diagnostic Accuracy Study
+  domain: medical
+  inherits: _base_medical
+  description: STARD checklist

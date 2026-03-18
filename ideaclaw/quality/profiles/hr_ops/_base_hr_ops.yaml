@@ -1,0 +1,26 @@
+meta:
+  id: hr_ops._base
+  name: HR/Operations Document (Base)
+  domain: hr_ops
+  is_base: true
+format:
+  constraints:
+    language: en
+rubric:
+  dimensions:
+    evidence_coverage:
+      weight: 10
+    claim_accuracy:
+      weight: 20
+      description: Legal compliance
+    reasoning_quality:
+      weight: 15
+    actionability:
+      weight: 25
+    uncertainty_honesty:
+      weight: 10
+    structure_clarity:
+      weight: 15
+    counterargument_depth:
+      weight: 5
+  pass_threshold: 6.5

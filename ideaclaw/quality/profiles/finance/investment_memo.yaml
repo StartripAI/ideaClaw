@@ -1,0 +1,14 @@
+meta:
+  id: finance.investment_memo
+  name: Investment Memo (VC/PE)
+  domain: finance
+  inherits: _base_finance
+  description: YC/Sequoia/a16z format
+review:
+  checklist:
+  - Team assessment
+  - Market size (TAM/SAM/SOM)
+  - Unit economics
+  - Investment thesis clear
+  - Risk factors enumerated
+  - Exit strategy considered

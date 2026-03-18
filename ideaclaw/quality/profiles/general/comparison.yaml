@@ -1,0 +1,33 @@
+meta:
+  id: general.comparison
+  name: Comparison Pack
+  domain: general
+format:
+  sections:
+  - name: summary
+    required: true
+  - name: comparison_matrix
+    required: true
+  - name: detailed_analysis
+    required: true
+  - name: recommendation
+    required: true
+  - name: sources
+    required: true
+rubric:
+  dimensions:
+    evidence_coverage:
+      weight: 25
+    claim_accuracy:
+      weight: 20
+    reasoning_quality:
+      weight: 15
+    actionability:
+      weight: 10
+    uncertainty_honesty:
+      weight: 10
+    structure_clarity:
+      weight: 10
+    counterargument_depth:
+      weight: 10
+  pass_threshold: 7.0

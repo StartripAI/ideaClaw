@@ -1,0 +1,6 @@
+meta:
+  id: medical.animal_study
+  name: Animal Study
+  domain: medical
+  inherits: _base_medical
+  description: ARRIVE guidelines

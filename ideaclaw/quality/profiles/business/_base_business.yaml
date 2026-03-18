@@ -1,0 +1,42 @@
+meta:
+  id: business._base
+  name: Business Document (Base)
+  domain: business
+  is_base: true
+format:
+  sections:
+  - name: executive_summary
+    required: true
+  - name: analysis
+    required: true
+  - name: recommendations
+    required: true
+  - name: next_steps
+    required: true
+  constraints:
+    language: en
+rubric:
+  dimensions:
+    evidence_coverage:
+      weight: 15
+      description: Data-backed claims
+    claim_accuracy:
+      weight: 15
+    reasoning_quality:
+      weight: 20
+      description: MECE, logical flow
+    actionability:
+      weight: 25
+      description: Actionable recommendations
+    uncertainty_honesty:
+      weight: 10
+    structure_clarity:
+      weight: 10
+      description: Scannable, exec-friendly
+    counterargument_depth:
+      weight: 5
+  pass_threshold: 7.0
+review:
+  reject_if:
+  - No actionable recommendations
+  - Fabricated market data

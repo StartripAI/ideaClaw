@@ -1,0 +1,18 @@
+meta:
+  id: education.literature_review
+  name: Literature Review
+  domain: education
+  inherits: _base_education
+format:
+  sections:
+  - name: introduction
+    required: true
+  - name: thematic_analysis
+    required: true
+  - name: gaps_identified
+    required: true
+  - name: conclusion
+    required: true
+  - name: references
+    required: true
+    min_count: 20

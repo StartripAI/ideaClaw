@@ -1,0 +1,16 @@
+meta:
+  id: legal.legal_memo
+  name: Legal Memorandum
+  domain: legal
+  inherits: _base_legal
+  description: 'IRAC: Issue-Rule-Application-Conclusion'
+format:
+  sections:
+  - name: issue
+    required: true
+  - name: rule
+    required: true
+  - name: application
+    required: true
+  - name: conclusion
+    required: true

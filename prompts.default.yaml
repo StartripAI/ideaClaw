@@ -1,0 +1,276 @@
+# =============================================================================
+# IdeaClaw — Default Prompt Templates
+# =============================================================================
+# Per-stage system and user prompts for the 15-stage pipeline.
+# Override by copying to a custom file and setting prompts.custom_file in config.
+# =============================================================================
+
+version: "1.0"
+
+# Reusable prompt blocks
+blocks:
+  trust_constraint: |
+    === TRUST CONSTRAINT ===
+    Every claim in the output MUST be one of:
+    - EVIDENCED: backed by a specific, verifiable source with URL/path/page
+    - INFERRED: logically derived from evidenced claims (must be labeled)
+    - UNCERTAIN: insufficient evidence (must be explicitly flagged)
+    Do NOT present inferred or uncertain claims as established facts.
+    === END CONSTRAINT ===
+
+  evidence_standard: |
+    EVIDENCE STANDARD:
+    - Every factual claim requires at least one verifiable source.
+    - Sources must include: title, URL or path, retrieval date.
+    - If evidence is insufficient, explicitly state: "Evidence insufficient — requires user verification."
+    - Do NOT fabricate sources, statistics, or quotes.
+
+stages:
+  # Phase A: Idea Scoping
+  idea_init:
+    system: You are a strategic thinking assistant that helps people clarify vague ideas into actionable goals.
+    user: |
+      Create a structured goal definition from this rough idea.
+
+      Idea: {idea_text}
+      Language: {language}
+
+      Output a markdown document with:
+      1. **Restated Idea** — clear, specific version of the user's intent
+      2. **Scope** — what is in scope and what is explicitly out of scope
+      3. **Success Criteria** — how the user would know this pack is useful
+      4. **Key Questions** — 3-5 questions that must be answered
+      5. **Pack Type Recommendation** — which pack type fits best and why
+
+  idea_decompose:
+    system: You are a MECE analysis expert. You decompose problems into mutually exclusive, collectively exhaustive sub-questions.
+    user: |
+      Decompose this idea into MECE sub-questions for evidence gathering.
+
+      Goal definition:
+      {goal_text}
+
+      Output markdown with:
+      1. **Sub-questions** — at least 4, each independently answerable
+      2. **Priority Ranking** — ordered by impact on the final decision
+      3. **Evidence Needs** — what kind of evidence each sub-question requires
+      4. **Risks** — what could go wrong if a sub-question is answered incorrectly
+
+  # Phase B: Source Discovery
+  search_strategy:
+    json_mode: true
+    system: You design comprehensive source discovery strategies covering web, academic, and local evidence.
+    user: |
+      Create a source discovery plan for this idea.
+
+      Return JSON with keys: search_plan, sources.
+
+      search_plan must include at least 3 search strategies with diverse queries.
+      Cover: direct answers, expert opinions, data/statistics, counterarguments.
+
+      Idea: {idea_text}
+      Sub-questions:
+      {sub_questions}
+
+  source_collect:
+    json_mode: true
+    system: You are a source mining assistant that finds relevant evidence from multiple channels.
+    user: |
+      Generate candidate sources based on the search plan.
+
+      Return JSON: {candidates: [...]} with >=15 entries.
+      Each candidate: id, title, source_type, url, snippet, relevance_score, collected_at.
+
+      Search plan:
+      {search_plan}
+
+  source_screen:
+    json_mode: true
+    system: You are a strict evidence screener. Reject irrelevant, low-quality, or unreliable sources aggressively.
+    user: |
+      Screen candidates for relevance and reliability.
+
+      Return JSON: {shortlist: [...]} each with title, url, relevance_score, quality_score, keep_reason.
+
+      Quality threshold: {quality_threshold}
+
+      Candidates:
+      {candidates_text}
+
+  evidence_extract:
+    system: You extract structured evidence from sources with precise quotes, page numbers, and context.
+    user: |
+      Extract evidence cards from the shortlisted sources.
+
+      For each source, extract:
+      - claim: the factual assertion
+      - quote: exact text from source
+      - location: page/section/URL fragment
+      - confidence: HIGH/MEDIUM/LOW
+      - relevance: which sub-question this answers
+
+      {trust_constraint}
+
+      Shortlist:
+      {shortlist}
+
+  # Phase C: Evidence Verification
+  evidence_gate:
+    json_mode: true
+    system: You are an evidence gate evaluator. You verify that sufficient evidence exists before proceeding.
+    user: |
+      Evaluate evidence coverage for each sub-question.
+
+      Return JSON: {
+        overall_status: "PASS" | "FAIL",
+        coverage_pct: number,
+        per_question: [{question, status, evidence_count, gaps}]
+      }
+
+      Sub-questions:
+      {sub_questions}
+
+      Evidence cards:
+      {evidence_cards}
+
+  claim_verify:
+    system: You are a fact-checker who verifies claims against their cited evidence.
+    user: |
+      Verify each evidence card against its source.
+
+      For each card, determine:
+      - verified: true/false
+      - verification_note: explanation
+      - confidence_adjustment: if confidence should change, explain why
+
+      {trust_constraint}
+
+      Evidence cards:
+      {evidence_cards}
+
+  # Phase D: Synthesis & Decision
+  evidence_synthesis:
+    system: You synthesize evidence into coherent narratives while maintaining source traceability.
+    user: |
+      Synthesize verified evidence into a structured analysis.
+
+      Output markdown with:
+      1. **Overview** — high-level synthesis
+      2. **Per-question Analysis** — for each sub-question, summarized findings with source citations
+      3. **Consensus Points** — where evidence converges
+      4. **Conflict Points** — where evidence contradicts
+      5. **Evidence Gaps** — what remains unknown
+
+      {evidence_standard}
+
+      Verified evidence:
+      {verified_evidence}
+
+  decision_tree:
+    system: You build logical reasoning trees that trace conclusions back to evidence.
+    user: |
+      Build a reasoning tree from the synthesis.
+
+      Output markdown with:
+      1. **Conclusion** — one clear bottom-line answer
+      2. **Reasoning Tree** — hierarchical argument structure
+         - Each node: claim → supporting evidence → confidence level
+      3. **Key Factors** — the 3-5 factors that most influence the conclusion
+      4. **Sensitivity Analysis** — how the conclusion changes if key assumptions are wrong
+
+      {trust_constraint}
+
+      Synthesis:
+      {synthesis}
+
+  counterargument_gen:
+    system: You are a devil's advocate who identifies weaknesses, risks, and opposing viewpoints.
+    user: |
+      Generate counterarguments and risk factors.
+
+      Output markdown with:
+      1. **Counterarguments** — at least 3 strong opposing viewpoints
+      2. **Risk Factors** — what could go wrong
+      3. **Blind Spots** — what the analysis might be missing
+      4. **Worst-Case Scenario** — what happens if the conclusion is wrong
+
+      Current conclusion and reasoning:
+      {decision_tree}
+
+  # Phase E: Pack Assembly
+  pack_outline:
+    system: You are a document architect who creates clear, actionable outlines.
+    user: |
+      Create an outline for the {pack_type} pack.
+
+      The outline must include sections for:
+      - Executive summary / conclusion
+      - Reasoning and evidence
+      - Counterarguments and risks
+      - Uncertainties and gaps
+      - Action items / next steps
+      - Source list
+
+      Decision tree:
+      {decision_tree}
+
+      Counterarguments:
+      {counterarguments}
+
+  pack_draft:
+    max_tokens: 16384
+    system: |
+      You write clear, professional documents designed to be shared with
+      decision-makers. Every claim is backed by evidence. Uncertain areas
+      are explicitly flagged. The tone is confident but honest.
+    user: |
+      Write the full {pack_type} pack based on the outline.
+
+      REQUIREMENTS:
+      - Professional, clear language suitable for sharing with colleagues/managers/clients
+      - Every factual claim must cite its source using [Source: title](url) format
+      - Uncertain claims must be marked with ⚠️
+      - Evidence gaps must be marked with 🚫
+      - Strong evidence marked with ✅
+      - Include a confidence score (0-100%) for the overall conclusion
+
+      {trust_constraint}
+
+      Outline:
+      {outline}
+
+      Evidence:
+      {verified_evidence}
+
+      Counterarguments:
+      {counterarguments}
+
+  trust_review:
+    json_mode: true
+    system: You are a trust auditor who evaluates document reliability and evidence backing.
+    user: |
+      Audit the pack draft for trustworthiness.
+
+      Return JSON: {
+        overall_score: number (1-10),
+        verdict: "PASS" | "REVISE" | "FAIL",
+        per_claim: [{claim, evidence_status, confidence, issues}],
+        strengths: [...],
+        weaknesses: [...],
+        required_actions: [...]
+      }
+
+      Pack draft:
+      {draft}
+
+  # Phase F: Export & Archive
+  export_publish:
+    system: You are a document formatting specialist.
+    user: |
+      Format the revised pack into clean final markdown for export.
+
+      Preserve all evidence citations, confidence markers, and source links.
+      Ensure the document is self-contained and shareable.
+
+      Input:
+      {revised}

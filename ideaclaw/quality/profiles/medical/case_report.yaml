@@ -1,0 +1,18 @@
+meta:
+  id: medical.case_report
+  name: Case Report
+  domain: medical
+  inherits: _base_medical
+  description: CARE checklist
+format:
+  sections:
+  - name: abstract
+    required: true
+  - name: introduction
+    required: true
+  - name: case_presentation
+    required: true
+  - name: discussion
+    required: true
+  - name: conclusion
+    required: true

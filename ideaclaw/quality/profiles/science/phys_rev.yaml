@@ -1,0 +1,5 @@
+meta:
+  id: science.phys_rev
+  name: Physical Review Paper
+  domain: science
+  inherits: _base_science

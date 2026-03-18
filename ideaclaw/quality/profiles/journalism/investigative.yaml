@@ -1,0 +1,12 @@
+meta:
+  id: journalism.investigative
+  name: Investigative Report
+  domain: journalism
+  inherits: _base_journalism
+  description: Pulitzer criteria + AP Stylebook
+review:
+  checklist:
+  - Multiple independent sources
+  - Documents/records cited
+  - Subjects given right to respond
+  - Public interest clearly served

@@ -1,0 +1,8 @@
+meta:
+  id: journalism.op_ed
+  name: Op-Ed / Opinion Piece
+  domain: journalism
+  inherits: _base_journalism
+format:
+  constraints:
+    max_words: 1200

@@ -1,0 +1,8 @@
+meta:
+  id: grants.eu_horizon
+  name: EU Horizon Europe
+  domain: grants
+  inherits: _base_grants
+  description: Excellence + Impact + Implementation (0-5, threshold ≥3/10)
+rubric:
+  pass_threshold: 6.0

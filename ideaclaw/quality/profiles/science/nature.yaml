@@ -1,0 +1,7 @@
+meta:
+  id: science.nature
+  name: Nature/Science Paper
+  domain: science
+  inherits: _base_science
+rubric:
+  pass_threshold: 7.0

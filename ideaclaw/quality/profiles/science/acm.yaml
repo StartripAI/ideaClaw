@@ -1,0 +1,5 @@
+meta:
+  id: science.acm
+  name: ACM Journal/Conference
+  domain: science
+  inherits: _base_science

@@ -1,0 +1,5 @@
+meta:
+  id: creative.book_outline
+  name: Book Proposal / Outline
+  domain: creative
+  inherits: _base_creative

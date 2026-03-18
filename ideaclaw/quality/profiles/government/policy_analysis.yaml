@@ -1,0 +1,6 @@
+meta:
+  id: government.policy_analysis
+  name: Policy Analysis Report
+  domain: government
+  inherits: _base_government
+  description: CBO/GAO report format

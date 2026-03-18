@@ -1,0 +1,7 @@
+meta:
+  id: grants.startup_grant
+  name: Startup / SME Grant
+  domain: grants
+  inherits: _base_grants
+rubric:
+  pass_threshold: 6.0

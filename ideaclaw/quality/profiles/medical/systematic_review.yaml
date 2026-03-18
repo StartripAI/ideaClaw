@@ -1,0 +1,16 @@
+meta:
+  id: medical.systematic_review
+  name: Systematic Review / Meta-Analysis
+  domain: medical
+  inherits: _base_medical
+  description: PRISMA 2020 checklist (27 items)
+review:
+  checklist:
+  - PRISMA flow diagram included
+  - Search strategy fully described
+  - Inclusion/exclusion criteria explicit
+  - Risk of bias assessed per study
+  - Heterogeneity assessed (I²)
+  - Forest plot included
+  - Protocol registered (PROSPERO)
+  - Publication bias assessed

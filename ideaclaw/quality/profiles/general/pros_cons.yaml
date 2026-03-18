@@ -1,0 +1,6 @@
+meta:
+  id: general.pros_cons
+  name: Pros & Cons Analysis
+  domain: general
+rubric:
+  pass_threshold: 6.5

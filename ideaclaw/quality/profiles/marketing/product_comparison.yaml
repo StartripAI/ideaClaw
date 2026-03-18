@@ -1,0 +1,5 @@
+meta:
+  id: marketing.product_comparison
+  name: Product Comparison / Review
+  domain: marketing
+  inherits: _base_marketing

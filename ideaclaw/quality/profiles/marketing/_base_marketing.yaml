@@ -1,0 +1,29 @@
+meta:
+  id: marketing._base
+  name: Marketing Document (Base)
+  domain: marketing
+  is_base: true
+format:
+  constraints:
+    language: en
+rubric:
+  dimensions:
+    evidence_coverage:
+      weight: 15
+      description: Data-backed claims
+    claim_accuracy:
+      weight: 15
+    reasoning_quality:
+      weight: 10
+    actionability:
+      weight: 20
+      description: Clear CTA
+    uncertainty_honesty:
+      weight: 5
+    structure_clarity:
+      weight: 25
+      description: Readability and visual appeal
+    counterargument_depth:
+      weight: 10
+      description: Honest comparison
+  pass_threshold: 6.5

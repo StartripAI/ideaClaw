@@ -1,0 +1,40 @@
+meta:
+  id: finance._base
+  name: Financial Document (Base)
+  domain: finance
+  is_base: true
+format:
+  sections:
+  - name: executive_summary
+    required: true
+  - name: analysis
+    required: true
+  - name: risks
+    required: true
+  - name: recommendation
+    required: true
+  constraints:
+    language: en
+rubric:
+  dimensions:
+    evidence_coverage:
+      weight: 20
+    claim_accuracy:
+      weight: 25
+      description: Financial data accuracy
+    reasoning_quality:
+      weight: 20
+    actionability:
+      weight: 15
+    uncertainty_honesty:
+      weight: 10
+      description: Risk disclosure
+    structure_clarity:
+      weight: 5
+    counterargument_depth:
+      weight: 5
+  pass_threshold: 7.0
+review:
+  reject_if:
+  - Fabricated financial data
+  - Missing risk disclosure

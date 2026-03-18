@@ -1,0 +1,6 @@
+meta:
+  id: marketing.landing_page
+  name: Landing Page Copy
+  domain: marketing
+  inherits: _base_marketing
+  description: AIDA framework

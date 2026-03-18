@@ -1,0 +1,5 @@
+meta:
+  id: legal.opinion_letter
+  name: Legal Opinion Letter
+  domain: legal
+  inherits: _base_legal

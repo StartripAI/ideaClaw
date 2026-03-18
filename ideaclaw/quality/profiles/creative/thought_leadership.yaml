@@ -1,0 +1,5 @@
+meta:
+  id: creative.thought_leadership
+  name: Thought Leadership Piece
+  domain: creative
+  inherits: _base_creative

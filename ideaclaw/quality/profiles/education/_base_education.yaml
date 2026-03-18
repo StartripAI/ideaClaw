@@ -1,0 +1,30 @@
+meta:
+  id: education._base
+  name: Educational Document (Base)
+  domain: education
+  is_base: true
+format:
+  constraints:
+    language: en
+rubric:
+  dimensions:
+    evidence_coverage:
+      weight: 15
+    claim_accuracy:
+      weight: 15
+    reasoning_quality:
+      weight: 25
+      description: Argumentation quality
+    actionability:
+      weight: 5
+    uncertainty_honesty:
+      weight: 5
+    structure_clarity:
+      weight: 25
+      description: Writing quality
+    counterargument_depth:
+      weight: 10
+  pass_threshold: 6.0
+review:
+  reject_if:
+  - Plagiarism detected

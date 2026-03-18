@@ -1,0 +1,10 @@
+meta:
+  id: business.strategy_report
+  name: Strategic Planning Report
+  domain: business
+  inherits: _base_business
+review:
+  checklist:
+  - SWOT or Porter Five Forces analysis
+  - 3-5 year timeline
+  - Key performance indicators defined

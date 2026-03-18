@@ -1,0 +1,9 @@
+meta:
+  id: legal.policy_brief
+  name: Policy Brief
+  domain: legal
+  inherits: _base_legal
+  description: RAND/Brookings format
+format:
+  constraints:
+    max_pages: 4

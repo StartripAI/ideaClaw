@@ -1,0 +1,5 @@
+meta:
+  id: business.quarterly_review
+  name: Quarterly Business Review (QBR)
+  domain: business
+  inherits: _base_business

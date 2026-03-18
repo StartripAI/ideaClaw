@@ -1,0 +1,5 @@
+meta:
+  id: grants.gates_foundation
+  name: Gates Foundation Grant
+  domain: grants
+  inherits: _base_grants

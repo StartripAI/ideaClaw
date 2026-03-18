@@ -1,0 +1,18 @@
+meta:
+  id: business.amazon_6pager
+  name: Amazon 6-Pager
+  domain: business
+  inherits: _base_business
+  description: Narrative format, max 6 pages
+format:
+  constraints:
+    max_pages: 6
+  sections:
+  - name: introduction
+    required: true
+  - name: body
+    required: true
+  - name: faq
+    required: true
+  - name: appendix
+    required: false

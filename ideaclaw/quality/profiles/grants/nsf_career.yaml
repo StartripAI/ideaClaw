@@ -1,0 +1,10 @@
+meta:
+  id: grants.nsf_career
+  name: NSF CAREER Award
+  domain: grants
+  inherits: _base_grants
+review:
+  checklist:
+  - Education integrated with research
+  - 5-year research plan
+  - Broader impacts for education

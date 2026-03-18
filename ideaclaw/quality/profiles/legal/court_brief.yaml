@@ -1,0 +1,9 @@
+meta:
+  id: legal.court_brief
+  name: Court Brief / Motion
+  domain: legal
+  inherits: _base_legal
+  description: Bluebook citation format
+format:
+  constraints:
+    citation_style: numbered

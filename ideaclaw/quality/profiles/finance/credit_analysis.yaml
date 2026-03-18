@@ -1,0 +1,5 @@
+meta:
+  id: finance.credit_analysis
+  name: Credit Analysis Report
+  domain: finance
+  inherits: _base_finance

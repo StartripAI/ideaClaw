@@ -1,0 +1,17 @@
+meta:
+  id: education.lab_report
+  name: Laboratory Report
+  domain: education
+  inherits: _base_education
+format:
+  sections:
+  - name: objective
+    required: true
+  - name: materials_and_methods
+    required: true
+  - name: results
+    required: true
+  - name: discussion
+    required: true
+  - name: conclusion
+    required: true

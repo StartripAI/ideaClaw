@@ -1,0 +1,6 @@
+meta:
+  id: general.daily_digest
+  name: Daily/Weekly Digest
+  domain: general
+rubric:
+  pass_threshold: 6.0

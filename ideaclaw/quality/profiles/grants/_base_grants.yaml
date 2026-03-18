@@ -1,0 +1,43 @@
+meta:
+  id: grants._base
+  name: Grant Proposal (Base)
+  domain: grants
+  is_base: true
+format:
+  sections:
+  - name: abstract
+    required: true
+  - name: specific_aims
+    required: true
+  - name: significance
+    required: true
+  - name: innovation
+    required: true
+  - name: approach
+    required: true
+  - name: budget_justification
+    required: true
+  - name: references
+    required: true
+  constraints:
+    language: en
+rubric:
+  dimensions:
+    evidence_coverage:
+      weight: 15
+    claim_accuracy:
+      weight: 15
+    reasoning_quality:
+      weight: 25
+      description: Approach feasibility
+    actionability:
+      weight: 20
+      description: Implementation plan
+    uncertainty_honesty:
+      weight: 10
+      description: Risk mitigation
+    structure_clarity:
+      weight: 10
+    counterargument_depth:
+      weight: 5
+  pass_threshold: 6.5

@@ -1,0 +1,6 @@
+meta:
+  id: hr_ops.training_curriculum
+  name: Training Curriculum Design
+  domain: hr_ops
+  inherits: _base_hr_ops
+  description: ADDIE model

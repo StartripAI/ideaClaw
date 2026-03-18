@@ -1,0 +1,11 @@
+meta:
+  id: business.bain_brief
+  name: Bain Results Brief
+  domain: business
+  inherits: _base_business
+  description: Implementation-focused
+review:
+  checklist:
+  - Results quantified
+  - Implementation roadmap included
+  - Ownership assigned for each action

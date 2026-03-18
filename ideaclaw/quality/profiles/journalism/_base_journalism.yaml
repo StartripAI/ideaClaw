@@ -1,0 +1,33 @@
+meta:
+  id: journalism._base
+  name: Journalism (Base)
+  domain: journalism
+  is_base: true
+format:
+  constraints:
+    language: en
+rubric:
+  dimensions:
+    evidence_coverage:
+      weight: 25
+      description: Source diversity and verification
+    claim_accuracy:
+      weight: 25
+      description: Factual accuracy
+    reasoning_quality:
+      weight: 10
+    actionability:
+      weight: 5
+    uncertainty_honesty:
+      weight: 15
+      description: Transparency about unknowns
+    structure_clarity:
+      weight: 15
+      description: Readability and narrative
+    counterargument_depth:
+      weight: 5
+  pass_threshold: 7.0
+review:
+  reject_if:
+  - Fabricated quotes or sources
+  - Undisclosed conflict of interest

@@ -1,0 +1,5 @@
+meta:
+  id: science.royal_society
+  name: Royal Society Paper
+  domain: science
+  inherits: _base_science

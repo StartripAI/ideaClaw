@@ -1,0 +1,9 @@
+meta:
+  id: cs_ml.neurips
+  name: NeurIPS Conference Paper
+  domain: cs_ml
+  inherits: _base_cs_ml
+  description: Neural Information Processing Systems — 1-10 scale + confidence 1-5
+format:
+  constraints:
+    max_pages: 9

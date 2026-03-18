@@ -1,0 +1,5 @@
+meta:
+  id: science.ieee_journal
+  name: IEEE Journal Paper
+  domain: science
+  inherits: _base_science

@@ -1,0 +1,6 @@
+meta:
+  id: finance.esg_report
+  name: ESG / Sustainability Report
+  domain: finance
+  inherits: _base_finance
+  description: GRI / SASB / TCFD frameworks

@@ -1,0 +1,6 @@
+meta:
+  id: government.regulatory_impact
+  name: Regulatory Impact Analysis
+  domain: government
+  inherits: _base_government
+  description: OECD RIA standards

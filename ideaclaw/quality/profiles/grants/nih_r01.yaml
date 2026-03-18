@@ -1,0 +1,13 @@
+meta:
+  id: grants.nih_r01
+  name: NIH R01 Grant
+  domain: grants
+  inherits: _base_grants
+  description: '5 criteria (1-9 scale): Significance, Investigators, Innovation, Approach, Environment'
+review:
+  checklist:
+  - Significance clearly articulated
+  - Investigator qualifications described
+  - Innovation beyond state-of-the-art
+  - Approach with alternatives for pitfalls
+  - Environment contributes to success

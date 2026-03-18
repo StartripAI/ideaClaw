@@ -1,0 +1,10 @@
+meta:
+  id: education.lesson_plan
+  name: Lesson Plan
+  domain: education
+  inherits: _base_education
+review:
+  checklist:
+  - Learning objectives stated (Bloom's Taxonomy)
+  - Assessment aligned with objectives
+  - Differentiation strategy included

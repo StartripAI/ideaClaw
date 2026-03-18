@@ -1,0 +1,6 @@
+meta:
+  id: medical.observational
+  name: Observational Study
+  domain: medical
+  inherits: _base_medical
+  description: STROBE checklist (22 items)

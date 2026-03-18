@@ -1,0 +1,10 @@
+meta:
+  id: business.market_sizing
+  name: Market Sizing Analysis
+  domain: business
+  inherits: _base_business
+review:
+  checklist:
+  - TAM/SAM/SOM clearly defined
+  - Bottom-up AND top-down approaches
+  - Assumptions explicitly stated

@@ -1,0 +1,10 @@
+meta:
+  id: professional.product_requirements
+  name: PRD / Product Requirements
+  domain: professional
+  inherits: _base_professional
+review:
+  checklist:
+  - User stories with acceptance criteria
+  - Non-functional requirements listed
+  - Dependencies identified

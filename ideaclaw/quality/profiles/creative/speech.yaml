@@ -1,0 +1,5 @@
+meta:
+  id: creative.speech
+  name: Speech / Keynote
+  domain: creative
+  inherits: _base_creative

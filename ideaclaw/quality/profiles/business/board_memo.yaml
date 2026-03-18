@@ -1,0 +1,8 @@
+meta:
+  id: business.board_memo
+  name: Board of Directors Memo
+  domain: business
+  inherits: _base_business
+format:
+  constraints:
+    max_pages: 2

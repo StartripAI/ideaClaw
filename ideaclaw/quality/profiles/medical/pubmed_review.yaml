@@ -1,0 +1,5 @@
+meta:
+  id: medical.pubmed_review
+  name: PubMed Review Article
+  domain: medical
+  inherits: _base_medical

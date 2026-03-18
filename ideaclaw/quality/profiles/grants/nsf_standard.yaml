@@ -1,0 +1,11 @@
+meta:
+  id: grants.nsf_standard
+  name: NSF Standard Grant
+  domain: grants
+  inherits: _base_grants
+  description: Intellectual Merit + Broader Impacts
+review:
+  checklist:
+  - Intellectual merit clearly stated
+  - Broader impacts plan included
+  - Qualifications and resources adequate

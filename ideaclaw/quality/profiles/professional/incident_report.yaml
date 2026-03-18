@@ -1,0 +1,15 @@
+meta:
+  id: professional.incident_report
+  name: Incident Report
+  domain: professional
+  inherits: _base_professional
+format:
+  sections:
+  - name: timeline
+    required: true
+  - name: impact
+    required: true
+  - name: root_cause
+    required: true
+  - name: action_items
+    required: true

@@ -1,0 +1,7 @@
+meta:
+  id: grants.erc
+  name: ERC Starting/Advanced
+  domain: grants
+  inherits: _base_grants
+rubric:
+  pass_threshold: 7.0

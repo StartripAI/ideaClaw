@@ -1,0 +1,16 @@
+meta:
+  id: professional.architecture_doc
+  name: Architecture Decision Record
+  domain: professional
+  inherits: _base_professional
+  description: ADR format
+format:
+  sections:
+  - name: context
+    required: true
+  - name: decision
+    required: true
+  - name: consequences
+    required: true
+  - name: status
+    required: true

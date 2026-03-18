@@ -1,0 +1,17 @@
+meta:
+  id: professional.white_paper
+  name: White Paper
+  domain: professional
+  inherits: _base_professional
+format:
+  sections:
+  - name: abstract
+    required: true
+  - name: problem
+    required: true
+  - name: solution
+    required: true
+  - name: evidence
+    required: true
+  - name: conclusion
+    required: true

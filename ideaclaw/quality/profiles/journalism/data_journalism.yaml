@@ -1,0 +1,5 @@
+meta:
+  id: journalism.data_journalism
+  name: Data Journalism Piece
+  domain: journalism
+  inherits: _base_journalism

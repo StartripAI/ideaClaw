@@ -1,0 +1,5 @@
+meta:
+  id: hr_ops.compensation_analysis
+  name: Compensation Analysis
+  domain: hr_ops
+  inherits: _base_hr_ops

@@ -1,0 +1,6 @@
+meta:
+  id: government.environmental_impact
+  name: Environmental Impact Assessment
+  domain: government
+  inherits: _base_government
+  description: NEPA / EIA format

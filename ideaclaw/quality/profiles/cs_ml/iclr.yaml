@@ -1,0 +1,9 @@
+meta:
+  id: cs_ml.iclr
+  name: ICLR Conference Paper
+  domain: cs_ml
+  inherits: _base_cs_ml
+  description: International Conference on Learning Representations — OpenReview 1-10
+format:
+  constraints:
+    max_pages: 10

@@ -1,0 +1,5 @@
+meta:
+  id: creative.screenplay
+  name: Screenplay / Script
+  domain: creative
+  inherits: _base_creative

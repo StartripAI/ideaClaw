@@ -1,0 +1,12 @@
+meta:
+  id: government.intelligence_brief
+  name: Intelligence Brief
+  domain: government
+  inherits: _base_government
+  description: CIA ICD 203 analytic standards
+review:
+  checklist:
+  - Sources characterized by reliability
+  - Confidence levels stated
+  - Alternatives analysis included
+  - Key assumptions identified

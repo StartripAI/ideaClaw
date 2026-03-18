@@ -1,0 +1,17 @@
+meta:
+  id: medical.rct
+  name: Randomized Controlled Trial
+  domain: medical
+  inherits: _base_medical
+  description: CONSORT 2010 checklist (25 items)
+review:
+  checklist:
+  - Study registered (ClinicalTrials.gov)
+  - Inclusion/exclusion criteria defined
+  - Randomization method described
+  - Blinding described
+  - Primary outcome pre-specified
+  - Effect sizes with 95% CI reported
+  - CONSORT flow diagram included
+  - Adverse events reported
+  - Statistical analysis plan pre-specified

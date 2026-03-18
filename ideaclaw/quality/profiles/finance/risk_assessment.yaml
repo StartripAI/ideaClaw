@@ -1,0 +1,5 @@
+meta:
+  id: finance.risk_assessment
+  name: Risk Assessment Report
+  domain: finance
+  inherits: _base_finance

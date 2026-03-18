@@ -1,0 +1,5 @@
+meta:
+  id: legal.regulatory_filing
+  name: Regulatory Filing
+  domain: legal
+  inherits: _base_legal

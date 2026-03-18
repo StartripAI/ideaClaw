@@ -1,0 +1,8 @@
+meta:
+  id: science.plos_one
+  name: PLOS ONE Paper
+  domain: science
+  inherits: _base_science
+  description: Soundness-based review, not novelty
+rubric:
+  pass_threshold: 5.5

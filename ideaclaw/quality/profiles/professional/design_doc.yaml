@@ -1,0 +1,18 @@
+meta:
+  id: professional.design_doc
+  name: Design Document
+  domain: professional
+  inherits: _base_professional
+  description: Google Design Doc format
+format:
+  sections:
+  - name: context
+    required: true
+  - name: goals_non_goals
+    required: true
+  - name: design
+    required: true
+  - name: alternatives_considered
+    required: true
+  - name: security_privacy
+    required: false

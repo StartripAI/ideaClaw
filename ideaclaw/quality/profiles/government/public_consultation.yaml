@@ -1,0 +1,5 @@
+meta:
+  id: government.public_consultation
+  name: Public Consultation Response
+  domain: government
+  inherits: _base_government

@@ -1,0 +1,12 @@
+meta:
+  id: business.mckinsey_memo
+  name: McKinsey-style Strategy Memo
+  domain: business
+  inherits: _base_business
+  description: Pyramid Principle + MECE + Action Titles
+review:
+  checklist:
+  - Starts with conclusion (Pyramid Principle)
+  - Arguments are MECE
+  - Each section has an action title
+  - Data visualizations support key points

@@ -1,0 +1,5 @@
+meta:
+  id: finance.earnings_analysis
+  name: Earnings / 10-K Analysis
+  domain: finance
+  inherits: _base_finance

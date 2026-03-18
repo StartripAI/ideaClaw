@@ -1,0 +1,5 @@
+meta:
+  id: government.budget_proposal
+  name: Budget Proposal
+  domain: government
+  inherits: _base_government

@@ -1,0 +1,5 @@
+meta:
+  id: marketing.email_campaign
+  name: Email Campaign Sequence
+  domain: marketing
+  inherits: _base_marketing

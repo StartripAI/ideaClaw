@@ -1,0 +1,29 @@
+[project]
+name = "ideaclaw"
+version = "0.1.0"
+description = "IdeaClaw — Turn a rough idea into a usable, verifiable pack."
+requires-python = ">=3.11"
+dependencies = [
+    "pyyaml>=6.0",
+    "rich>=13.0",
+    "jinja2>=3.1",
+]
+readme = "README.md"
+license = {text = "MIT"}
+
+[project.optional-dependencies]
+docx = ["python-docx>=1.0"]
+pdf = ["weasyprint>=60.0"]
+ocr = ["paddleocr>=2.7", "easyocr>=1.7"]
+anthropic = ["httpx>=0.24"]
+dev = ["pytest>=7.0"]
+
+[project.scripts]
+ideaclaw = "ideaclaw.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["ideaclaw"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"

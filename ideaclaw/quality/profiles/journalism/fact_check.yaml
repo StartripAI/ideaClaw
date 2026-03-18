@@ -1,0 +1,12 @@
+meta:
+  id: journalism.fact_check
+  name: Fact-Check Report
+  domain: journalism
+  inherits: _base_journalism
+  description: IFCN Code of Principles
+review:
+  checklist:
+  - Claim clearly stated
+  - Methodology transparent
+  - Sources independently verifiable
+  - Corrections policy visible

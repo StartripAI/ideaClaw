@@ -1,0 +1,11 @@
+meta:
+  id: finance.pitchbook
+  name: Fundraising Pitchbook
+  domain: finance
+  inherits: _base_finance
+review:
+  checklist:
+  - Problem clearly defined
+  - Solution differentiated
+  - Traction/metrics shown
+  - Ask is specific
