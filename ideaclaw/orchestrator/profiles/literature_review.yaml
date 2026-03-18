@@ -1,0 +1,48 @@
+scenario_id: literature_review
+display_name: Systematic Literature Review
+category: general
+objective: PRISMA-compliant systematic review.
+max_iterations: 5
+target_score: 0.85
+min_score: 0.6
+evaluation:
+  criteria:
+    clarity:
+      weight: 0.25
+      min: 0.7
+    structure:
+      weight: 0.2
+      min: 0.7
+    depth:
+      weight: 0.3
+      min: 0.8
+    citations:
+      weight: 0.15
+      min: 0.7
+    soundness:
+      weight: 0.1
+      min: 0.6
+    style:
+      weight: 0.1
+      min: 0.6
+search:
+  apis:
+  - arxiv
+  - semantic_scholar
+  - openalex
+  - pubmed
+  recency_years: 3
+  min_sources: 80
+style:
+  formality: 0.9
+  voice: third_person
+  citation_style: apa
+  required_sections:
+  - abstract
+  - introduction
+  - methodology
+  - search strategy
+  - results
+  - discussion
+  - limitations
+  - conclusion

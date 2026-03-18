@@ -1,0 +1,45 @@
+scenario_id: emnlp_2025
+display_name: EMNLP 2025
+category: cs_ml
+objective: EMNLP 2025 empirical NLP.
+max_iterations: 5
+target_score: 0.85
+min_score: 0.6
+evaluation:
+  criteria:
+    novelty:
+      weight: 0.2
+      min: 0.7
+    soundness:
+      weight: 0.25
+      min: 0.75
+    clarity:
+      weight: 0.15
+      min: 0.7
+    significance:
+      weight: 0.15
+      min: 0.6
+    citations:
+      weight: 0.1
+      min: 0.8
+    depth:
+      weight: 0.15
+      min: 0.7
+search:
+  apis:
+  - arxiv
+  - semantic_scholar
+  recency_years: 3
+  min_sources: 15
+style:
+  formality: 0.9
+  voice: third_person
+  citation_style: natbib
+  required_sections:
+  - abstract
+  - introduction
+  - related work
+  - method
+  - experiments
+  - conclusion
+  - error analysis

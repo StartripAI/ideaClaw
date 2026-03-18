@@ -1,0 +1,49 @@
+scenario_id: care_case_report
+display_name: CARE Case Report
+category: medical
+objective: Case report per CARE guidelines.
+max_iterations: 5
+target_score: 0.8
+min_score: 0.6
+evaluation:
+  criteria:
+    soundness:
+      weight: 0.25
+      min: 0.8
+    clarity:
+      weight: 0.15
+      min: 0.75
+    citations:
+      weight: 0.15
+      min: 0.85
+    depth:
+      weight: 0.15
+      min: 0.7
+    significance:
+      weight: 0.15
+      min: 0.65
+    ethics:
+      weight: 0.1
+      min: 0.6
+    novelty:
+      weight: 0.05
+      min: 0.5
+search:
+  apis:
+  - pubmed
+  recency_years: 3
+  min_sources: 15
+style:
+  formality: 0.9
+  voice: third_person
+  citation_style: apa
+  required_sections:
+  - abstract
+  - introduction
+  - patient information
+  - clinical findings
+  - timeline
+  - diagnostic assessment
+  - therapeutic intervention
+  - outcome
+  - discussion

@@ -1,0 +1,43 @@
+scenario_id: cfa_research
+display_name: CFA Research Report
+category: finance
+objective: CFA Institute-compliant equity research.
+max_iterations: 5
+target_score: 0.85
+min_score: 0.6
+evaluation:
+  criteria:
+    soundness:
+      weight: 0.25
+      min: 0.75
+    clarity:
+      weight: 0.2
+      min: 0.7
+    depth:
+      weight: 0.2
+      min: 0.7
+    structure:
+      weight: 0.15
+      min: 0.7
+    citations:
+      weight: 0.1
+      min: 0.6
+    significance:
+      weight: 0.1
+      min: 0.6
+search:
+  apis:
+  - semantic_scholar
+  recency_years: 3
+  min_sources: 15
+style:
+  formality: 0.95
+  voice: third_person
+  citation_style: apa
+  required_sections:
+  - investment summary
+  - company overview
+  - industry analysis
+  - financial analysis
+  - valuation
+  - recommendation

@@ -1,0 +1,39 @@
+scenario_id: contract_analysis
+display_name: Contract Analysis
+category: legal
+objective: Commercial contract analysis memo.
+max_iterations: 5
+target_score: 0.85
+min_score: 0.6
+evaluation:
+  criteria:
+    soundness:
+      weight: 0.25
+      min: 0.75
+    clarity:
+      weight: 0.25
+      min: 0.7
+    structure:
+      weight: 0.2
+      min: 0.75
+    citations:
+      weight: 0.2
+      min: 0.75
+    depth:
+      weight: 0.1
+      min: 0.6
+search:
+  apis:
+  - arxiv
+  - semantic_scholar
+  recency_years: 3
+  min_sources: 15
+style:
+  formality: 0.95
+  voice: third_person
+  citation_style: natbib
+  required_sections:
+  - summary
+  - key terms
+  - risk assessment
+  - recommendations

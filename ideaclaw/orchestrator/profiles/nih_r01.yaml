@@ -1,0 +1,45 @@
+scenario_id: nih_r01
+display_name: NIH R01 Grant
+category: grants
+objective: NIH R01 per 5-criteria 1-9 scale.
+max_iterations: 5
+target_score: 0.85
+min_score: 0.6
+evaluation:
+  criteria:
+    significance:
+      weight: 0.25
+      min: 0.75
+    novelty:
+      weight: 0.2
+      min: 0.7
+    soundness:
+      weight: 0.2
+      min: 0.75
+    clarity:
+      weight: 0.15
+      min: 0.7
+    depth:
+      weight: 0.1
+      min: 0.65
+    citations:
+      weight: 0.1
+      min: 0.75
+search:
+  apis:
+  - pubmed
+  - semantic_scholar
+  recency_years: 3
+  min_sources: 15
+style:
+  formality: 0.9
+  voice: first_person
+  citation_style: apa
+  required_sections:
+  - specific aims
+  - significance
+  - innovation
+  - approach
+  - timeline
+  - preliminary data
+  - budget justification

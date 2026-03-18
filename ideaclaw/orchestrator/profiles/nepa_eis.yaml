@@ -1,0 +1,43 @@
+scenario_id: nepa_eis
+display_name: NEPA Environmental Impact
+category: government
+objective: Environmental impact statement per NEPA.
+max_iterations: 5
+target_score: 0.85
+min_score: 0.6
+evaluation:
+  criteria:
+    clarity:
+      weight: 0.25
+      min: 0.75
+    soundness:
+      weight: 0.2
+      min: 0.7
+    significance:
+      weight: 0.2
+      min: 0.7
+    structure:
+      weight: 0.15
+      min: 0.7
+    depth:
+      weight: 0.1
+      min: 0.6
+    citations:
+      weight: 0.1
+      min: 0.6
+search:
+  apis:
+  - arxiv
+  - semantic_scholar
+  recency_years: 3
+  min_sources: 30
+style:
+  formality: 0.9
+  voice: third_person
+  citation_style: natbib
+  required_sections:
+  - purpose and need
+  - alternatives
+  - affected environment
+  - environmental consequences
+  - mitigation

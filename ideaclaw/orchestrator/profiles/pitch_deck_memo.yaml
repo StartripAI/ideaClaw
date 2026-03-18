@@ -1,0 +1,45 @@
+scenario_id: pitch_deck_memo
+display_name: Pitch Deck Narrative
+category: business
+objective: Startup pitch deck narrative memo.
+max_iterations: 5
+target_score: 0.75
+min_score: 0.6
+evaluation:
+  criteria:
+    clarity:
+      weight: 0.25
+      min: 0.75
+    depth:
+      weight: 0.2
+      min: 0.65
+    structure:
+      weight: 0.2
+      min: 0.7
+    citations:
+      weight: 0.15
+      min: 0.6
+    significance:
+      weight: 0.1
+      min: 0.6
+    style:
+      weight: 0.1
+      min: 0.65
+search:
+  apis:
+  - arxiv
+  - semantic_scholar
+  recency_years: 3
+  min_sources: 15
+style:
+  formality: 0.7
+  voice: third_person
+  citation_style: natbib
+  required_sections:
+  - problem
+  - solution
+  - market
+  - business model
+  - traction
+  - team
+  - ask

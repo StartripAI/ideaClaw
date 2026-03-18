@@ -1,0 +1,43 @@
+scenario_id: arxiv_preprint
+display_name: arXiv Preprint
+category: science
+objective: arXiv preprint (no peer review).
+max_iterations: 3
+target_score: 0.75
+min_score: 0.5
+evaluation:
+  criteria:
+    novelty:
+      weight: 0.2
+      min: 0.7
+    soundness:
+      weight: 0.25
+      min: 0.75
+    clarity:
+      weight: 0.15
+      min: 0.7
+    significance:
+      weight: 0.15
+      min: 0.6
+    citations:
+      weight: 0.1
+      min: 0.8
+    depth:
+      weight: 0.15
+      min: 0.7
+search:
+  apis:
+  - arxiv
+  - semantic_scholar
+  recency_years: 3
+  min_sources: 15
+style:
+  formality: 0.9
+  voice: third_person
+  citation_style: natbib
+  required_sections:
+  - abstract
+  - introduction
+  - method
+  - results
+  - conclusion

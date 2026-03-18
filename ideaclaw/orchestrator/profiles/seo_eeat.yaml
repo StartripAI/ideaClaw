@@ -1,0 +1,41 @@
+scenario_id: seo_eeat
+display_name: SEO Content (E-E-A-T)
+category: marketing
+objective: Google E-E-A-T optimized long-form content.
+max_iterations: 5
+target_score: 0.75
+min_score: 0.6
+evaluation:
+  criteria:
+    clarity:
+      weight: 0.25
+      min: 0.7
+    style:
+      weight: 0.25
+      min: 0.65
+    structure:
+      weight: 0.2
+      min: 0.65
+    depth:
+      weight: 0.15
+      min: 0.55
+    significance:
+      weight: 0.15
+      min: 0.55
+search:
+  apis:
+  - arxiv
+  - semantic_scholar
+  recency_years: 3
+  min_sources: 15
+style:
+  formality: 0.6
+  voice: mixed
+  citation_style: natbib
+  required_sections:
+  - headline
+  - introduction
+  - main sections
+  - expert quotes
+  - conclusion
+  - faq

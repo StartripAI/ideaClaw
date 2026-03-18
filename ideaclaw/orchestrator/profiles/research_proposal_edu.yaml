@@ -1,0 +1,42 @@
+scenario_id: research_proposal_edu
+display_name: Research Proposal (Edu)
+category: education
+objective: Educational research proposal.
+max_iterations: 5
+target_score: 0.85
+min_score: 0.6
+evaluation:
+  criteria:
+    clarity:
+      weight: 0.25
+      min: 0.7
+    structure:
+      weight: 0.2
+      min: 0.7
+    depth:
+      weight: 0.2
+      min: 0.65
+    citations:
+      weight: 0.15
+      min: 0.7
+    soundness:
+      weight: 0.1
+      min: 0.6
+    style:
+      weight: 0.1
+      min: 0.6
+search:
+  apis:
+  - semantic_scholar
+  recency_years: 3
+  min_sources: 15
+style:
+  formality: 0.9
+  voice: third_person
+  citation_style: apa
+  required_sections:
+  - introduction
+  - literature review
+  - methodology
+  - timeline
+  - significance

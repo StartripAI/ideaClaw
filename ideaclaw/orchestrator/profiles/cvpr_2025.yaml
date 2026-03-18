@@ -1,10 +1,7 @@
 scenario_id: cvpr_2025
-display_name: CVPR 2025 CV Paper
-category: academic_cv
-tags:
-- cv
-- conference
-objective: CVPR 2025 paper with benchmark results, visual comparisons, ablations.
+display_name: CVPR 2025
+category: cs_ml
+objective: CVPR 2025 with visual benchmarks and ablations.
 max_iterations: 5
 target_score: 0.85
 min_score: 0.6
@@ -14,13 +11,10 @@ evaluation:
       weight: 0.2
       min: 0.7
     soundness:
-      weight: 0.2
+      weight: 0.25
       min: 0.75
     clarity:
       weight: 0.15
-      min: 0.7
-    depth:
-      weight: 0.2
       min: 0.7
     significance:
       weight: 0.15
@@ -28,20 +22,19 @@ evaluation:
     citations:
       weight: 0.1
       min: 0.8
+    depth:
+      weight: 0.15
+      min: 0.7
 search:
   apis:
   - arxiv
   - semantic_scholar
-  domains:
-  - cs.CV
-  - cs.AI
   recency_years: 3
-  min_sources: 30
+  min_sources: 15
 style:
-  formality: 0.95
+  formality: 0.9
   voice: third_person
   citation_style: natbib
-  max_pages: 8
   required_sections:
   - abstract
   - introduction
@@ -49,7 +42,3 @@ style:
   - method
   - experiments
   - conclusion
-experiment:
-  enabled: true
-  metric_name: mAP
-  metric_direction: maximize

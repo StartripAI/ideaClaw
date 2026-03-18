@@ -1,10 +1,7 @@
 scenario_id: acl_2025
-display_name: ACL 2025 NLP Paper
-category: academic_nlp
-tags:
-- nlp
-- conference
-objective: ACL 2025 main conference paper with error analysis and significance tests.
+display_name: ACL 2025
+category: cs_ml
+objective: ACL 2025 NLP paper with error analysis.
 max_iterations: 5
 target_score: 0.85
 min_score: 0.6
@@ -14,7 +11,7 @@ evaluation:
       weight: 0.2
       min: 0.7
     soundness:
-      weight: 0.2
+      weight: 0.25
       min: 0.75
     clarity:
       weight: 0.15
@@ -22,35 +19,31 @@ evaluation:
     significance:
       weight: 0.15
       min: 0.6
-    reproducibility:
-      weight: 0.15
-      min: 0.7
     citations:
       weight: 0.1
       min: 0.8
-    ethics:
-      weight: 0.05
-      min: 0.5
+    depth:
+      weight: 0.15
+      min: 0.7
+    reproducibility:
+      weight: 0.1
+      min: 0.7
 search:
   apis:
   - arxiv
   - semantic_scholar
-  domains:
-  - cs.CL
-  - cs.AI
   recency_years: 3
-  min_sources: 25
+  min_sources: 15
 style:
-  formality: 0.95
+  formality: 0.9
   voice: third_person
   citation_style: natbib
-  max_pages: 8
   required_sections:
   - abstract
   - introduction
   - related work
   - method
   - experiments
-  - analysis
   - conclusion
+  - analysis
   - limitations

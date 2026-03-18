@@ -287,6 +287,7 @@ class ResearchLoop:
 
     def __init__(
         self,
+        config: Optional[Any] = None,
         search_fn: Optional[SearchHook] = None,
         generate_fn: Optional[GenerateHook] = None,
         evaluate_fn: Optional[EvaluateHook] = None,
@@ -294,6 +295,16 @@ class ResearchLoop:
         versioning: Optional[Any] = None,      # Versioning instance
         output_dir: Optional[Path] = None,
     ):
+        # Auto-wire LLMHooks when config is provided and no explicit hooks
+        if config is not None and not generate_fn:
+            from ideaclaw.orchestrator.hooks import LLMHooks
+            hooks = LLMHooks(config)
+            search_fn = search_fn or hooks.search
+            generate_fn = hooks.generate
+            evaluate_fn = evaluate_fn or hooks.evaluate
+            learn_fn = learn_fn or hooks.learn
+            logger.info("Auto-wired LLMHooks from config (BYOK)")
+
         self.search_fn = search_fn
         self.generate_fn = generate_fn
         self.evaluate_fn = evaluate_fn

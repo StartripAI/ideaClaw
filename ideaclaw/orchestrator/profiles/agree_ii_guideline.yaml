@@ -1,0 +1,47 @@
+scenario_id: agree_ii_guideline
+display_name: AGREE II Clinical Guideline
+category: medical
+objective: Clinical practice guideline per AGREE II.
+max_iterations: 5
+target_score: 0.85
+min_score: 0.6
+evaluation:
+  criteria:
+    soundness:
+      weight: 0.25
+      min: 0.8
+    clarity:
+      weight: 0.15
+      min: 0.75
+    citations:
+      weight: 0.15
+      min: 0.85
+    depth:
+      weight: 0.15
+      min: 0.7
+    significance:
+      weight: 0.15
+      min: 0.65
+    ethics:
+      weight: 0.1
+      min: 0.6
+    novelty:
+      weight: 0.05
+      min: 0.5
+search:
+  apis:
+  - pubmed
+  - semantic_scholar
+  recency_years: 3
+  min_sources: 40
+style:
+  formality: 0.9
+  voice: third_person
+  citation_style: apa
+  required_sections:
+  - scope
+  - stakeholder involvement
+  - rigor
+  - clarity
+  - applicability
+  - editorial independence

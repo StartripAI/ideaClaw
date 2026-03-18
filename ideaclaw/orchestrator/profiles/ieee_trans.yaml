@@ -1,0 +1,44 @@
+scenario_id: ieee_trans
+display_name: IEEE Transactions
+category: science
+objective: IEEE Transactions journal paper.
+max_iterations: 5
+target_score: 0.85
+min_score: 0.6
+evaluation:
+  criteria:
+    novelty:
+      weight: 0.25
+      min: 0.8
+    soundness:
+      weight: 0.25
+      min: 0.8
+    significance:
+      weight: 0.2
+      min: 0.75
+    clarity:
+      weight: 0.15
+      min: 0.8
+    citations:
+      weight: 0.1
+      min: 0.85
+    depth:
+      weight: 0.05
+      min: 0.7
+search:
+  apis:
+  - arxiv
+  - semantic_scholar
+  recency_years: 3
+  min_sources: 15
+style:
+  formality: 0.9
+  voice: third_person
+  citation_style: ieee
+  required_sections:
+  - abstract
+  - introduction
+  - system model
+  - proposed method
+  - simulation results
+  - conclusion

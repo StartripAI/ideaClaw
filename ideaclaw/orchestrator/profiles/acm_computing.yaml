@@ -1,0 +1,44 @@
+scenario_id: acm_computing
+display_name: ACM Computing Surveys
+category: science
+objective: ACM Computing Surveys review article.
+max_iterations: 5
+target_score: 0.85
+min_score: 0.6
+evaluation:
+  criteria:
+    novelty:
+      weight: 0.25
+      min: 0.8
+    soundness:
+      weight: 0.25
+      min: 0.8
+    significance:
+      weight: 0.2
+      min: 0.75
+    clarity:
+      weight: 0.15
+      min: 0.8
+    citations:
+      weight: 0.1
+      min: 0.85
+    depth:
+      weight: 0.25
+      min: 0.8
+search:
+  apis:
+  - arxiv
+  - semantic_scholar
+  recency_years: 3
+  min_sources: 60
+style:
+  formality: 0.9
+  voice: third_person
+  citation_style: natbib
+  required_sections:
+  - abstract
+  - introduction
+  - taxonomy
+  - survey
+  - open problems
+  - conclusion

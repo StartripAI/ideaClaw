@@ -1,77 +1,47 @@
-# ICML 2025 — International Conference on Machine Learning
 scenario_id: icml_2025
-display_name: "ICML 2025 Conference Paper"
-category: academic_ml
-version: "1.0"
-tags: [ml, conference, top-tier]
-
-objective: |
-  Produce a camera-ready ICML 2025 paper. The paper must demonstrate
-  a clear and significant contribution to machine learning, with
-  rigorous experiments, proper baselines, and ablation studies.
-  Follow the official ICML 2025 formatting and review guidelines.
-
+display_name: ICML 2025
+category: cs_ml
+objective: ICML 2025 conference paper per reviewer guidelines.
 max_iterations: 5
 target_score: 0.85
-min_score: 0.60
-time_budget_minutes: 0
-
-# --- Evaluation criteria (from ICML review form) ---
-# Ref: https://icml.cc/Conferences/2025/ReviewerGuide
+min_score: 0.6
 evaluation:
-  target_score: 0.85
-  min_score: 0.60
   criteria:
     novelty:
-      weight: 0.20
-      min: 0.70
-      description: "Originality of ideas, methods, or applications"
+      weight: 0.2
+      min: 0.7
     soundness:
       weight: 0.25
       min: 0.75
-      description: "Technical correctness of claims and proofs"
     clarity:
       weight: 0.15
-      min: 0.70
-      description: "Clear writing, well-organized, easy to follow"
+      min: 0.7
     significance:
       weight: 0.15
-      min: 0.60
-      description: "Impact and importance to the ML community"
+      min: 0.6
     citations:
-      weight: 0.10
-      min: 0.80
-      description: "Proper citation of related work, no hallucinated refs"
+      weight: 0.1
+      min: 0.8
     depth:
       weight: 0.15
-      min: 0.70
-      description: "Thoroughness of experiments, ablations, analysis"
-
+      min: 0.7
 search:
-  apis: [arxiv, semantic_scholar, openalex]
-  domains: [cs.LG, cs.AI, stat.ML]
+  apis:
+  - arxiv
+  - semantic_scholar
   recency_years: 3
-  min_sources: 25
-  max_sources: 80
-
+  min_sources: 15
 style:
-  formality: 0.95
+  formality: 0.9
   voice: third_person
-  tense: present
   citation_style: natbib
-  max_pages: 9
   required_sections:
-    - abstract
-    - introduction
-    - related work
-    - method
-    - experiments
-    - conclusion
-  terminology_registry: ml_standard
-
-experiment:
-  enabled: true
-  timeout_seconds: 300
-  metric_name: val_bpb
-  metric_direction: minimize
-  max_iterations: 10
+  - abstract
+  - introduction
+  - related work
+  - method
+  - experiments
+  - conclusion
+tags:
+- ml
+- conference

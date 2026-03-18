@@ -1,0 +1,48 @@
+scenario_id: prisma_systematic
+display_name: PRISMA Systematic Review
+category: medical
+objective: Systematic review per PRISMA 27-item checklist.
+max_iterations: 5
+target_score: 0.85
+min_score: 0.6
+evaluation:
+  criteria:
+    soundness:
+      weight: 0.25
+      min: 0.8
+    clarity:
+      weight: 0.15
+      min: 0.75
+    citations:
+      weight: 0.15
+      min: 0.85
+    depth:
+      weight: 0.25
+      min: 0.8
+    significance:
+      weight: 0.15
+      min: 0.65
+    ethics:
+      weight: 0.1
+      min: 0.6
+    novelty:
+      weight: 0.05
+      min: 0.5
+search:
+  apis:
+  - pubmed
+  - semantic_scholar
+  recency_years: 3
+  min_sources: 50
+style:
+  formality: 0.9
+  voice: third_person
+  citation_style: apa
+  required_sections:
+  - abstract
+  - introduction
+  - methods
+  - search strategy
+  - results
+  - discussion
+  - conclusion
