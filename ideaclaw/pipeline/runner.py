@@ -238,25 +238,85 @@ class PipelineRunner:
         )
 
     def _write_final_pack(self, state: PipelineState) -> None:
-        """Write the final pack.md from the EXPORT_PUBLISH stage output."""
-        export_content = state.context.get("export_publish", "")
-        if not export_content:
-            # Fallback: use pack_draft output
-            export_content = state.context.get("pack_draft", "")
+        """Write the final pack using PackBuilder + TrustReviewer + Exporter."""
+        from ideaclaw.pack.builder import PackBuilder
+        from ideaclaw.pack.trust_review import TrustReviewer
+        from ideaclaw.export import Exporter
 
-        pack_path = state.run_dir / "pack.md"
-        pack_path.write_text(export_content, encoding="utf-8")
-        console.print(f"\n  [bold green]📦 Pack written → {pack_path}[/bold green]")
+        idea_text = state.context.get("idea_text", "")
+        pack_type_str = state.context.get("pack_type", "decision")
+        if pack_type_str == "auto":
+            pack_type_str = "decision"
 
-        # Also write pack.json with structured metadata
-        pack_json = {
+        # 1. Trust review
+        draft = state.context.get("pack_draft", state.context.get("export_publish", ""))
+        reviewer = TrustReviewer(self.config)
+        trust_result = reviewer.review(
+            draft=draft,
+            idea_text=idea_text,
+        )
+        console.print(
+            f"\n  [bold]Trust Review:[/bold] PQS={trust_result.overall_score:.2f} "
+            f"[{'green' if trust_result.verdict == 'PASS' else 'yellow' if trust_result.verdict == 'REVISE' else 'red'}]"
+            f"{trust_result.verdict}"
+            f"[/{'green' if trust_result.verdict == 'PASS' else 'yellow' if trust_result.verdict == 'REVISE' else 'red'}]"
+        )
+
+        # 2. Build pack with templates
+        pipeline_ctx = {
+            "idea": idea_text,
+            "pack_type": pack_type_str,
             "run_id": state.run_id,
-            "idea": state.context.get("idea_text", ""),
-            "pack_type": state.context.get("pack_type", "auto"),
-            "completed_at": dt.datetime.now(dt.timezone.utc).isoformat(),
-            "stages_completed": len(state.stage_results),
+            "draft": draft,
+            "conclusion": state.context.get("evidence_synthesis", draft),
+            "reasoning": state.context.get("evidence_synthesis", ""),
+            "synthesis": state.context.get("evidence_synthesis", ""),
+            "counterarguments": self._parse_list(state.context.get("counterargument_gen", "")),
+            "uncertainties": self._parse_list(state.context.get("evidence_gate", "")),
+            "action_items": self._parse_list(state.context.get("pack_outline", "")),
+            "sources": self._parse_sources(state.context.get("source_collect", "")),
+            "trust_review": trust_result,
+            "decomposition": state.context.get("idea_decompose", ""),
+            "decision_tree": state.context.get("decision_tree", ""),
         }
-        write_json(state.run_dir / "pack.json", pack_json)
+
+        builder = PackBuilder(self.config)
+        pack_data = builder.build(pipeline_ctx)
+
+        # 3. Add trust review to pack_data for export
+        pack_data["trust_review"] = trust_result.to_dict()
+
+        # 4. Export
+        exporter = Exporter(self.config)
+        exported = exporter.export_all(pack_data, state.run_dir)
+
+        for p in exported:
+            console.print(f"  [bold green]📦 {p.name}[/bold green] → {p}")
+
+    def _parse_list(self, text: str) -> list:
+        """Parse a text output into a list of items."""
+        if not text:
+            return []
+        items = []
+        for line in text.split("\n"):
+            line = line.strip().lstrip("-*0123456789. ")
+            if line and len(line) > 5:
+                items.append(line)
+        return items[:20]
+
+    def _parse_sources(self, text: str) -> list:
+        """Parse source collection output into structured sources."""
+        import re
+        if not text:
+            return []
+        sources = []
+        for line in text.split("\n"):
+            url_match = re.search(r'(https?://\S+)', line)
+            if url_match:
+                sources.append({"title": line.strip()[:100], "url": url_match.group(1)})
+            elif line.strip() and len(line.strip()) > 10:
+                sources.append({"title": line.strip()[:100], "url": ""})
+        return sources[:30]
 
     def _request_approval(self, stage: Stage) -> bool:
         """Request human approval at a gate stage."""
