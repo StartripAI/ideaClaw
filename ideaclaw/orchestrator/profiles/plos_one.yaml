@@ -1,7 +1,8 @@
 scenario_id: plos_one
 display_name: PLOS ONE
 category: science
-objective: PLOS ONE research article.
+objective: Produce a high-quality PLOS ONE that meets professional standards for the
+  science domain. PLOS ONE research article.
 max_iterations: 5
 target_score: 0.8
 min_score: 0.6
@@ -41,3 +42,7 @@ style:
   - results
   - discussion
   - methods
+tags:
+- science
+- plos-one
+- plos

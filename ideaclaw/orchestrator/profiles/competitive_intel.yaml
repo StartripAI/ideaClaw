@@ -1,7 +1,8 @@
 scenario_id: competitive_intel
 display_name: Competitive Intelligence
 category: business
-objective: Competitive intelligence brief.
+objective: Produce a high-quality Competitive Intelligence that meets professional
+  standards for the business domain. Competitive intelligence brief.
 max_iterations: 5
 target_score: 0.85
 min_score: 0.6
@@ -41,3 +42,6 @@ style:
   - product comparison
   - SWOT
   - strategic implications
+tags:
+- business
+- competitive-intel

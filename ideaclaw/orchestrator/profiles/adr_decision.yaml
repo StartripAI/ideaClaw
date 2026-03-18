@@ -1,7 +1,8 @@
 scenario_id: adr_decision
 display_name: Architecture Decision Record
 category: professional
-objective: ADR per Michael Nygard template.
+objective: Produce a high-quality Architecture Decision Record that meets professional
+  standards for the professional domain. ADR per Michael Nygard template.
 max_iterations: 5
 target_score: 0.75
 min_score: 0.6
@@ -38,3 +39,7 @@ style:
   - context
   - decision
   - consequences
+tags:
+- professional
+- adr-decision
+- adr

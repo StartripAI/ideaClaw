@@ -1,7 +1,8 @@
 scenario_id: care_case_report
 display_name: CARE Case Report
 category: medical
-objective: Case report per CARE guidelines.
+objective: Produce a high-quality CARE Case Report that meets professional standards
+  for the medical domain. Case report per CARE guidelines.
 max_iterations: 5
 target_score: 0.8
 min_score: 0.6
@@ -47,3 +48,7 @@ style:
   - therapeutic intervention
   - outcome
   - discussion
+tags:
+- medical
+- care-case-report
+- care

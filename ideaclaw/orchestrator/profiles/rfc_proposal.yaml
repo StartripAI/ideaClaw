@@ -1,7 +1,8 @@
 scenario_id: rfc_proposal
 display_name: RFC/Design Doc
 category: professional
-objective: Technical RFC or design document.
+objective: Produce a high-quality RFC/Design Doc that meets professional standards
+  for the professional domain. Technical RFC or design document.
 max_iterations: 5
 target_score: 0.85
 min_score: 0.6
@@ -39,3 +40,7 @@ style:
   - alternatives
   - risks
   - timeline
+tags:
+- professional
+- rfc-proposal
+- rfc

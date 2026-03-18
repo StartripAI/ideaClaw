@@ -1,7 +1,8 @@
 scenario_id: yc_memo
 display_name: YC Application Memo
 category: finance
-objective: Y Combinator-style startup memo.
+objective: Produce a high-quality YC Application Memo that meets professional standards
+  for the finance domain. Y Combinator-style startup memo.
 max_iterations: 5
 target_score: 0.75
 min_score: 0.6
@@ -42,3 +43,7 @@ style:
   - traction
   - team
   - ask
+tags:
+- finance
+- yc-memo
+- yc

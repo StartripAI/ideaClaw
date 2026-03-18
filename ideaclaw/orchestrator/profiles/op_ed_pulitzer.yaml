@@ -1,7 +1,8 @@
 scenario_id: op_ed_pulitzer
 display_name: Op-Ed / Commentary
 category: journalism
-objective: Pulitzer-quality opinion editorial.
+objective: Produce a high-quality Op-Ed / Commentary that meets professional standards
+  for the journalism domain. Pulitzer-quality opinion editorial.
 max_iterations: 5
 target_score: 0.85
 min_score: 0.6
@@ -39,3 +40,7 @@ style:
   - evidence
   - counterargument
   - conclusion
+tags:
+- journalism
+- op-ed-pulitzer
+- pulitzer

@@ -1,7 +1,8 @@
 scenario_id: hbs_case_study
 display_name: HBS Case Study
 category: business
-objective: Harvard Business School teaching case.
+objective: Produce a high-quality HBS Case Study that meets professional standards
+  for the business domain. Harvard Business School teaching case.
 max_iterations: 5
 target_score: 0.85
 min_score: 0.6
@@ -42,3 +43,7 @@ style:
   - analysis
   - exhibits
   - discussion questions
+tags:
+- business
+- hbs-case-study
+- hbs

@@ -1,7 +1,8 @@
 scenario_id: sre_postmortem
 display_name: SRE Postmortem (Google)
 category: professional
-objective: Google SRE-style incident postmortem.
+objective: Produce a high-quality SRE Postmortem (Google) that meets professional
+  standards for the professional domain. Google SRE-style incident postmortem.
 max_iterations: 5
 target_score: 0.85
 min_score: 0.6
@@ -39,3 +40,7 @@ style:
   - timeline
   - action items
   - lessons learned
+tags:
+- professional
+- sre-postmortem
+- sre

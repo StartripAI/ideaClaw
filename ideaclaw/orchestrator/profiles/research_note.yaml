@@ -1,7 +1,8 @@
 scenario_id: research_note
 display_name: Research Note
 category: general
-objective: Quick research note or memo.
+objective: Produce a high-quality Research Note that meets professional standards
+  for the general domain. Quick research note or memo.
 max_iterations: 2
 target_score: 0.7
 min_score: 0.6
@@ -36,3 +37,6 @@ style:
   - background
   - analysis
   - implications
+tags:
+- general
+- research-note

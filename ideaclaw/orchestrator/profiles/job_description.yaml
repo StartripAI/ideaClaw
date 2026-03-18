@@ -1,7 +1,8 @@
 scenario_id: job_description
 display_name: Job Description
 category: hr_ops
-objective: Professional job description.
+objective: Produce a high-quality Job Description that meets professional standards
+  for the hr_ops domain. Professional job description.
 max_iterations: 5
 target_score: 0.7
 min_score: 0.6
@@ -39,3 +40,6 @@ style:
   - requirements
   - preferred qualifications
   - benefits
+tags:
+- hr_ops
+- job-description

@@ -1,7 +1,8 @@
 scenario_id: oecd_ria
 display_name: OECD Regulatory Impact Assessment
 category: government
-objective: OECD RIA best practices.
+objective: Produce a high-quality OECD Regulatory Impact Assessment that meets professional
+  standards for the government domain. OECD RIA best practices.
 max_iterations: 5
 target_score: 0.85
 min_score: 0.6
@@ -41,3 +42,7 @@ style:
   - impact analysis
   - stakeholder consultation
   - recommendation
+tags:
+- government
+- oecd-ria
+- oecd

@@ -1,7 +1,8 @@
 scenario_id: nepa_eis
 display_name: NEPA Environmental Impact
 category: government
-objective: Environmental impact statement per NEPA.
+objective: Produce a high-quality NEPA Environmental Impact that meets professional
+  standards for the government domain. Environmental impact statement per NEPA.
 max_iterations: 5
 target_score: 0.85
 min_score: 0.6
@@ -41,3 +42,7 @@ style:
   - affected environment
   - environmental consequences
   - mitigation
+tags:
+- government
+- nepa-eis
+- nepa

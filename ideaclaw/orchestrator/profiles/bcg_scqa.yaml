@@ -1,7 +1,8 @@
 scenario_id: bcg_scqa
 display_name: BCG SCQA Framework
 category: business
-objective: BCG Situation-Complication-Question-Answer report.
+objective: Produce a high-quality BCG SCQA Framework that meets professional standards
+  for the business domain. BCG Situation-Complication-Question-Answer report.
 max_iterations: 5
 target_score: 0.85
 min_score: 0.6
@@ -40,3 +41,7 @@ style:
   - question
   - answer
   - next steps
+tags:
+- business
+- bcg-scqa
+- bcg

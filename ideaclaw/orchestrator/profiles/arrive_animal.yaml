@@ -1,7 +1,8 @@
 scenario_id: arrive_animal
 display_name: ARRIVE Animal Study
 category: medical
-objective: Animal research per ARRIVE 2.0 guidelines.
+objective: Produce a high-quality ARRIVE Animal Study that meets professional standards
+  for the medical domain. Animal research per ARRIVE 2.0 guidelines.
 max_iterations: 5
 target_score: 0.85
 min_score: 0.6
@@ -45,3 +46,7 @@ style:
   - discussion
   - limitations
   - conclusion
+tags:
+- medical
+- arrive-animal
+- arrive

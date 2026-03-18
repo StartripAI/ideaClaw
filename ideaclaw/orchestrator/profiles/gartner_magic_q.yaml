@@ -1,7 +1,8 @@
 scenario_id: gartner_magic_q
 display_name: Gartner Magic Quadrant
 category: business
-objective: Gartner-style market analysis.
+objective: Produce a high-quality Gartner Magic Quadrant that meets professional standards
+  for the business domain. Gartner-style market analysis.
 max_iterations: 5
 target_score: 0.85
 min_score: 0.6
@@ -42,3 +43,7 @@ style:
   - challengers
   - visionaries
   - niche
+tags:
+- business
+- gartner-magic-q
+- gartner

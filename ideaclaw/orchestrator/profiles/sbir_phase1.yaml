@@ -1,7 +1,8 @@
 scenario_id: sbir_phase1
 display_name: SBIR Phase I
 category: grants
-objective: NSF/NIH SBIR Phase I.
+objective: Produce a high-quality SBIR Phase I that meets professional standards for
+  the grants domain. NSF/NIH SBIR Phase I.
 max_iterations: 5
 target_score: 0.8
 min_score: 0.6
@@ -40,3 +41,9 @@ style:
   - technical objectives
   - research plan
   - commercialization
+tags:
+- grants
+- sbir-phase1
+- nih
+- nsf
+- sbir

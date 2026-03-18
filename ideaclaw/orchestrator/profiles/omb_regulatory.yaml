@@ -1,7 +1,8 @@
 scenario_id: omb_regulatory
 display_name: OMB Regulatory Impact
 category: government
-objective: OMB regulatory impact analysis.
+objective: Produce a high-quality OMB Regulatory Impact that meets professional standards
+  for the government domain. OMB regulatory impact analysis.
 max_iterations: 5
 target_score: 0.85
 min_score: 0.6
@@ -41,3 +42,7 @@ style:
   - alternatives
   - cost-benefit analysis
   - regulatory flexibility
+tags:
+- government
+- omb-regulatory
+- omb

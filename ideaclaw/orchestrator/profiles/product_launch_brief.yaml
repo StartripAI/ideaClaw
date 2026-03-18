@@ -1,7 +1,8 @@
 scenario_id: product_launch_brief
 display_name: Product Launch Brief
 category: marketing
-objective: Product launch planning brief.
+objective: Produce a high-quality Product Launch Brief that meets professional standards
+  for the marketing domain. Product launch planning brief.
 max_iterations: 5
 target_score: 0.85
 min_score: 0.6
@@ -40,3 +41,6 @@ style:
   - channels
   - timeline
   - metrics
+tags:
+- marketing
+- product-launch-brief

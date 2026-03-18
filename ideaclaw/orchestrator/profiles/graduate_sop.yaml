@@ -1,7 +1,8 @@
 scenario_id: graduate_sop
 display_name: Graduate SOP
 category: education
-objective: Statement of Purpose for grad school.
+objective: Produce a high-quality Graduate SOP that meets professional standards for
+  the education domain. Statement of Purpose for grad school.
 max_iterations: 5
 target_score: 0.85
 min_score: 0.6
@@ -42,3 +43,6 @@ style:
   - goals
   - fit
   - conclusion
+tags:
+- education
+- graduate-sop

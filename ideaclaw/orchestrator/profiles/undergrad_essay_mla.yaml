@@ -1,7 +1,8 @@
 scenario_id: undergrad_essay_mla
 display_name: Undergrad Essay (MLA)
 category: education
-objective: Undergraduate essay MLA format.
+objective: Produce a high-quality Undergrad Essay (MLA) that meets professional standards
+  for the education domain. Undergraduate essay MLA format.
 max_iterations: 5
 target_score: 0.85
 min_score: 0.6
@@ -39,3 +40,7 @@ style:
   - body
   - conclusion
   - works cited
+tags:
+- education
+- undergrad-essay-mla
+- mla

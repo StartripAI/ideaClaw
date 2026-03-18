@@ -1,7 +1,8 @@
 scenario_id: nsfc_china
 display_name: NSFC Grant (中国国自然)
 category: grants
-objective: National Natural Science Foundation of China.
+objective: Produce a high-quality NSFC Grant (中国国自然) that meets professional standards
+  for the grants domain. National Natural Science Foundation of China.
 max_iterations: 5
 target_score: 0.85
 min_score: 0.6
@@ -43,3 +44,8 @@ style:
   - innovation
   - timeline
   - budget
+tags:
+- grants
+- nsfc-china
+- nsf
+- nsfc

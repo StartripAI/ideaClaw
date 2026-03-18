@@ -1,7 +1,8 @@
 scenario_id: change_management
 display_name: Change Management Plan
 category: hr_ops
-objective: Organizational change management plan.
+objective: Produce a high-quality Change Management Plan that meets professional standards
+  for the hr_ops domain. Organizational change management plan.
 max_iterations: 5
 target_score: 0.85
 min_score: 0.6
@@ -39,3 +40,6 @@ style:
   - training
   - timeline
   - risk mitigation
+tags:
+- hr_ops
+- change-management

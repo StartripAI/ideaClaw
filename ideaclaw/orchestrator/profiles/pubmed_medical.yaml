@@ -4,7 +4,8 @@ category: academic_medical
 tags:
 - medical
 - clinical
-objective: Clinical research article following CONSORT/STROBE/PRISMA.
+objective: Produce a high-quality PubMed Medical Paper that meets professional standards
+  for the academic_medical domain. Clinical research article following CONSORT/STROBE/PRISMA.
 max_iterations: 5
 target_score: 0.85
 min_score: 0.6

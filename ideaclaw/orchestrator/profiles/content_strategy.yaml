@@ -1,7 +1,8 @@
 scenario_id: content_strategy
 display_name: Content Strategy Doc
 category: marketing
-objective: Content marketing strategy document.
+objective: Produce a high-quality Content Strategy Doc that meets professional standards
+  for the marketing domain. Content marketing strategy document.
 max_iterations: 5
 target_score: 0.85
 min_score: 0.6
@@ -39,3 +40,6 @@ style:
   - distribution
   - calendar
   - metrics
+tags:
+- marketing
+- content-strategy

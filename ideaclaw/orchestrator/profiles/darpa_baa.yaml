@@ -1,7 +1,8 @@
 scenario_id: darpa_baa
 display_name: DARPA BAA Response
 category: grants
-objective: DARPA BAA white paper.
+objective: Produce a high-quality DARPA BAA Response that meets professional standards
+  for the grants domain. DARPA BAA white paper.
 max_iterations: 5
 target_score: 0.85
 min_score: 0.6
@@ -41,3 +42,7 @@ style:
   - team
   - schedule
   - cost
+tags:
+- grants
+- darpa-baa
+- darpa

@@ -1,7 +1,8 @@
 scenario_id: agree_ii_guideline
 display_name: AGREE II Clinical Guideline
 category: medical
-objective: Clinical practice guideline per AGREE II.
+objective: Produce a high-quality AGREE II Clinical Guideline that meets professional
+  standards for the medical domain. Clinical practice guideline per AGREE II.
 max_iterations: 5
 target_score: 0.85
 min_score: 0.6
@@ -45,3 +46,7 @@ style:
   - clarity
   - applicability
   - editorial independence
+tags:
+- medical
+- agree-ii-guideline
+- agree

@@ -1,7 +1,8 @@
 scenario_id: screenplay_final_draft
 display_name: Screenplay (Final Draft)
 category: creative
-objective: Feature screenplay per Final Draft format.
+objective: Produce a high-quality Screenplay (Final Draft) that meets professional
+  standards for the creative domain. Feature screenplay per Final Draft format.
 max_iterations: 5
 target_score: 0.75
 min_score: 0.6
@@ -39,3 +40,7 @@ style:
   - action
   - dialogue
   - transitions
+tags:
+- creative
+- screenplay-final-draft
+- final draft

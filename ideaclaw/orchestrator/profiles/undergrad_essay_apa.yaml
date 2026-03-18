@@ -1,7 +1,8 @@
 scenario_id: undergrad_essay_apa
 display_name: Undergrad Essay (APA)
 category: education
-objective: Undergraduate academic essay APA format.
+objective: Produce a high-quality Undergrad Essay (APA) that meets professional standards
+  for the education domain. Undergraduate academic essay APA format.
 max_iterations: 5
 target_score: 0.85
 min_score: 0.6
@@ -40,3 +41,7 @@ style:
   - analysis
   - conclusion
   - references
+tags:
+- education
+- undergrad-essay-apa
+- apa

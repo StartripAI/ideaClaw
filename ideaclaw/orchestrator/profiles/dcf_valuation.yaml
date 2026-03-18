@@ -1,7 +1,8 @@
 scenario_id: dcf_valuation
 display_name: DCF Valuation Model
 category: finance
-objective: Discounted cash flow valuation narrative.
+objective: Produce a high-quality DCF Valuation Model that meets professional standards
+  for the finance domain. Discounted cash flow valuation narrative.
 max_iterations: 5
 target_score: 0.85
 min_score: 0.6
@@ -43,3 +44,6 @@ style:
   - wacc
   - terminal value
   - sensitivity
+tags:
+- finance
+- dcf-valuation

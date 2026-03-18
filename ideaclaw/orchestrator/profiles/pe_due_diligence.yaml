@@ -1,7 +1,8 @@
 scenario_id: pe_due_diligence
 display_name: PE Due Diligence
 category: finance
-objective: Private equity due diligence memo.
+objective: Produce a high-quality PE Due Diligence that meets professional standards
+  for the finance domain. Private equity due diligence memo.
 max_iterations: 5
 target_score: 0.85
 min_score: 0.6
@@ -42,3 +43,6 @@ style:
   - financials
   - risks
   - returns analysis
+tags:
+- finance
+- pe-due-diligence

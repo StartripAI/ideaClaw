@@ -1,7 +1,8 @@
 scenario_id: meeting_minutes
 display_name: Meeting Minutes
 category: general
-objective: Formal meeting minutes.
+objective: Produce a high-quality Meeting Minutes that meets professional standards
+  for the general domain. Formal meeting minutes.
 max_iterations: 2
 target_score: 0.65
 min_score: 0.6
@@ -39,3 +40,6 @@ style:
   - decisions
   - action items
   - next meeting
+tags:
+- general
+- meeting-minutes

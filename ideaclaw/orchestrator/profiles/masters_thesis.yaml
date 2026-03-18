@@ -1,7 +1,8 @@
 scenario_id: masters_thesis
 display_name: Master's Thesis
 category: education
-objective: Comprehensive master's thesis.
+objective: Produce a high-quality Master's Thesis that meets professional standards
+  for the education domain. Comprehensive master's thesis.
 max_iterations: 6
 target_score: 0.85
 min_score: 0.6
@@ -44,3 +45,6 @@ style:
   - results
   - discussion
   - conclusion
+tags:
+- education
+- masters-thesis

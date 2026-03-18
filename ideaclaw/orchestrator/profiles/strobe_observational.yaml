@@ -1,7 +1,8 @@
 scenario_id: strobe_observational
 display_name: STROBE Observational
 category: medical
-objective: Observational study per STROBE checklist.
+objective: Produce a high-quality STROBE Observational that meets professional standards
+  for the medical domain. Observational study per STROBE checklist.
 max_iterations: 5
 target_score: 0.85
 min_score: 0.6
@@ -46,3 +47,7 @@ style:
   - discussion
   - limitations
   - conclusion
+tags:
+- medical
+- strobe-observational
+- strobe

@@ -1,7 +1,8 @@
 scenario_id: consulting_proposal
 display_name: Consulting Proposal
 category: business
-objective: Management consulting proposal.
+objective: Produce a high-quality Consulting Proposal that meets professional standards
+  for the business domain. Management consulting proposal.
 max_iterations: 5
 target_score: 0.85
 min_score: 0.6
@@ -42,3 +43,6 @@ style:
   - team
   - fees
   - case studies
+tags:
+- business
+- consulting-proposal

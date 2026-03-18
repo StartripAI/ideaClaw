@@ -1,7 +1,8 @@
 scenario_id: whitepaper_tech
 display_name: Technical White Paper
 category: professional
-objective: Product/technology white paper.
+objective: Produce a high-quality Technical White Paper that meets professional standards
+  for the professional domain. Product/technology white paper.
 max_iterations: 5
 target_score: 0.85
 min_score: 0.6
@@ -38,3 +39,6 @@ style:
   - architecture
   - benchmarks
   - conclusion
+tags:
+- professional
+- whitepaper-tech

@@ -1,7 +1,8 @@
 scenario_id: ml_workshop
 display_name: ML Workshop Paper
 category: cs_ml
-objective: 4-page ML workshop paper.
+objective: Produce a high-quality ML Workshop Paper that meets professional standards
+  for the cs_ml domain. 4-page ML workshop paper.
 max_iterations: 3
 target_score: 0.75
 min_score: 0.5
@@ -41,3 +42,6 @@ style:
   - method
   - experiments
   - conclusion
+tags:
+- cs_ml
+- ml-workshop

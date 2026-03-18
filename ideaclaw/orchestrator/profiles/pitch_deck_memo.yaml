@@ -1,7 +1,8 @@
 scenario_id: pitch_deck_memo
 display_name: Pitch Deck Narrative
 category: business
-objective: Startup pitch deck narrative memo.
+objective: Produce a high-quality Pitch Deck Narrative that meets professional standards
+  for the business domain. Startup pitch deck narrative memo.
 max_iterations: 5
 target_score: 0.75
 min_score: 0.6
@@ -43,3 +44,6 @@ style:
   - traction
   - team
   - ask
+tags:
+- business
+- pitch-deck-memo

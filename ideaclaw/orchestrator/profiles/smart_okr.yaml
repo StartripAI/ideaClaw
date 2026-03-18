@@ -1,7 +1,8 @@
 scenario_id: smart_okr
 display_name: SMART OKR Document
 category: hr_ops
-objective: OKRs per SMART criteria framework.
+objective: Produce a high-quality SMART OKR Document that meets professional standards
+  for the hr_ops domain. OKRs per SMART criteria framework.
 max_iterations: 5
 target_score: 0.75
 min_score: 0.6
@@ -39,3 +40,7 @@ style:
   - timeline
   - metrics
   - review cadence
+tags:
+- hr_ops
+- smart-okr
+- smart

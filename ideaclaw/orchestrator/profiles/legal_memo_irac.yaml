@@ -1,7 +1,8 @@
 scenario_id: legal_memo_irac
 display_name: Legal Memo (IRAC)
 category: legal
-objective: Legal memo with IRAC structure.
+objective: Produce a high-quality Legal Memo (IRAC) that meets professional standards
+  for the legal domain. Legal memo with IRAC structure.
 max_iterations: 5
 target_score: 0.85
 min_score: 0.6
@@ -39,3 +40,7 @@ style:
   - facts
   - discussion
   - conclusion
+tags:
+- legal
+- legal-memo-irac
+- irac

@@ -1,7 +1,8 @@
 scenario_id: ip_opinion
 display_name: IP Opinion Letter
 category: legal
-objective: Intellectual property opinion letter.
+objective: Produce a high-quality IP Opinion Letter that meets professional standards
+  for the legal domain. Intellectual property opinion letter.
 max_iterations: 5
 target_score: 0.85
 min_score: 0.6
@@ -38,3 +39,6 @@ style:
   - analysis
   - prior art
   - conclusion
+tags:
+- legal
+- ip-opinion

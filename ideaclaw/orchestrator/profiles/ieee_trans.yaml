@@ -1,7 +1,8 @@
 scenario_id: ieee_trans
 display_name: IEEE Transactions
 category: science
-objective: IEEE Transactions journal paper.
+objective: Produce a high-quality IEEE Transactions that meets professional standards
+  for the science domain. IEEE Transactions journal paper.
 max_iterations: 5
 target_score: 0.85
 min_score: 0.6
@@ -42,3 +43,7 @@ style:
   - proposed method
   - simulation results
   - conclusion
+tags:
+- science
+- ieee-trans
+- ieee

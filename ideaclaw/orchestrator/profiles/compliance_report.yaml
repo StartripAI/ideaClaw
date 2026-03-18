@@ -1,7 +1,8 @@
 scenario_id: compliance_report
 display_name: Compliance Report
 category: legal
-objective: Regulatory compliance assessment.
+objective: Produce a high-quality Compliance Report that meets professional standards
+  for the legal domain. Regulatory compliance assessment.
 max_iterations: 5
 target_score: 0.85
 min_score: 0.6
@@ -39,3 +40,6 @@ style:
   - gaps
   - remediation plan
   - timeline
+tags:
+- legal
+- compliance-report

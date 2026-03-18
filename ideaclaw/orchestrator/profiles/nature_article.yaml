@@ -1,7 +1,8 @@
 scenario_id: nature_article
 display_name: Nature Article
 category: science
-objective: Nature primary research article.
+objective: Produce a high-quality Nature Article that meets professional standards
+  for the science domain. Nature primary research article.
 max_iterations: 5
 target_score: 0.9
 min_score: 0.6
@@ -43,3 +44,7 @@ style:
   - results
   - discussion
   - methods
+tags:
+- science
+- nature-article
+- nature

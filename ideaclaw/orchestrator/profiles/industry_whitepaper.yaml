@@ -1,7 +1,8 @@
 scenario_id: industry_whitepaper
 display_name: Industry White Paper
 category: general
-objective: Cross-industry analytical white paper.
+objective: Produce a high-quality Industry White Paper that meets professional standards
+  for the general domain. Cross-industry analytical white paper.
 max_iterations: 5
 target_score: 0.85
 min_score: 0.6
@@ -42,3 +43,6 @@ style:
   - findings
   - recommendations
   - conclusion
+tags:
+- general
+- industry-whitepaper

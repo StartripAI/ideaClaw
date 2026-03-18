@@ -1,7 +1,8 @@
 scenario_id: policy_brief_rand
 display_name: RAND Policy Brief
 category: legal
-objective: RAND-style evidence-based policy brief.
+objective: Produce a high-quality RAND Policy Brief that meets professional standards
+  for the legal domain. RAND-style evidence-based policy brief.
 max_iterations: 5
 target_score: 0.85
 min_score: 0.6
@@ -41,3 +42,7 @@ style:
   - evidence
   - recommendations
   - conclusion
+tags:
+- legal
+- policy-brief-rand
+- rand

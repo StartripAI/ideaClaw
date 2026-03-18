@@ -1,7 +1,8 @@
 scenario_id: book_proposal
 display_name: Book Proposal
 category: creative
-objective: Non-fiction book proposal.
+objective: Produce a high-quality Book Proposal that meets professional standards
+  for the creative domain. Non-fiction book proposal.
 max_iterations: 5
 target_score: 0.85
 min_score: 0.6
@@ -39,3 +40,6 @@ style:
   - table of contents
   - sample chapter
   - author bio
+tags:
+- creative
+- book-proposal

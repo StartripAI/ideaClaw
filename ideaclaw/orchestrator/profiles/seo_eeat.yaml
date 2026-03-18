@@ -1,7 +1,8 @@
 scenario_id: seo_eeat
 display_name: SEO Content (E-E-A-T)
 category: marketing
-objective: Google E-E-A-T optimized long-form content.
+objective: Produce a high-quality SEO Content (E-E-A-T) that meets professional standards
+  for the marketing domain. Google E-E-A-T optimized long-form content.
 max_iterations: 5
 target_score: 0.75
 min_score: 0.6
@@ -39,3 +40,7 @@ style:
   - expert quotes
   - conclusion
   - faq
+tags:
+- marketing
+- seo-eeat
+- e-e-a-t

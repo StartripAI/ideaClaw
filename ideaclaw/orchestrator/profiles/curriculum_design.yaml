@@ -1,7 +1,8 @@
 scenario_id: curriculum_design
 display_name: Curriculum Design
 category: education
-objective: Course curriculum document.
+objective: Produce a high-quality Curriculum Design that meets professional standards
+  for the education domain. Course curriculum document.
 max_iterations: 5
 target_score: 0.8
 min_score: 0.6
@@ -41,3 +42,6 @@ style:
   - schedule
   - assessment strategy
   - resources
+tags:
+- education
+- curriculum-design

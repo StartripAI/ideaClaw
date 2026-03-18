@@ -1,7 +1,8 @@
 scenario_id: executive_briefing
 display_name: Executive Briefing
 category: general
-objective: C-suite executive briefing.
+objective: Produce a high-quality Executive Briefing that meets professional standards
+  for the general domain. C-suite executive briefing.
 max_iterations: 5
 target_score: 0.85
 min_score: 0.6
@@ -40,3 +41,11 @@ style:
   - key findings
   - implications
   - recommended actions
+  - executive_summary
+  - analysis
+  - recommendations
+  - next_steps
+  - appendix
+tags:
+- general
+- executive-briefing

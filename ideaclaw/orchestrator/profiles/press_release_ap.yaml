@@ -1,7 +1,8 @@
 scenario_id: press_release_ap
 display_name: Press Release (AP)
 category: journalism
-objective: AP-style press release.
+objective: Produce a high-quality Press Release (AP) that meets professional standards
+  for the journalism domain. AP-style press release.
 max_iterations: 5
 target_score: 0.85
 min_score: 0.6
@@ -39,3 +40,7 @@ style:
   - body
   - quote
   - boilerplate
+tags:
+- journalism
+- press-release-ap
+- ap

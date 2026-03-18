@@ -1,7 +1,8 @@
 scenario_id: contract_analysis
 display_name: Contract Analysis
 category: legal
-objective: Commercial contract analysis memo.
+objective: Produce a high-quality Contract Analysis that meets professional standards
+  for the legal domain. Commercial contract analysis memo.
 max_iterations: 5
 target_score: 0.85
 min_score: 0.6
@@ -37,3 +38,6 @@ style:
   - key terms
   - risk assessment
   - recommendations
+tags:
+- legal
+- contract-analysis

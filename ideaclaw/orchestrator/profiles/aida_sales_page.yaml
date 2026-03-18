@@ -1,7 +1,8 @@
 scenario_id: aida_sales_page
 display_name: AIDA Sales Page
 category: marketing
-objective: AIDA framework sales/landing page.
+objective: Produce a high-quality AIDA Sales Page that meets professional standards
+  for the marketing domain. AIDA framework sales/landing page.
 max_iterations: 5
 target_score: 0.75
 min_score: 0.6
@@ -37,3 +38,7 @@ style:
   - interest
   - desire
   - action
+tags:
+- marketing
+- aida-sales-page
+- aida

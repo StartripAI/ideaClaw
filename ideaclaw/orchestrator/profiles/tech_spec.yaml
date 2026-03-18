@@ -1,7 +1,8 @@
 scenario_id: tech_spec
 display_name: Technical Specification
 category: professional
-objective: IEEE/ISO-style technical specification.
+objective: Produce a high-quality Technical Specification that meets professional
+  standards for the professional domain. IEEE/ISO-style technical specification.
 max_iterations: 5
 target_score: 0.85
 min_score: 0.6
@@ -39,3 +40,8 @@ style:
   - requirements
   - design
   - verification
+tags:
+- professional
+- tech-spec
+- ieee
+- iso

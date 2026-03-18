@@ -1,7 +1,8 @@
 scenario_id: literature_review
 display_name: Systematic Literature Review
 category: general
-objective: PRISMA-compliant systematic review.
+objective: Produce a high-quality Systematic Literature Review that meets professional
+  standards for the general domain. PRISMA-compliant systematic review.
 max_iterations: 5
 target_score: 0.85
 min_score: 0.6
@@ -46,3 +47,6 @@ style:
   - discussion
   - limitations
   - conclusion
+tags:
+- general
+- literature-review

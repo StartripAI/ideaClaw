@@ -4,7 +4,9 @@ category: academic_science
 tags:
 - journal
 - top-tier
-objective: Nature/Science quality article demonstrating major scientific advance.
+objective: Produce a high-quality Nature/Science Article that meets professional standards
+  for the academic_science domain. Nature/Science quality article demonstrating major
+  scientific advance.
 max_iterations: 6
 target_score: 0.9
 min_score: 0.65

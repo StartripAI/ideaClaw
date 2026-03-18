@@ -1,7 +1,10 @@
 scenario_id: icml_2025
 display_name: ICML 2025
 category: cs_ml
-objective: ICML 2025 conference paper per reviewer guidelines.
+objective: 'ICML 2025 conference paper per reviewer guidelines.
+
+  Adhere to ICML 2025 review criteria (novelty, significance, clarity, correctness,
+  reproducibility).'
 max_iterations: 5
 target_score: 0.85
 min_score: 0.6

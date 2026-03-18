@@ -1,7 +1,8 @@
 scenario_id: aaai_2025
 display_name: AAAI 2025
 category: cs_ml
-objective: AAAI 2025 AI paper.
+objective: Produce a high-quality AAAI 2025 that meets professional standards for
+  the cs_ml domain. AAAI 2025 AI paper.
 max_iterations: 5
 target_score: 0.85
 min_score: 0.6
@@ -42,3 +43,7 @@ style:
   - method
   - experiments
   - conclusion
+tags:
+- cs_ml
+- aaai-2025
+- aaai

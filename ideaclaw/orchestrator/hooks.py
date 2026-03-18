@@ -245,34 +245,46 @@ class LLMHooks:
 
     def __init__(
         self,
-        config: Any,
+        config: Any = None,
         idea: str = "",
         program_md_path: Optional[Path] = None,
         style_guide_path: Optional[Path] = None,
         output_dir: Optional[Path] = None,
+        llm_callable: Optional[Any] = None,
     ):
         """Initialize with config and optional AR-style overrides.
 
+        Supports two modes:
+        1. BYOK mode: Pass config with llm.api_key → uses LLMClient
+        2. IDE-native mode: Pass llm_callable → IDE provides LLM directly
+
         Args:
-            config: IdeaClawConfig or dict with 'llm' key.
+            config: IdeaClawConfig or dict with 'llm' key. Optional if llm_callable provided.
             idea: The user's idea/topic (main input).
             program_md_path: Path to program.md override.
             style_guide_path: Path to style_guide.md.
             output_dir: Where to write train.md and other logs.
+            llm_callable: IDE-native LLM function(system_prompt, user_prompt, **kwargs) -> str.
+                          When set, LLMClient is not needed — the IDE IS the LLM.
         """
-        from ideaclaw.llm.client import LLMClient
         from ideaclaw.orchestrator.evaluator import UnifiedEvaluator
 
-        # Resolve LLM config
-        if hasattr(config, "llm"):
-            from dataclasses import asdict
-            llm_cfg = asdict(config.llm) if hasattr(config.llm, "__dataclass_fields__") else config.llm
-        elif isinstance(config, dict):
-            llm_cfg = config.get("llm", {})
-        else:
-            llm_cfg = {}
+        self._ide_mode = llm_callable is not None
+        self._llm_callable = llm_callable
+        self.llm = None
 
-        self.llm = LLMClient(llm_cfg)
+        if not self._ide_mode:
+            # BYOK mode: create LLMClient from config
+            from ideaclaw.llm.client import LLMClient
+            if hasattr(config, "llm"):
+                from dataclasses import asdict
+                llm_cfg = asdict(config.llm) if hasattr(config.llm, "__dataclass_fields__") else config.llm
+            elif isinstance(config, dict):
+                llm_cfg = config.get("llm", {})
+            else:
+                llm_cfg = {}
+            self.llm = LLMClient(llm_cfg)
+
         self.evaluator = UnifiedEvaluator()
         self.usage = UsageStats()
         self.idea = idea
@@ -316,34 +328,38 @@ class LLMHooks:
     ) -> str:
         """Call LLM with retry logic and usage tracking.
 
-        Args:
-            system_prompt: System message.
-            user_prompt: User message.
-            json_mode: Request JSON output.
-            temperature: Sampling temperature.
-            max_tokens: Max output tokens.
-            purpose: Label for logging.
-
-        Returns:
-            LLM response text.
-
-        Raises:
-            RuntimeError: If all retries exhaust.
+        Supports two modes:
+        1. IDE-native: routes through self._llm_callable (IDE is the LLM)
+        2. BYOK: routes through self.llm (LLMClient with API key)
         """
         last_error = None
         for attempt in range(self.MAX_RETRIES):
             try:
-                result = self.llm.chat_with_fallback(
-                    system_prompt=system_prompt,
-                    user_prompt=user_prompt,
-                    json_mode=json_mode,
-                    temperature=temperature,
-                    max_tokens=max_tokens,
-                )
-                # Estimate tokens (rough: 1 token ≈ 4 chars)
+                if self._ide_mode:
+                    # IDE-native mode: call IDE's LLM directly
+                    result = self._llm_callable(
+                        system_prompt=system_prompt,
+                        user_prompt=user_prompt,
+                        json_mode=json_mode,
+                        temperature=temperature,
+                        max_tokens=max_tokens,
+                    )
+                    model_name = "ide-native"
+                else:
+                    # BYOK mode: call LLMClient
+                    result = self.llm.chat_with_fallback(
+                        system_prompt=system_prompt,
+                        user_prompt=user_prompt,
+                        json_mode=json_mode,
+                        temperature=temperature,
+                        max_tokens=max_tokens,
+                    )
+                    model_name = self.llm.primary_model
+
+                # Track usage
                 in_tokens = (len(system_prompt) + len(user_prompt)) // 4
                 out_tokens = len(result) // 4
-                self.usage.record(self.llm.primary_model, in_tokens, out_tokens)
+                self.usage.record(model_name, in_tokens, out_tokens)
                 logger.debug("%s: %d in / %d out tokens (attempt %d)",
                              purpose, in_tokens, out_tokens, attempt + 1)
                 return result
@@ -353,7 +369,7 @@ class LLMHooks:
                 self.usage.errors += 1
                 if attempt < self.MAX_RETRIES - 1:
                     self.usage.retries += 1
-                    delay = self.RETRY_DELAY * (2 ** attempt)  # Exponential backoff
+                    delay = self.RETRY_DELAY * (2 ** attempt)
                     logger.warning("%s attempt %d failed: %s (retry in %.0fs)",
                                    purpose, attempt + 1, e, delay)
                     time.sleep(delay)

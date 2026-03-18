@@ -1,7 +1,8 @@
 scenario_id: comparison_analysis
 display_name: Comparison Analysis
 category: general
-objective: Side-by-side comparison document.
+objective: Produce a high-quality Comparison Analysis that meets professional standards
+  for the general domain. Side-by-side comparison document.
 max_iterations: 5
 target_score: 0.8
 min_score: 0.6
@@ -40,3 +41,6 @@ style:
   - comparison matrix
   - analysis
   - recommendation
+tags:
+- general
+- comparison-analysis

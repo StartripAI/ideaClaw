@@ -1,7 +1,8 @@
 scenario_id: emnlp_2025
 display_name: EMNLP 2025
 category: cs_ml
-objective: EMNLP 2025 empirical NLP.
+objective: Produce a high-quality EMNLP 2025 that meets professional standards for
+  the cs_ml domain. EMNLP 2025 empirical NLP.
 max_iterations: 5
 target_score: 0.85
 min_score: 0.6
@@ -43,3 +44,7 @@ style:
   - experiments
   - conclusion
   - error analysis
+tags:
+- cs_ml
+- emnlp-2025
+- emnlp

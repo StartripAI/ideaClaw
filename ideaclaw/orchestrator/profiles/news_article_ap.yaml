@@ -1,7 +1,8 @@
 scenario_id: news_article_ap
 display_name: News Article (AP Style)
 category: journalism
-objective: AP Stylebook news article.
+objective: Produce a high-quality News Article (AP Style) that meets professional
+  standards for the journalism domain. AP Stylebook news article.
 max_iterations: 5
 target_score: 0.85
 min_score: 0.6
@@ -39,3 +40,7 @@ style:
   - body
   - quotes
   - background
+tags:
+- journalism
+- news-article-ap
+- ap

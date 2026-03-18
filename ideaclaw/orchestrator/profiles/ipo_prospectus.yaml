@@ -1,7 +1,8 @@
 scenario_id: ipo_prospectus
 display_name: IPO Prospectus Summary
 category: finance
-objective: IPO prospectus executive summary.
+objective: Produce a high-quality IPO Prospectus Summary that meets professional standards
+  for the finance domain. IPO prospectus executive summary.
 max_iterations: 5
 target_score: 0.85
 min_score: 0.6
@@ -42,3 +43,6 @@ style:
   - financials
   - risk factors
   - use of proceeds
+tags:
+- finance
+- ipo-prospectus

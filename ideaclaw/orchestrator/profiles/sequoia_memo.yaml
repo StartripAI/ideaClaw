@@ -1,7 +1,8 @@
 scenario_id: sequoia_memo
 display_name: Sequoia Capital Memo
 category: finance
-objective: Sequoia investment memo.
+objective: Produce a high-quality Sequoia Capital Memo that meets professional standards
+  for the finance domain. Sequoia investment memo.
 max_iterations: 5
 target_score: 0.85
 min_score: 0.6
@@ -44,3 +45,7 @@ style:
   - competition
   - team
   - financials
+tags:
+- finance
+- sequoia-memo
+- sequoia

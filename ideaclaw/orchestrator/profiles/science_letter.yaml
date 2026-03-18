@@ -1,7 +1,8 @@
 scenario_id: science_letter
 display_name: Science Letter
 category: science
-objective: Science short communication.
+objective: Produce a high-quality Science Letter that meets professional standards
+  for the science domain. Science short communication.
 max_iterations: 5
 target_score: 0.9
 min_score: 0.6
@@ -40,3 +41,7 @@ style:
   - abstract
   - main text
   - methods
+tags:
+- science
+- science-letter
+- science

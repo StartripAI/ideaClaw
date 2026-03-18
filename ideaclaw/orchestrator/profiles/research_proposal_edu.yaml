@@ -1,7 +1,8 @@
 scenario_id: research_proposal_edu
 display_name: Research Proposal (Edu)
 category: education
-objective: Educational research proposal.
+objective: Produce a high-quality Research Proposal (Edu) that meets professional
+  standards for the education domain. Educational research proposal.
 max_iterations: 5
 target_score: 0.85
 min_score: 0.6
@@ -40,3 +41,6 @@ style:
   - methodology
   - timeline
   - significance
+tags:
+- education
+- research-proposal-edu

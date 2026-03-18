@@ -1,7 +1,8 @@
 scenario_id: regulatory_comment
 display_name: Regulatory Comment
 category: legal
-objective: Public comment on proposed regulation.
+objective: Produce a high-quality Regulatory Comment that meets professional standards
+  for the legal domain. Public comment on proposed regulation.
 max_iterations: 5
 target_score: 0.85
 min_score: 0.6
@@ -38,3 +39,6 @@ style:
   - analysis
   - recommendations
   - conclusion
+tags:
+- legal
+- regulatory-comment

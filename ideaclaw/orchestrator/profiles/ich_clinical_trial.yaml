@@ -1,7 +1,8 @@
 scenario_id: ich_clinical_trial
 display_name: ICH Clinical Trial
 category: medical
-objective: Clinical trial protocol per ICH E6(R3) GCP.
+objective: Produce a high-quality ICH Clinical Trial that meets professional standards
+  for the medical domain. Clinical trial protocol per ICH E6(R3) GCP.
 max_iterations: 5
 target_score: 0.9
 min_score: 0.6
@@ -47,3 +48,7 @@ style:
   - assessments
   - statistics
   - ethics
+tags:
+- medical
+- ich-clinical-trial
+- ich

@@ -4,7 +4,9 @@ category: communications
 tags:
 - pr
 - media
-objective: AP-style press release with inverted pyramid and quotes.
+objective: Produce a high-quality Press Release (AP Style) that meets professional
+  standards for the communications domain. AP-style press release with inverted pyramid
+  and quotes.
 max_iterations: 3
 target_score: 0.75
 min_score: 0.5

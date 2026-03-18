@@ -1,7 +1,8 @@
 scenario_id: investigative_report
 display_name: Investigative Report
 category: journalism
-objective: Long-form investigative journalism.
+objective: Produce a high-quality Investigative Report that meets professional standards
+  for the journalism domain. Long-form investigative journalism.
 max_iterations: 5
 target_score: 0.85
 min_score: 0.6
@@ -39,3 +40,6 @@ style:
   - evidence
   - impact
   - conclusion
+tags:
+- journalism
+- investigative-report

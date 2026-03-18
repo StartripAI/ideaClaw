@@ -1,7 +1,8 @@
 scenario_id: api_documentation
 display_name: API Documentation
 category: professional
-objective: REST/GraphQL API reference documentation.
+objective: Produce a high-quality API Documentation that meets professional standards
+  for the professional domain. REST/GraphQL API reference documentation.
 max_iterations: 5
 target_score: 0.75
 min_score: 0.6
@@ -39,3 +40,6 @@ style:
   - request/response
   - errors
   - examples
+tags:
+- professional
+- api-documentation

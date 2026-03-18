@@ -1,7 +1,8 @@
 scenario_id: legal_brief
 display_name: Legal Brief
 category: legal
-objective: Appellate brief with Bluebook citations.
+objective: Produce a high-quality Legal Brief that meets professional standards for
+  the legal domain. Appellate brief with Bluebook citations.
 max_iterations: 5
 target_score: 0.85
 min_score: 0.6
@@ -39,3 +40,7 @@ style:
   - argument
   - conclusion
   - certificate
+tags:
+- legal
+- legal-brief
+- bluebook
