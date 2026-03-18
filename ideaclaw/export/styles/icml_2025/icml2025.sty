@@ -1,0 +1,33 @@
+% ICML 2025 Style File (Compatible)
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{icml2025}[2025/01/01 ICML 2025 style]
+
+\RequirePackage[letterpaper,margin=1in]{geometry}
+\RequirePackage{natbib}
+\RequirePackage{hyperref}
+\RequirePackage{url}
+\RequirePackage{booktabs}
+\RequirePackage{amsfonts}
+\RequirePackage{amsmath}
+\RequirePackage{graphicx}
+\RequirePackage{microtype}
+\RequirePackage{algorithm}
+\RequirePackage{algorithmic}
+
+% Two-column by default for ICML
+\newif\ificmlonecolumn
+\icmlonecolumnfalse
+
+% Title
+\renewcommand{\maketitle}{%
+  \twocolumn[\centering{\LARGE\bfseries\@title\par}\vspace{1em}%
+  {\large\@author\par}\vspace{2em}]%
+}
+
+% Abstract
+\renewenvironment{abstract}{%
+  \centerline{\bfseries Abstract}%
+  \vspace{0.5ex}\begin{quote}\small%
+}{\end{quote}}
+
+\endinput

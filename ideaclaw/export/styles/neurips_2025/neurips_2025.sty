@@ -1,0 +1,42 @@
+% NeurIPS 2025 Style File (Compatible)
+% Based on the official NeurIPS template
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{neurips_2025}[2025/01/01 NeurIPS 2025 style]
+
+\RequirePackage{geometry}
+\geometry{letterpaper, margin=1in, top=1.25in, bottom=1.25in}
+
+\RequirePackage{natbib}
+\RequirePackage{hyperref}
+\RequirePackage{url}
+\RequirePackage{booktabs}
+\RequirePackage{amsfonts}
+\RequirePackage{amsmath}
+\RequirePackage{graphicx}
+\RequirePackage{microtype}
+\RequirePackage{xcolor}
+
+% Title formatting
+\newcommand{\neuripsauthor}[1]{\author{#1}}
+
+% Abstract environment
+\renewenvironment{abstract}{%
+  \centerline{\large\bfseries Abstract}%
+  \vspace{0.5ex}%
+  \begin{quote}%
+}{%
+  \end{quote}%
+}
+
+% Section formatting
+\renewcommand{\section}{\@startsection{section}{1}{\z@}%
+  {-3.5ex \@plus -1ex \@minus -.2ex}%
+  {2.3ex \@plus.2ex}%
+  {\normalfont\Large\bfseries}}
+
+\renewcommand{\subsection}{\@startsection{subsection}{2}{\z@}%
+  {-3.25ex\@plus -1ex \@minus -.2ex}%
+  {1.5ex \@plus .2ex}%
+  {\normalfont\large\bfseries}}
+
+\endinput
