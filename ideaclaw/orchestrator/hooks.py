@@ -1,21 +1,18 @@
-"""Default LLM-powered hooks for the orchestrator loop.
+"""Production-grade LLM hooks for the orchestrator loop.
 
-Wires existing LLMClient (BYOK, 6 providers, fallback chain) into the
-orchestrator's hook protocols. This is the "brain" — turns the empty pipe
-into a real content-generation system.
+Wires LLMClient (BYOK: OpenAI, Anthropic, DeepSeek, Groq, Together, custom)
+into the orchestrator's hook protocols.
 
-Usage:
-    from ideaclaw.config import load_config
-    from ideaclaw.orchestrator.hooks import LLMHooks
+Architecture mapping (AR → IdeaClaw):
+    program.md   → scenario YAML + optional program.md override → INPUT
+    train.py     → draft document being iterated              → ARTIFACT
+    train.md     → experiment log (auto-generated)            → LOG
+    val_bpb      → composite score from evaluator             → SIGNAL
+    final output → accepted document + reports                → OUTPUT
 
-    hooks = LLMHooks(load_config())
-    # Now pass hooks.generate, hooks.evaluate, etc. to ResearchLoop
-    # Or just: ResearchLoop(config=load_config())  # auto-wires
-
-AR pattern integration:
-    - profile YAML → system prompt (like program.md)
-    - Optional program.md override → user-editable objective
-    - train.md → auto-generated experiment log (like AR's train.md)
+Input/Output contract:
+    INPUT:  idea (str) + scenario profile (YAML) + [program.md] + [style_guide.md]
+    OUTPUT: final document (.md) + train.md (log) + evolution report + state.json
 """
 
 from __future__ import annotations
@@ -23,197 +20,252 @@ from __future__ import annotations
 import json
 import logging
 import textwrap
-from dataclasses import asdict
+import time
+from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Dict, List, Optional
-
-from ideaclaw.orchestrator.evaluator import UnifiedEvaluator
+from typing import Any, Dict, List, Optional, Tuple
 
 logger = logging.getLogger(__name__)
+
+
+# ---------------------------------------------------------------------------
+# Token / Cost tracking
+# ---------------------------------------------------------------------------
+
+@dataclass
+class UsageStats:
+    """Track LLM usage across the entire loop run."""
+    total_input_tokens: int = 0
+    total_output_tokens: int = 0
+    total_calls: int = 0
+    total_cost_usd: float = 0.0
+    errors: int = 0
+    retries: int = 0
+    call_log: List[Dict[str, Any]] = field(default_factory=list)
+
+    # Rough cost estimates per 1M tokens (input/output)
+    COST_TABLE: Dict[str, Tuple[float, float]] = field(default_factory=lambda: {
+        "gpt-4o": (2.50, 10.00),
+        "gpt-4o-mini": (0.15, 0.60),
+        "claude-sonnet-4-20250514": (3.00, 15.00),
+        "claude-haiku-4-20250514": (0.80, 4.00),
+        "deepseek-chat": (0.14, 0.28),
+        "deepseek-reasoner": (0.55, 2.19),
+    })
+
+    def record(self, model: str, input_tokens: int, output_tokens: int):
+        self.total_input_tokens += input_tokens
+        self.total_output_tokens += output_tokens
+        self.total_calls += 1
+        costs = self.COST_TABLE.get(model, (1.0, 3.0))
+        cost = (input_tokens * costs[0] + output_tokens * costs[1]) / 1_000_000
+        self.total_cost_usd += cost
+        self.call_log.append({
+            "model": model, "input_tokens": input_tokens,
+            "output_tokens": output_tokens, "cost_usd": round(cost, 6),
+        })
+
+    def summary(self) -> str:
+        return (
+            f"LLM Usage: {self.total_calls} calls, "
+            f"{self.total_input_tokens:,} in / {self.total_output_tokens:,} out tokens, "
+            f"${self.total_cost_usd:.4f} est. cost, "
+            f"{self.errors} errors, {self.retries} retries"
+        )
 
 
 # ---------------------------------------------------------------------------
 # Prompt builders
 # ---------------------------------------------------------------------------
 
-def build_generate_prompt(
-    profile: Any,
-    sources: List[Any],
-    previous_draft: Optional[str],
-    feedback: str,
-    program_md: str = "",
-) -> tuple[str, str]:
-    """Build system + user prompts from profile + sources.
+def build_system_prompt(profile: Any, program_md: str = "", style_guide: str = "") -> str:
+    """Build the system prompt from profile + optional overrides.
 
-    Returns (system_prompt, user_prompt) tuple.
+    This is the equivalent of AR's program.md — it tells the LLM:
+    - What to produce
+    - What structure to follow
+    - What style to use
+    - What quality standards to meet
     """
-    # Objective: program.md overrides YAML if present
-    objective = program_md.strip() if program_md else profile.objective
+    objective = program_md.strip() if program_md else getattr(profile, "objective", "")
 
-    # Required sections as numbered list
-    sections_list = ""
+    # Sections
+    sections = ""
     if hasattr(profile, "style") and profile.style.required_sections:
-        sections_list = "\n".join(
-            f"  {i+1}. {s.title()}"
-            for i, s in enumerate(profile.style.required_sections)
-        )
+        sections = "\n".join(f"  {i+1}. {s.title()}" for i, s in enumerate(profile.style.required_sections))
 
-    # Format sources as reference list
-    sources_text = ""
-    if sources:
-        refs = []
-        for i, src in enumerate(sources[:20], 1):  # Cap at 20
-            if isinstance(src, dict):
-                title = src.get("title", "Untitled")
-                year = src.get("year", "")
-                abstract = src.get("abstract", "")[:200]
-                refs.append(f"[{i}] {title} ({year})\n    {abstract}")
-            else:
-                refs.append(f"[{i}] {src}")
-        sources_text = "\n".join(refs)
-
-    # Style instructions
+    # Style
     formality = getattr(profile.style, "formality", 0.8) if hasattr(profile, "style") else 0.8
     voice = getattr(profile.style, "voice", "third_person") if hasattr(profile, "style") else "third_person"
     cite_style = getattr(profile.style, "citation_style", "natbib") if hasattr(profile, "style") else "natbib"
 
-    tone_map = {
-        (0.0, 0.3): "casual, conversational",
-        (0.3, 0.6): "professional but approachable",
-        (0.6, 0.8): "formal, professional",
-        (0.8, 1.01): "highly formal, academic",
-    }
     tone = "professional"
-    for (lo, hi), desc in tone_map.items():
-        if lo <= formality < hi:
-            tone = desc
-            break
+    if formality < 0.3: tone = "casual, conversational"
+    elif formality < 0.6: tone = "professional but approachable"
+    elif formality < 0.8: tone = "formal, professional"
+    else: tone = "highly formal, academic"
 
-    voice_map = {
-        "first_person": "first person (I/we)",
-        "third_person": "third person (the authors, this paper)",
-        "second_person": "second person (you)",
-        "mixed": "mixed voice as appropriate",
-    }
+    voice_map = {"first_person": "first person (I/we)", "third_person": "third person",
+                 "second_person": "second person (you)", "mixed": "mixed voice"}
     voice_desc = voice_map.get(voice, voice)
 
-    system_prompt = textwrap.dedent(f"""\
+    # Evaluation criteria as quality targets
+    criteria_text = ""
+    if hasattr(profile, "criteria") and profile.criteria:
+        criteria_text = "QUALITY TARGETS:\n" + "\n".join(
+            f"  - {c.name}: weight {c.weight:.0%}, minimum {c.min_score:.0%}"
+            for c in profile.criteria
+        )
+
+    # Style guide override
+    style_section = ""
+    if style_guide:
+        style_section = f"\nADDITIONAL STYLE GUIDE:\n{style_guide[:2000]}\n"
+
+    return textwrap.dedent(f"""\
         You are an expert writer producing a {profile.display_name}.
 
         OBJECTIVE:
-        {objective}
+        {objective or f"Produce a high-quality {profile.display_name}."}
 
-        STRUCTURE (required sections):
-        {sections_list or "Use appropriate sections for this document type."}
+        REQUIRED STRUCTURE:
+        {sections or "Use appropriate sections for this document type."}
 
         STYLE:
         - Tone: {tone}
         - Voice: {voice_desc}
         - Citation style: {cite_style}
-        - Category: {profile.category}
+        - Category: {getattr(profile, 'category', 'general')}
 
+        {criteria_text}
+        {style_section}
         RULES:
         - Write the COMPLETE document, not an outline or summary.
-        - Include real citations referencing the provided sources.
-        - Be specific, detailed, and substantive.
-        - Match the quality expected for {profile.display_name}.
-    """)
+        - Include real citations referencing the provided sources where relevant.
+        - Be specific, detailed, and substantive — match the quality expected for {profile.display_name}.
+        - Output in markdown format.
+    """).strip()
 
-    # User prompt
+
+def build_user_prompt(
+    sources: List[Any],
+    previous_draft: Optional[str],
+    feedback: str,
+    idea: str = "",
+) -> str:
+    """Build the user prompt with sources, previous draft, and feedback."""
     parts = []
-    if sources_text:
-        parts.append(f"REFERENCE SOURCES:\n{sources_text}")
+
+    if idea:
+        parts.append(f"TOPIC/IDEA:\n{idea}")
+
+    # Format sources
+    if sources:
+        refs = []
+        for i, src in enumerate(sources[:20], 1):
+            if isinstance(src, dict):
+                title = src.get("title", "Untitled")
+                year = src.get("year", "")
+                abstract = (src.get("abstract", "") or "")[:300]
+                ref = f"[{i}] {title} ({year})"
+                if abstract:
+                    ref += f"\n    {abstract}"
+                refs.append(ref)
+            else:
+                refs.append(f"[{i}] {src}")
+        parts.append(f"REFERENCE SOURCES:\n" + "\n".join(refs))
 
     if previous_draft and feedback:
-        parts.append(f"PREVIOUS DRAFT (improve based on feedback):\n{previous_draft[:3000]}")
-        parts.append(f"FEEDBACK TO ADDRESS:\n{feedback}")
+        # Iterative improvement mode
+        parts.append(f"PREVIOUS DRAFT:\n{previous_draft[:4000]}")
+        parts.append(f"REVIEWER FEEDBACK (address these issues):\n{feedback}")
+        parts.append("Rewrite the document, keeping what works and improving the weak areas.")
     elif previous_draft:
-        parts.append(f"PREVIOUS DRAFT (improve it):\n{previous_draft[:3000]}")
+        parts.append(f"PREVIOUS DRAFT (improve it):\n{previous_draft[:4000]}")
+        parts.append("Improve this draft's quality, depth, and completeness.")
     else:
         parts.append("Write the complete document now.")
 
-    user_prompt = "\n\n".join(parts)
-
-    return system_prompt, user_prompt
+    return "\n\n".join(parts)
 
 
-def build_judge_prompt(
-    profile: Any,
-    draft: str,
-    criteria_names: List[str],
-) -> tuple[str, str]:
-    """Build LLM-as-judge prompt for subjective evaluation dimensions.
-
-    Returns (system_prompt, user_prompt).
-    """
-    criteria_desc = "\n".join(f"- {name}: score 0.0-1.0" for name in criteria_names)
+def build_judge_prompt(profile: Any, draft: str, criteria_names: List[str]) -> Tuple[str, str]:
+    """Build LLM-as-judge prompt for subjective evaluation."""
+    criteria_desc = "\n".join(f"  - {name}: 0.0 (poor) to 1.0 (excellent)" for name in criteria_names)
 
     system_prompt = textwrap.dedent(f"""\
-        You are a strict reviewer for {profile.display_name}.
-        Evaluate the following document on these criteria:
+        You are a strict, expert reviewer evaluating a {profile.display_name}.
+        Rate the document on each criterion:
         {criteria_desc}
 
-        Return ONLY a JSON object with criterion names as keys and float scores (0.0-1.0) as values.
-        Be critical and realistic. Score relative to the standards of {profile.display_name}.
-        Example response: {{"novelty": 0.65, "significance": 0.72}}
-    """)
+        Scoring guide:
+        - 0.0-0.3: Major deficiencies, unpublishable
+        - 0.3-0.5: Below average, needs significant revision
+        - 0.5-0.7: Adequate, meets minimum standards
+        - 0.7-0.85: Good, above average quality
+        - 0.85-1.0: Excellent, top-tier quality
+
+        Return ONLY a JSON object: {{"criterion": score, ...}}
+        Be critical and honest. Do not inflate scores.
+    """).strip()
 
     user_prompt = f"DOCUMENT TO EVALUATE:\n\n{draft[:6000]}"
-
     return system_prompt, user_prompt
-
-
-def build_feedback_prompt(
-    profile: Any,
-    scores: Dict[str, float],
-    criteria: List[Any],
-) -> str:
-    """Build actionable feedback from scores for the next iteration."""
-    weak = []
-    for c in criteria:
-        score = scores.get(c.name, 0)
-        if score < c.min_score:
-            weak.append(f"- {c.name}: {score:.2f} (needs ≥{c.min_score:.2f})")
-        elif score < 0.7:
-            weak.append(f"- {c.name}: {score:.2f} (could improve)")
-
-    if not weak:
-        return "All criteria met. Polish and refine."
-
-    return "Focus on improving these weak areas:\n" + "\n".join(weak)
 
 
 # ---------------------------------------------------------------------------
-# LLMHooks — default implementations
+# LLMHooks — production implementation
 # ---------------------------------------------------------------------------
 
 class LLMHooks:
-    """Default LLM-powered hook implementations for the orchestrator loop.
+    """Production LLM hooks for the orchestrator loop.
 
-    Wires existing LLMClient (from llm/client.py) into the loop's
-    generate, evaluate, and learn hooks. Supports optional program.md
-    override (AR-style user-editable experiment specification).
+    Provides default implementations for all hook protocols:
+    - search()   → source module (with graceful fallback)
+    - generate() → LLM content generation (with retry)
+    - evaluate() → hybrid heuristic + LLM-as-judge
+    - learn()    → train.md experiment log
 
-    Usage:
-        hooks = LLMHooks(load_config())
-        loop = ResearchLoop(
-            generate_fn=hooks.generate,
-            evaluate_fn=hooks.evaluate,
-            learn_fn=hooks.learn,
-        )
+    Input/Output contract:
+        INPUT:  idea + profile YAML + [program.md] + [style_guide.md]
+        OUTPUT: draft text (str) per iteration → loop saves to disk
+
+    AR integration:
+        - program.md in CWD → overrides profile.objective
+        - style_guide.md in CWD → appended to system prompt
+        - train.md in CWD → auto-updated with experiment log
     """
 
-    def __init__(self, config: Any, program_md_path: Optional[Path] = None):
-        """Initialize with config (dict or IdeaClawConfig).
+    # Dimensions that require LLM judgment (can't be computed heuristically)
+    LLM_JUDGE_DIMS = {"novelty", "significance", "soundness", "ethics"}
+
+    # Max retries for LLM calls
+    MAX_RETRIES = 3
+    RETRY_DELAY = 2.0  # seconds
+
+    def __init__(
+        self,
+        config: Any,
+        idea: str = "",
+        program_md_path: Optional[Path] = None,
+        style_guide_path: Optional[Path] = None,
+        output_dir: Optional[Path] = None,
+    ):
+        """Initialize with config and optional AR-style overrides.
 
         Args:
-            config: Configuration (dict with 'llm' key, or IdeaClawConfig).
-            program_md_path: Optional path to program.md override file.
+            config: IdeaClawConfig or dict with 'llm' key.
+            idea: The user's idea/topic (main input).
+            program_md_path: Path to program.md override.
+            style_guide_path: Path to style_guide.md.
+            output_dir: Where to write train.md and other logs.
         """
         from ideaclaw.llm.client import LLMClient
+        from ideaclaw.orchestrator.evaluator import UnifiedEvaluator
 
-        # Handle both dict and IdeaClawConfig
+        # Resolve LLM config
         if hasattr(config, "llm"):
+            from dataclasses import asdict
             llm_cfg = asdict(config.llm) if hasattr(config.llm, "__dataclass_fields__") else config.llm
         elif isinstance(config, dict):
             llm_cfg = config.get("llm", {})
@@ -221,43 +273,117 @@ class LLMHooks:
             llm_cfg = {}
 
         self.llm = LLMClient(llm_cfg)
-        self._heuristic_evaluator = UnifiedEvaluator()
-        self._program_md = ""
+        self.evaluator = UnifiedEvaluator()
+        self.usage = UsageStats()
+        self.idea = idea
+        self.output_dir = output_dir
 
-        # Load program.md if it exists
-        if program_md_path and program_md_path.exists():
-            self._program_md = program_md_path.read_text(encoding="utf-8")
-            logger.info("Loaded program.md override from %s", program_md_path)
+        # Load AR-style markdown overrides
+        self._program_md = self._load_md(program_md_path, "program.md")
+        self._style_guide = self._load_md(style_guide_path, "style_guide.md")
 
-        # Also check CWD for program.md (AR convention)
-        cwd_program = Path("program.md")
-        if not self._program_md and cwd_program.exists():
-            self._program_md = cwd_program.read_text(encoding="utf-8")
-            logger.info("Loaded program.md from current directory")
+        # Cache the system prompt per profile (avoid rebuilding every call)
+        self._system_prompt_cache: Dict[str, str] = {}
 
-        # LLM-judged dimensions (subjective, can't be heuristic)
-        self._llm_judge_dims = {"novelty", "significance", "soundness", "ethics"}
+    def _load_md(self, explicit_path: Optional[Path], filename: str) -> str:
+        """Load an optional markdown file: explicit path → CWD fallback."""
+        if explicit_path and explicit_path.exists():
+            logger.info("Loaded %s from %s", filename, explicit_path)
+            return explicit_path.read_text(encoding="utf-8")
+        cwd_path = Path(filename)
+        if cwd_path.exists():
+            logger.info("Loaded %s from CWD", filename)
+            return cwd_path.read_text(encoding="utf-8")
+        return ""
+
+    def _get_system_prompt(self, profile: Any) -> str:
+        """Get (cached) system prompt for a profile."""
+        pid = getattr(profile, "scenario_id", id(profile))
+        if pid not in self._system_prompt_cache:
+            self._system_prompt_cache[pid] = build_system_prompt(
+                profile, self._program_md, self._style_guide,
+            )
+        return self._system_prompt_cache[pid]
+
+    def _call_llm(
+        self,
+        system_prompt: str,
+        user_prompt: str,
+        json_mode: bool = False,
+        temperature: float = 0.7,
+        max_tokens: int = 4096,
+        purpose: str = "generate",
+    ) -> str:
+        """Call LLM with retry logic and usage tracking.
+
+        Args:
+            system_prompt: System message.
+            user_prompt: User message.
+            json_mode: Request JSON output.
+            temperature: Sampling temperature.
+            max_tokens: Max output tokens.
+            purpose: Label for logging.
+
+        Returns:
+            LLM response text.
+
+        Raises:
+            RuntimeError: If all retries exhaust.
+        """
+        last_error = None
+        for attempt in range(self.MAX_RETRIES):
+            try:
+                result = self.llm.chat_with_fallback(
+                    system_prompt=system_prompt,
+                    user_prompt=user_prompt,
+                    json_mode=json_mode,
+                    temperature=temperature,
+                    max_tokens=max_tokens,
+                )
+                # Estimate tokens (rough: 1 token ≈ 4 chars)
+                in_tokens = (len(system_prompt) + len(user_prompt)) // 4
+                out_tokens = len(result) // 4
+                self.usage.record(self.llm.primary_model, in_tokens, out_tokens)
+                logger.debug("%s: %d in / %d out tokens (attempt %d)",
+                             purpose, in_tokens, out_tokens, attempt + 1)
+                return result
+
+            except Exception as e:
+                last_error = e
+                self.usage.errors += 1
+                if attempt < self.MAX_RETRIES - 1:
+                    self.usage.retries += 1
+                    delay = self.RETRY_DELAY * (2 ** attempt)  # Exponential backoff
+                    logger.warning("%s attempt %d failed: %s (retry in %.0fs)",
+                                   purpose, attempt + 1, e, delay)
+                    time.sleep(delay)
+
+        raise RuntimeError(f"{purpose} failed after {self.MAX_RETRIES} attempts: {last_error}")
+
+    # ------------------------------------------------------------------
+    # Hook implementations (match Protocol signatures in loop.py)
+    # ------------------------------------------------------------------
 
     def search(self, profile: Any, context: Dict[str, Any]) -> List[Any]:
-        """Search for sources using the source module.
+        """Search for reference sources.
 
-        Falls back to empty list if source module unavailable.
+        Uses the source/collector module. Falls back gracefully if unavailable.
         """
         try:
             from ideaclaw.source.collector import collect_sources
-            query = profile.objective or profile.display_name
+            query = self.idea or getattr(profile, "objective", "") or profile.display_name
             results = collect_sources(
                 query=query,
-                engines=profile.search.apis,
-                limit=profile.search.max_sources,
+                engines=profile.search.apis if hasattr(profile, "search") else ["arxiv"],
+                limit=getattr(profile.search, "max_sources", 20) if hasattr(profile, "search") else 20,
             )
-            logger.info("Found %d sources for '%s'", len(results), query[:50])
+            logger.info("Search: %d sources for '%s'", len(results), query[:60])
             return results
         except ImportError:
-            logger.warning("Source module not available, using empty sources")
+            logger.info("Source module unavailable — continuing without external sources")
             return []
         except Exception as e:
-            logger.warning("Search failed: %s", e)
+            logger.warning("Search error: %s — continuing without sources", e)
             return []
 
     def generate(
@@ -269,25 +395,24 @@ class LLMHooks:
     ) -> str:
         """Generate document content using LLM.
 
-        Builds prompt from profile YAML (or program.md override) + sources,
-        then calls LLMClient.chat_with_fallback().
+        INPUT:  profile + sources + previous_draft + feedback
+        OUTPUT: complete document text (markdown)
+
+        This is the core content generation — equivalent to AR's
+        LLM editing train.py based on program.md instructions.
         """
-        system_prompt, user_prompt = build_generate_prompt(
-            profile, sources, previous_draft, feedback,
-            program_md=self._program_md,
-        )
+        system_prompt = self._get_system_prompt(profile)
+        user_prompt = build_user_prompt(sources, previous_draft, feedback, self.idea)
 
-        logger.info("Generating %s (iter feedback: %s)",
-                     profile.display_name, feedback[:50] if feedback else "initial")
-
-        content = self.llm.chat_with_fallback(
+        content = self._call_llm(
             system_prompt=system_prompt,
             user_prompt=user_prompt,
-            temperature=0.7,
+            temperature=0.7 if not previous_draft else 0.5,  # Lower temp for revisions
             max_tokens=4096,
+            purpose="generate",
         )
 
-        logger.info("Generated %d chars", len(content))
+        logger.info("Generated: %d chars, %d lines", len(content), content.count("\n"))
         return content
 
     def evaluate(
@@ -298,42 +423,46 @@ class LLMHooks:
     ) -> Dict[str, float]:
         """Hybrid evaluation: heuristic + LLM-as-judge.
 
-        - Heuristic dimensions (structure, citations, depth, clarity, style,
-          formatting): computed locally by UnifiedEvaluator.
-        - LLM-judged dimensions (novelty, significance, soundness, ethics):
-          scored by LLM-as-judge prompt.
+        Heuristic (free, instant):
+        - structure: section count, heading hierarchy
+        - citations: reference density
+        - depth: word count, detail level
+        - clarity: readability metrics
+        - style: formality match
+        - formatting: markdown quality
 
-        Returns {dimension_name: score} dict.
+        LLM-as-judge (costs tokens, accurate):
+        - novelty: originality of ideas
+        - significance: importance of contribution
+        - soundness: technical correctness
+        - ethics: ethical considerations
         """
-        # 1. Heuristic scores (free, fast)
-        scores = self._heuristic_evaluator.evaluate(profile, draft, sources)
+        # 1. Heuristic scores (always available, free)
+        scores = self.evaluator.evaluate(profile, draft, sources)
 
-        # 2. LLM-judge for subjective dimensions
-        criteria_names = [c.name for c in profile.criteria]
-        llm_dims = [n for n in criteria_names if n in self._llm_judge_dims]
+        # 2. LLM judge for subjective dimensions
+        criteria_names = [c.name for c in profile.criteria] if hasattr(profile, "criteria") else []
+        llm_dims = [n for n in criteria_names if n in self.LLM_JUDGE_DIMS]
 
-        if llm_dims:
+        if llm_dims and draft.strip():
             try:
-                sys_prompt, user_prompt = build_judge_prompt(
-                    profile, draft, llm_dims,
-                )
-                raw = self.llm.chat_with_fallback(
+                sys_prompt, user_prompt = build_judge_prompt(profile, draft, llm_dims)
+                raw = self._call_llm(
                     system_prompt=sys_prompt,
                     user_prompt=user_prompt,
                     json_mode=True,
                     temperature=0.1,
                     max_tokens=256,
+                    purpose="evaluate",
                 )
-
-                # Parse JSON response
                 llm_scores = json.loads(raw)
                 for dim in llm_dims:
                     if dim in llm_scores:
-                        val = float(llm_scores[dim])
-                        scores[dim] = max(0.0, min(1.0, val))
-                        logger.debug("LLM judge %s = %.2f", dim, scores[dim])
+                        scores[dim] = max(0.0, min(1.0, float(llm_scores[dim])))
+            except json.JSONDecodeError as e:
+                logger.warning("Judge returned invalid JSON: %s", e)
             except Exception as e:
-                logger.warning("LLM judge failed, keeping heuristic: %s", e)
+                logger.warning("LLM judge failed (keeping heuristic): %s", e)
 
         return scores
 
@@ -344,30 +473,145 @@ class LLMHooks:
         scores: Dict[str, float],
         failure_reason: str,
     ) -> None:
-        """Update train.md experiment log (AR pattern).
+        """Update train.md experiment log.
 
-        Records what worked, what didn't, and suggestions for next iteration.
+        AR pattern: each iteration records what happened, what failed,
+        and what to try next. This creates a persistent experiment log
+        that the user can review.
         """
-        train_md = Path("train.md")
+        import datetime as dt
+
+        timestamp = dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        scores_str = ", ".join(f"{k}={v:.2f}" for k, v in sorted(scores.items()))
+
         entry = (
-            f"\n## Iteration — {profile.display_name}\n"
-            f"Scores: {', '.join(f'{k}={v:.2f}' for k, v in sorted(scores.items()))}\n"
+            f"\n### {timestamp} — {profile.display_name}\n"
+            f"- **Scores**: {scores_str}\n"
+            f"- **Draft**: {len(draft)} chars, {draft.count(chr(10))} lines\n"
         )
         if failure_reason:
-            entry += f"Failed: {failure_reason}\n"
-        entry += f"Draft length: {len(draft)} chars\n"
+            entry += f"- **REVERTED**: {failure_reason}\n"
+        entry += f"- **Usage**: {self.usage.summary()}\n"
 
+        # Write to output_dir/train.md or CWD/train.md
+        train_path = (self.output_dir / "train.md") if self.output_dir else Path("train.md")
         try:
-            existing = train_md.read_text(encoding="utf-8") if train_md.exists() else "# IdeaClaw Experiment Log\n"
-            train_md.write_text(existing + entry, encoding="utf-8")
-        except OSError:
-            pass  # Non-critical
+            existing = train_path.read_text(encoding="utf-8") if train_path.exists() else "# Experiment Log\n"
+            train_path.write_text(existing + entry, encoding="utf-8")
+        except OSError as e:
+            logger.warning("Could not write train.md: %s", e)
+
+    # ------------------------------------------------------------------
+    # Output finalization
+    # ------------------------------------------------------------------
+
+    def finalize_output(
+        self,
+        profile: Any,
+        state: Any,
+        run_dir: Path,
+    ) -> Dict[str, Path]:
+        """Save all final outputs after loop completes.
+
+        OUTPUT files:
+        - output.md        → the final accepted document
+        - train.md         → experiment log (AR pattern)
+        - evolution.md     → score progression report
+        - state.json       → full loop state
+        - usage.json       → LLM token/cost tracking
+
+        Returns dict of output_name → file_path.
+        """
+        outputs: Dict[str, Path] = {}
+        run_dir.mkdir(parents=True, exist_ok=True)
+
+        # 1. Final document
+        if state.current_draft:
+            out_path = run_dir / "output.md"
+            out_path.write_text(state.current_draft, encoding="utf-8")
+            outputs["document"] = out_path
+            logger.info("Saved final document: %s (%d chars)", out_path, len(state.current_draft))
+
+        # 2. Train.md (copy from output_dir if exists)
+        train_src = (self.output_dir / "train.md") if self.output_dir else Path("train.md")
+        if train_src.exists():
+            train_dst = run_dir / "train.md"
+            if train_src != train_dst:
+                train_dst.write_text(train_src.read_text(encoding="utf-8"), encoding="utf-8")
+            outputs["train_log"] = train_dst
+
+        # 3. Usage stats
+        usage_path = run_dir / "usage.json"
+        usage_data = {
+            "total_calls": self.usage.total_calls,
+            "total_input_tokens": self.usage.total_input_tokens,
+            "total_output_tokens": self.usage.total_output_tokens,
+            "total_cost_usd": round(self.usage.total_cost_usd, 6),
+            "errors": self.usage.errors,
+            "retries": self.usage.retries,
+            "call_log": self.usage.call_log,
+        }
+        usage_path.write_text(json.dumps(usage_data, indent=2), encoding="utf-8")
+        outputs["usage"] = usage_path
+
+        # 4. Summary
+        summary_path = run_dir / "summary.md"
+        summary = self._build_summary(profile, state)
+        summary_path.write_text(summary, encoding="utf-8")
+        outputs["summary"] = summary_path
+
+        return outputs
+
+    def _build_summary(self, profile: Any, state: Any) -> str:
+        """Build a human-readable summary of the run."""
+        lines = [
+            f"# {profile.display_name} — Run Summary",
+            "",
+            f"**Status**: {state.status}",
+            f"**Best Score**: {state.best_score:.3f} (iteration {state.best_iteration})",
+            f"**Iterations**: {state.iteration_count}",
+            f"**Elapsed**: {state.total_elapsed:.1f}s",
+            f"**{self.usage.summary()}**",
+            "",
+            "## Iteration History",
+            "",
+            "| # | Score | Status | Key Scores |",
+            "|---|---|---|---|",
+        ]
+        for r in getattr(state, "iterations", []):
+            status = "✅ Accept" if r.accepted else "❌ Revert"
+            detail = ", ".join(f"{k}={v:.2f}" for k, v in sorted(r.scores_detail.items())[:4])
+            lines.append(f"| {r.iteration} | {r.score:.3f} | {status} | {detail} |")
+
+        if state.current_draft:
+            lines.extend([
+                "",
+                f"## Output Preview",
+                "",
+                f"```",
+                state.current_draft[:500] + ("..." if len(state.current_draft) > 500 else ""),
+                f"```",
+            ])
+
+        return "\n".join(lines)
 
 
 # ---------------------------------------------------------------------------
 # Factory
 # ---------------------------------------------------------------------------
 
-def create_hooks(config: Any, program_md: Optional[Path] = None) -> LLMHooks:
-    """Create LLMHooks from config. Convenience factory."""
-    return LLMHooks(config, program_md_path=program_md)
+def create_hooks(
+    config: Any,
+    idea: str = "",
+    program_md: Optional[Path] = None,
+    style_guide: Optional[Path] = None,
+    output_dir: Optional[Path] = None,
+) -> LLMHooks:
+    """Create production LLMHooks. Convenience factory."""
+    return LLMHooks(
+        config=config,
+        idea=idea,
+        program_md_path=program_md,
+        style_guide_path=style_guide,
+        output_dir=output_dir,
+    )

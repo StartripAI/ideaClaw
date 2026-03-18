@@ -288,6 +288,7 @@ class ResearchLoop:
     def __init__(
         self,
         config: Optional[Any] = None,
+        idea: str = "",
         search_fn: Optional[SearchHook] = None,
         generate_fn: Optional[GenerateHook] = None,
         evaluate_fn: Optional[EvaluateHook] = None,
@@ -295,14 +296,17 @@ class ResearchLoop:
         versioning: Optional[Any] = None,      # Versioning instance
         output_dir: Optional[Path] = None,
     ):
+        self._hooks = None  # Reference for finalize_output
+
         # Auto-wire LLMHooks when config is provided and no explicit hooks
         if config is not None and not generate_fn:
             from ideaclaw.orchestrator.hooks import LLMHooks
-            hooks = LLMHooks(config)
+            hooks = LLMHooks(config, idea=idea, output_dir=output_dir)
             search_fn = search_fn or hooks.search
             generate_fn = hooks.generate
             evaluate_fn = evaluate_fn or hooks.evaluate
             learn_fn = learn_fn or hooks.learn
+            self._hooks = hooks
             logger.info("Auto-wired LLMHooks from config (BYOK)")
 
         self.search_fn = search_fn
@@ -470,6 +474,17 @@ class ResearchLoop:
         # Save state to disk
         state_path = run_dir / "state.json"
         state_path.write_text(json.dumps(state.to_dict(), indent=2, ensure_ascii=False), encoding="utf-8")
+
+        # Finalize outputs (document, train.md, usage, summary)
+        if self._hooks and hasattr(self._hooks, "finalize_output"):
+            try:
+                outputs = self._hooks.finalize_output(profile, state, run_dir)
+                logger.info("Outputs saved: %s", ", ".join(f"{k}={v}" for k, v in outputs.items()))
+            except Exception as e:
+                logger.warning("Output finalization failed: %s", e)
+        elif self.versioning and state.current_draft:
+            # Fallback: at least save the final document
+            (run_dir / "output.md").write_text(state.current_draft, encoding="utf-8")
 
         logger.info("Loop finished: status=%s, best=%.3f (iter %d), %d iterations, %.1fs",
                      state.status, state.best_score, state.best_iteration,
