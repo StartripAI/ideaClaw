@@ -9,6 +9,7 @@ Usage:
 """
 
 from __future__ import annotations
+import logging
 
 import argparse
 import sys
@@ -19,6 +20,10 @@ from rich.console import Console
 from ideaclaw import __version__
 from ideaclaw.config import load_config
 from ideaclaw.pipeline.runner import PipelineRunner
+
+logger = logging.getLogger(__name__)
+
+__all__ = ["cmd_run", "cmd_resume", "cmd_status", "cmd_profiles", "cmd_benchmark", "cmd_login", "cmd_logout", "cmd_whoami", "main"]
 
 console = Console()
 
@@ -86,14 +91,26 @@ def _parse_args() -> argparse.Namespace:
 def cmd_run(args: argparse.Namespace) -> int:
     """Execute a full pipeline run."""
     from ideaclaw.quality.loader import auto_detect_profile, load_profile
+    import dataclasses
 
-    config = load_config(args.config)
+    config_obj = load_config(args.config)
+
+    # Convert frozen dataclass to mutable dict for PipelineRunner
+    config: dict = {}
+    for field in dataclasses.fields(config_obj):
+        val = getattr(config_obj, field.name)
+        if dataclasses.is_dataclass(val):
+            config[field.name] = {f.name: getattr(val, f.name) for f in dataclasses.fields(val)}
+        else:
+            config[field.name] = val
 
     # Override config with CLI args
+    config.setdefault("idea", {})
     config["idea"]["text"] = args.idea
     config["idea"]["pack_type"] = args.pack_type
     config["idea"]["language"] = args.language
     if args.auto_approve:
+        config.setdefault("security", {})
         config["security"]["auto_approve"] = True
 
     # Resolve profile
@@ -204,8 +221,8 @@ def cmd_benchmark(args: argparse.Namespace) -> int:
                 manifest = json.loads(manifest_path.read_text())
                 idea = manifest.get("idea", {}).get("text", "")
                 profile_id = args.profile or manifest.get("quality", {}).get("profile_id", profile_id)
-            except Exception:
-                pass
+            except Exception as exc:  # noqa: BLE001
+                logger.debug("Suppressed: %s", exc)
         runner.add_pack(content, idea=idea, profile_id=profile_id, pack_path=str(pf))
         console.print(f"  ✓ {pf.parent.name}")
 

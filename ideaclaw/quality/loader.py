@@ -5,6 +5,7 @@ Profiles can inherit from a _base_{domain}.yaml via the `inherits` field.
 """
 
 from __future__ import annotations
+import logging
 
 import copy
 import re
@@ -13,6 +14,10 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
 import yaml
+
+logger = logging.getLogger(__name__)
+
+__all__ = ["PROFILES_DIR", "Dimension", "Profile", "DEFAULT_DIMENSIONS", "load_profile", "list_profiles", "auto_detect_profile"]
 
 PROFILES_DIR = Path(__file__).parent / "profiles"
 
@@ -204,7 +209,7 @@ def list_profiles(domain: Optional[str] = None) -> List[Tuple[str, str]]:
             try:
                 raw = _load_yaml(yaml_file)
                 name = raw.get("meta", {}).get("name", scene)
-            except Exception:
+            except Exception:  # noqa: BLE001
                 name = scene
             result.append((pid, name))
     return result

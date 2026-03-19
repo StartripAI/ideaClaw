@@ -10,6 +10,7 @@ Design goals:
 """
 
 from __future__ import annotations
+import logging
 
 import os
 import re
@@ -19,6 +20,10 @@ from pathlib import Path
 from typing import Iterable, List, Sequence, Tuple
 
 from pypdf import PdfReader
+
+logger = logging.getLogger(__name__)
+
+__all__ = ["W_NS", "A_NS", "ExtractResult", "extract_pdf_text", "extract_docx_text", "extract_pptx_text_native", "extract_image_text_dual_ocr", "extract_with_markitdown_optional", "extract_with_docling_optional", "extract_local_source_text"]
 
 
 W_NS = "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}"

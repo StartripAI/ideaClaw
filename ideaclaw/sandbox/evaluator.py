@@ -13,6 +13,7 @@ Also supports ARC-style experiment evaluation:
 """
 
 from __future__ import annotations
+import logging
 
 import json
 import math
@@ -20,6 +21,10 @@ from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional, Tuple
 
 from ideaclaw.sandbox.executor import ExecResult
+
+logger = logging.getLogger(__name__)
+
+__all__ = ['EvalResult', 'ExperimentRun', 'ExperimentEvaluator']
 
 
 @dataclass

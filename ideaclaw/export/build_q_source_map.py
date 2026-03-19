@@ -6,6 +6,7 @@ Q numbering is assigned by question order in the FAQ body.
 """
 
 from __future__ import annotations
+import logging
 
 import argparse
 import csv
@@ -15,6 +16,10 @@ import xml.etree.ElementTree as ET
 from pathlib import Path
 from typing import Dict, List, Tuple
 from ideaclaw.pipeline.run_artifact_utils import is_valid_run_id
+
+logger = logging.getLogger(__name__)
+
+__all__ = ['W', 'QUESTION_PREFIX_RE', 'QUESTION_HINT_RE', 'main']
 
 W = "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}"
 QUESTION_PREFIX_RE = re.compile(

@@ -9,12 +9,17 @@ Filters collected sources by:
 """
 
 from __future__ import annotations
+import logging
 
 import re
 from dataclasses import dataclass
 from typing import Any, Dict, List, Optional, Set
 
 from ideaclaw.source.collector import SourceResult
+
+logger = logging.getLogger(__name__)
+
+__all__ = ['SOURCE_TIERS', 'ScreenedSource', 'screen_sources']
 
 # Domain-to-tier mapping for quick lookup (expanded from SourceRegistry)
 SOURCE_TIERS = {

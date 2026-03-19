@@ -32,6 +32,7 @@ import re
 import time
 import urllib.error
 import urllib.parse
+import ssl
 import urllib.request
 import xml.etree.ElementTree as ET
 from dataclasses import dataclass, field
@@ -40,6 +41,11 @@ from pathlib import Path
 from typing import Any, List, Optional, Sequence
 
 logger = logging.getLogger(__name__)
+
+# S-2: Use default SSL context with certificate verification
+_SSL_CONTEXT = ssl.create_default_context()
+
+__all__ = ["VerifyStatus", "CitationResult", "VerificationReport", "parse_bibtex_entries", "title_similarity", "verify_by_arxiv_id", "verify_by_doi", "verify_by_openalex", "verify_by_title_search", "verify_citations", "filter_verified_bibtex", "annotate_paper_hallucinations"]
 
 
 # ---------------------------------------------------------------------------
@@ -295,7 +301,7 @@ def _verify_doi_datacite(doi: str, expected_title: str) -> Optional[CitationResu
                 details=f"DOI {doi} not found via CrossRef or DataCite",
             )
         return None
-    except Exception:
+    except Exception:  # noqa: BLE001
         return None
 
     attrs = body.get("data", {}).get("attributes", {})
@@ -345,7 +351,7 @@ def verify_by_doi(doi: str, expected_title: str) -> Optional[CitationResult]:
                 method="doi", details=f"DOI {doi} not found (404)",
             )
         return None
-    except Exception:
+    except Exception:  # noqa: BLE001
         return None
 
     message = body.get("message", {})
@@ -396,7 +402,7 @@ def verify_by_openalex(title: str) -> Optional[CitationResult]:
         })
         with urllib.request.urlopen(req, timeout=_OPENALEX_TIMEOUT) as resp:
             body = json.loads(resp.read().decode("utf-8"))
-    except Exception:
+    except Exception:  # noqa: BLE001
         return None
 
     results = body.get("results", [])
@@ -440,7 +446,7 @@ def verify_by_title_search(title: str) -> Optional[CitationResult]:
     try:
         from ideaclaw.source.search import search_sources
         results = search_sources(title, limit=5)
-    except Exception:
+    except Exception:  # noqa: BLE001
         return None
 
     if not results:

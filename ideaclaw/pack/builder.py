@@ -4,6 +4,7 @@ Uses Jinja2 templates + quality profile to produce the final pack.
 """
 
 from __future__ import annotations
+import logging
 
 import datetime as dt
 from pathlib import Path
@@ -12,6 +13,10 @@ from typing import Any, Dict, List, Optional
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 from ideaclaw.pack.schema import PackType
+
+logger = logging.getLogger(__name__)
+
+__all__ = ['TEMPLATES_DIR', 'PackBuilder']
 
 TEMPLATES_DIR = Path(__file__).parent / "templates"
 
@@ -43,10 +48,19 @@ class PackBuilder:
                 - counterarguments: list of counterarguments
                 - draft: raw draft from LLM
                 - trust_review: TrustReviewResult
+                - deliverable_template: (optional) template content from TemplateLoader
+                - deliverable_sections: (optional) section names from template
+                - deliverable_format: (optional) 'latex', 'markdown', or 'fountain'
+                - review_form: (optional) review criteria from TemplateLoader
+                - template_tier: (optional) tier identifier
 
         Returns:
             Dict with 'markdown', 'json', and 'metadata' keys.
         """
+        # If deliverable template is available, use template-driven build
+        if pipeline_context.get("deliverable_template"):
+            return self._build_from_deliverable_template(pipeline_context)
+
         # Resolve pack type
         pack_type = pipeline_context.get("pack_type", "decision")
         if isinstance(pack_type, str):
@@ -64,7 +78,7 @@ class PackBuilder:
         template_name = pt.info.template
         try:
             template = self.env.get_template(template_name)
-        except Exception:
+        except Exception:  # noqa: BLE001
             # Fallback to generic template
             template = self.env.get_template("generic.md.j2")
 
@@ -82,6 +96,63 @@ class PackBuilder:
                 "profile_id": self.config.get("quality", {}).get("profile_id", ""),
                 "idea": pipeline_context.get("idea", ""),
             },
+        }
+
+    def _build_from_deliverable_template(
+        self, pipeline_context: Dict[str, Any]
+    ) -> Dict[str, Any]:
+        """Build output using a deliverable template from TemplateLoader.
+
+        Uses the template skeleton to produce a structured, professional
+        deliverable where each section is filled from the pipeline draft.
+        """
+        template_content = pipeline_context["deliverable_template"]
+        sections = pipeline_context.get("deliverable_sections", [])
+        fmt = pipeline_context.get("deliverable_format", "markdown")
+        tier = pipeline_context.get("template_tier", "unknown")
+        draft = pipeline_context.get("draft", "")
+        idea = pipeline_context.get("idea", "")
+        review_form = pipeline_context.get("review_form", {})
+
+        # Parse draft into section content blocks
+        section_content = self._split_draft_into_sections(draft, sections)
+
+        # Fill template with section content
+        if fmt == "latex":
+            filled = self._fill_latex_template(template_content, section_content)
+        else:
+            filled = self._fill_markdown_template(template_content, section_content)
+
+        # Build metadata
+        metadata = {
+            "pack_type": f"deliverable_{tier}",
+            "generated_at": dt.datetime.now(dt.timezone.utc).isoformat(),
+            "profile_id": self.config.get("scenario_id", self.config.get("quality", {}).get("profile_id", "")),
+            "idea": idea,
+            "deliverable_format": fmt,
+            "template_tier": tier,
+            "sections": sections,
+            "review_form": review_form,
+        }
+
+        # Build JSON structure
+        pack_json = {
+            "schema_version": "2.0",
+            "deliverable_type": tier,
+            "format": fmt,
+            "idea": idea,
+            "profile_id": metadata["profile_id"],
+            "generated_at": metadata["generated_at"],
+            "sections": {s: section_content.get(s, "") for s in sections},
+            "review_criteria": review_form.get("criteria", []) if review_form else [],
+            "sources": pipeline_context.get("sources", []),
+        }
+
+        return {
+            "markdown": filled if fmt != "latex" else draft,
+            "latex": filled if fmt == "latex" else None,
+            "json": pack_json,
+            "metadata": metadata,
         }
 
     def _build_context(self, ctx: Dict, pt: PackType) -> Dict[str, Any]:
@@ -176,3 +247,128 @@ class PackBuilder:
             if len(line) > 20:
                 claims.append({"text": line[:200], "status": status})
         return claims[:20]  # Cap at 20 claims
+
+    # ------------------------------------------------------------------
+    # Deliverable template helpers
+    # ------------------------------------------------------------------
+
+    def _split_draft_into_sections(
+        self, draft: str, section_names: List[str]
+    ) -> Dict[str, str]:
+        """Split a draft into named sections by detecting headers.
+
+        Handles both Markdown (## Section) and LaTeX (\\section{Section}) headers.
+        """
+        import re
+        sections: Dict[str, str] = {}
+        current_section = "_preamble"
+        current_lines: List[str] = []
+
+        for line in draft.split("\n"):
+            # Detect markdown header
+            md_match = re.match(r'^#{1,3}\s+(.+)', line)
+            # Detect LaTeX section
+            tex_match = re.match(r'\\(?:sub)?section\{(.+?)\}', line)
+
+            header_name = None
+            if md_match:
+                header_name = md_match.group(1).strip()
+            elif tex_match:
+                header_name = tex_match.group(1).strip()
+
+            if header_name:
+                # Save previous section
+                if current_lines:
+                    sections[current_section] = "\n".join(current_lines).strip()
+                # Match to known section name (fuzzy)
+                matched = self._fuzzy_match_section(header_name, section_names)
+                current_section = matched or header_name.lower().replace(" ", "_")
+                current_lines = []
+            else:
+                current_lines.append(line)
+
+        # Save last section
+        if current_lines:
+            sections[current_section] = "\n".join(current_lines).strip()
+
+        return sections
+
+    def _fuzzy_match_section(self, header: str, candidates: List[str]) -> Optional[str]:
+        """Fuzzy-match a header to a section name."""
+        header_lower = header.lower().replace(" ", "_").replace("-", "_")
+        for c in candidates:
+            c_lower = c.lower().replace(" ", "_").replace("-", "_")
+            if c_lower == header_lower or c_lower in header_lower or header_lower in c_lower:
+                return c
+        return None
+
+    def _fill_latex_template(
+        self, template: str, sections: Dict[str, str]
+    ) -> str:
+        """Fill a LaTeX template by replacing section comment placeholders.
+
+        Template format:
+            \\section{Introduction}
+            % CONSORT Item 2a: Scientific background...
+
+        Replacement fills content after the section header.
+        """
+        import re
+        lines = template.split("\n")
+        output: List[str] = []
+        i = 0
+        while i < len(lines):
+            line = lines[i]
+            output.append(line)
+
+            # Check if this is a section header
+            sec_match = re.match(r'\\(?:sub)?section\{(.+?)\}', line)
+            if sec_match:
+                sec_name = sec_match.group(1).strip()
+                matched_key = self._fuzzy_match_section(sec_name, list(sections.keys()))
+                if matched_key and sections.get(matched_key):
+                    # Skip template comment lines (lines starting with %)
+                    while i + 1 < len(lines) and lines[i + 1].strip().startswith("%"):
+                        i += 1
+                    # Insert generated content
+                    output.append(sections[matched_key])
+                    output.append("")  # blank line
+            i += 1
+
+        return "\n".join(output)
+
+    def _fill_markdown_template(
+        self, template: str, sections: Dict[str, str]
+    ) -> str:
+        """Fill a Markdown template by replacing placeholder sections.
+
+        Template format:
+            ## Section Name
+            [Content]
+
+        Replacement fills content after the section header.
+        """
+        import re
+        lines = template.split("\n")
+        output: List[str] = []
+        i = 0
+        while i < len(lines):
+            line = lines[i]
+            header_match = re.match(r'^(#{1,3})\s+(.+)', line)
+
+            if header_match:
+                sec_name = header_match.group(2).strip()
+                matched_key = self._fuzzy_match_section(sec_name, list(sections.keys()))
+                output.append(line)
+                if matched_key and sections.get(matched_key):
+                    # Skip placeholder lines (lines with [Content] or [xxx])
+                    while i + 1 < len(lines) and re.match(r'^\s*\[.+\]\s*$', lines[i + 1]):
+                        i += 1
+                    output.append("")  # blank line
+                    output.append(sections[matched_key])
+                    output.append("")  # blank line
+            else:
+                output.append(line)
+            i += 1
+
+        return "\n".join(output)

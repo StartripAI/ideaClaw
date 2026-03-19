@@ -9,6 +9,7 @@ Surpasses ARC's cache.py by adding:
 """
 
 from __future__ import annotations
+import logging
 
 import hashlib
 import json
@@ -20,6 +21,10 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 from ideaclaw.source.collector import SourceResult
+
+logger = logging.getLogger(__name__)
+
+__all__ = ['CacheEntry', 'CacheStats', 'SearchCache']
 
 
 @dataclass

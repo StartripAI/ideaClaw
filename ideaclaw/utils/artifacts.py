@@ -1,6 +1,7 @@
 """Run artifact management — ported from OpenRevise run_artifact_utils.py."""
 
 from __future__ import annotations
+import logging
 
 import datetime as dt
 import hashlib
@@ -8,6 +9,10 @@ import shutil
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Optional
+
+logger = logging.getLogger(__name__)
+
+__all__ = ["utc_now", "to_iso_z", "make_run_id", "sha256_file", "safe_copy2", "ensure_run_layout", "ArtifactRecord"]
 
 
 def utc_now() -> dt.datetime:

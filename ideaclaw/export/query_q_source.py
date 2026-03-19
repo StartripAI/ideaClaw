@@ -4,6 +4,7 @@ Query source mapping for a single FAQ question number.
 """
 
 from __future__ import annotations
+import logging
 
 import argparse
 import re
@@ -11,6 +12,10 @@ import zipfile
 import xml.etree.ElementTree as ET
 from pathlib import Path
 from typing import Dict, List, Tuple
+
+logger = logging.getLogger(__name__)
+
+__all__ = ['W', 'QUESTION_PREFIX_RE', 'QUESTION_HINT_RE', 'main']
 
 W = "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}"
 QUESTION_PREFIX_RE = re.compile(

@@ -5,6 +5,7 @@ Can be used with LLM-as-judge (agent mode) or heuristic baseline.
 """
 
 from __future__ import annotations
+import logging
 
 import json
 import re
@@ -12,6 +13,10 @@ from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional
 
 from ideaclaw.quality.loader import Profile, DEFAULT_DIMENSIONS
+
+logger = logging.getLogger(__name__)
+
+__all__ = ['DimensionScore', 'ScoreResult', 'PackScorer']
 
 
 @dataclass

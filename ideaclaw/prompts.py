@@ -1,11 +1,16 @@
 """Prompt template engine for IdeaClaw."""
 
 from __future__ import annotations
+import logging
 
 from pathlib import Path
 from typing import Any, Dict, Optional
 
 import yaml
+
+logger = logging.getLogger(__name__)
+
+__all__ = ['PromptEngine']
 
 
 _DEFAULT_PROMPTS_PATH = Path(__file__).resolve().parents[1] / "prompts.default.yaml"

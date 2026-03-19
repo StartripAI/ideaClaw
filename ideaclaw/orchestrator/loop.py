@@ -1,17 +1,23 @@
-"""AR-style autonomous research loop.
+"""AR-style autonomous research loop — central orchestrator.
 
 Inspired by Karpathy's AutoResearch: program.md → edit → evaluate → commit/revert → repeat.
 Each scenario profile acts as the 'program.md' equivalent, defining objectives,
 constraints, evaluation criteria, and search scope.
 
 The loop orchestrates ALL IdeaClaw modules:
-  - source/   → search()
-  - llm/      → generate()
-  - evidence/ → verify()
-  - quality/  → evaluate()
-  - export/   → export()
-  - sandbox/  → experiment()
-  - reasoning/ → reason()
+  - source/       → search() + cache + novelty check
+  - llm/          → generate() via BYOK or IDE-native
+  - evidence/     → verify()
+  - quality/      → evaluate()
+  - export/       → export()
+  - sandbox/      → experiment()
+  - reasoning/    → reason()
+  - knowledge/    → memory + skills + preferences (Layer 1)
+  - library/      → ingester + style + retriever + personalize (Layer 2)
+  - orchestrator/ → evolution (idea mutation/crossover)
+
+All modules flow through this orchestrator. The Personalizer assembles
+context from all layers before each LLM call.
 """
 
 from __future__ import annotations
@@ -27,6 +33,8 @@ from typing import Any, Callable, Dict, List, Optional, Protocol
 import yaml
 
 logger = logging.getLogger(__name__)
+
+__all__ = ["EvalCriterion", "SearchConfig", "StyleConfig", "ExperimentConfig", "ScenarioProfile", "load_profile", "load_all_profiles", "IterationResult", "LoopState", "SearchHook", "GenerateHook", "EvaluateHook", "LearnHook", "ResearchLoop"]
 
 
 # ---------------------------------------------------------------------------
@@ -293,21 +301,50 @@ class ResearchLoop:
         generate_fn: Optional[GenerateHook] = None,
         evaluate_fn: Optional[EvaluateHook] = None,
         learn_fn: Optional[LearnHook] = None,
-        versioning: Optional[Any] = None,      # Versioning instance
+        versioning: Optional[Any] = None,
         output_dir: Optional[Path] = None,
+        llm_callable: Optional[Callable[[str], str]] = None,
+        enable_memory: bool = True,
+        enable_library: bool = True,
+        enable_novelty: bool = True,
+        enable_evolution: bool = False,
+        adaptive_depth: bool = True,
+        checkpoint_every: int = 1,
+        plateau_patience: int = 3,
+        plateau_threshold: float = 0.01,
     ):
-        self._hooks = None  # Reference for finalize_output
+        self._hooks = None
+        self._idea = idea
+        self._personalizer = None
+        self._novelty_checker = None
+        self._evolver = None
+        self.adaptive_depth = adaptive_depth
+        self.checkpoint_every = checkpoint_every
+        self.plateau_patience = plateau_patience
+        self.plateau_threshold = plateau_threshold
 
-        # Auto-wire LLMHooks when config is provided and no explicit hooks
+        # Auto-wire LLMHooks (BYOK or IDE-native)
         if config is not None and not generate_fn:
             from ideaclaw.orchestrator.hooks import LLMHooks
-            hooks = LLMHooks(config, idea=idea, output_dir=output_dir)
+            hooks = LLMHooks(config, idea=idea, output_dir=output_dir,
+                             llm_callable=llm_callable)
             search_fn = search_fn or hooks.search
             generate_fn = hooks.generate
             evaluate_fn = evaluate_fn or hooks.evaluate
             learn_fn = learn_fn or hooks.learn
             self._hooks = hooks
-            logger.info("Auto-wired LLMHooks from config (BYOK)")
+            mode = "IDE-native" if llm_callable else "BYOK"
+            logger.info("Auto-wired LLMHooks (%s)", mode)
+        elif llm_callable and not generate_fn:
+            from ideaclaw.orchestrator.hooks import LLMHooks
+            hooks = LLMHooks(None, idea=idea, output_dir=output_dir,
+                             llm_callable=llm_callable)
+            search_fn = search_fn or hooks.search
+            generate_fn = hooks.generate
+            evaluate_fn = evaluate_fn or hooks.evaluate
+            learn_fn = learn_fn or hooks.learn
+            self._hooks = hooks
+            logger.info("Auto-wired LLMHooks (IDE-native)")
 
         self.search_fn = search_fn
         self.generate_fn = generate_fn
@@ -316,6 +353,43 @@ class ResearchLoop:
         self.versioning = versioning
         self.output_dir = output_dir or Path.home() / ".ideaclaw" / "runs"
         self.output_dir.mkdir(parents=True, exist_ok=True)
+
+        # --- Layer 1 + Layer 2: Personalizer (memory, skills, prefs, library, style) ---
+        if enable_memory or enable_library:
+            try:
+                from ideaclaw.library.personalize import Personalizer
+                self._personalizer = Personalizer()
+                logger.info("Personalizer enabled (memory + library)")
+            except Exception as e:
+                logger.debug("Personalizer not available: %s", e)
+
+        # --- Novelty detection ---
+        if enable_novelty:
+            try:
+                from ideaclaw.source.novelty import NoveltyChecker
+                self._novelty_checker = NoveltyChecker()
+                logger.info("Novelty checker enabled")
+            except Exception as e:
+                logger.debug("NoveltyChecker not available: %s", e)
+
+        # --- Idea evolution ---
+        if enable_evolution:
+            try:
+                from ideaclaw.orchestrator.evolution import IdeaEvolver
+                self._evolver = IdeaEvolver(llm_callable=llm_callable)
+                logger.info("Idea evolver enabled")
+            except Exception as e:
+                logger.debug("IdeaEvolver not available: %s", e)
+
+    @classmethod
+    def from_ide(cls, llm_callable: Callable[[str], str], idea: str = "", **kwargs):
+        """Factory for IDE-native mode — IDE provides the LLM callable.
+
+        Usage:
+            loop = ResearchLoop.from_ide(my_llm_fn, idea="attention mechanisms")
+            state = loop.run(profile)
+        """
+        return cls(llm_callable=llm_callable, idea=idea, **kwargs)
 
     def run(
         self,
@@ -362,7 +436,64 @@ class ResearchLoop:
         logger.info("Starting loop: %s (profile=%s, max_iter=%d, target=%.2f)",
                      run_id, profile.scenario_id, profile.max_iterations, profile.target_score)
 
+        # --- PRE-RUN: Personalize + Novelty + Evolution ---
+        personal_context = ""
+        novelty_info = ""
+        idea_text = self._idea or profile.objective
+
+        # Step 0a: Build personalized context (memory + skills + preferences + library)
+        if self._personalizer:
+            try:
+                ctx = self._personalizer.build_context(
+                    idea=idea_text,
+                    category=profile.category,
+                    scenario_id=profile.scenario_id,
+                )
+                if not ctx.is_empty():
+                    personal_context = ctx.full_prompt
+                    logger.info("Personalized context: %d chars", len(personal_context))
+            except Exception as e:
+                logger.debug("Personalization failed: %s", e)
+
+        # Step 0b: Novelty check against existing literature
+        if self._novelty_checker and self.search_fn:
+            try:
+                pre_sources = self.search_fn(profile, {"iteration": -1, "feedback": ""})
+                report = self._novelty_checker.check(idea_text, pre_sources[:20])
+                is_novel = report.composite_novelty >= 0.5
+                if not is_novel:
+                    from ideaclaw.source.novelty import novelty_report as fmt_novelty
+                    novelty_info = fmt_novelty(report)
+                    logger.info("Novelty: %.2f / %s (%d similar)",
+                                report.composite_novelty, report.verdict,
+                                len(report.most_similar_papers))
+                    (run_dir / "novelty_report.json").write_text(
+                        json.dumps({"score": report.composite_novelty,
+                                    "verdict": report.verdict,
+                                    "similar": report.most_similar_papers[:5],
+                                    "explanation": report.explanation}, indent=2),
+                        encoding="utf-8")
+            except Exception as e:
+                logger.debug("Novelty check failed: %s", e)
+
+        # Step 0c: Evolve idea variants (optional)
+        if self._evolver and idea_text:
+            try:
+                variants = self._evolver.mutate(idea_text, n_variants=2,
+                                                 feedback=novelty_info)
+                if variants:
+                    logger.info("Evolution: %d variants generated", len(variants))
+                    (run_dir / "idea_variants.json").write_text(
+                        json.dumps(variants, indent=2, ensure_ascii=False),
+                        encoding="utf-8")
+            except Exception as e:
+                logger.debug("Evolution failed: %s", e)
+
+        # Inject pre-loop context into initial feedback
         feedback = ""
+        if personal_context or novelty_info:
+            feedback = "\n".join(filter(None, [personal_context, novelty_info]))
+
         start_iter = state.iteration_count
 
         for i in range(start_iter, profile.max_iterations):
@@ -439,6 +570,14 @@ class ResearchLoop:
                         # Accepted but not yet at target — continue improving
                         feedback = self._generate_feedback(profile, scores)
 
+                        # Adaptive depth: stop early if plateaued
+                        if self.adaptive_depth and self._is_plateaued(state):
+                            logger.info("  PLATEAU detected (%d iters with <%.1f%% improvement), stopping early",
+                                        self.plateau_patience, self.plateau_threshold * 100)
+                            state.status = "completed"
+                            state.iterations.append(result)
+                            break
+
                 else:
                     # REVERT — score below minimum
                     result.accepted = False
@@ -456,6 +595,10 @@ class ResearchLoop:
 
                 state.iterations.append(result)
 
+                # Checkpoint after every N iterations
+                if self.checkpoint_every > 0 and (i + 1) % self.checkpoint_every == 0:
+                    self._save_checkpoint(state, run_dir)
+
             except Exception as e:
                 logger.error("  Iteration %d failed: %s", i, e)
                 state.iterations.append(IterationResult(
@@ -463,6 +606,7 @@ class ResearchLoop:
                     elapsed_seconds=round(time.monotonic() - iter_start, 2),
                     timestamp=dt.datetime.now(dt.timezone.utc).isoformat(),
                 ))
+                self._save_checkpoint(state, run_dir)
 
         # Finalize
         if state.status == "running":
@@ -483,8 +627,26 @@ class ResearchLoop:
             except Exception as e:
                 logger.warning("Output finalization failed: %s", e)
         elif self.versioning and state.current_draft:
-            # Fallback: at least save the final document
             (run_dir / "output.md").write_text(state.current_draft, encoding="utf-8")
+
+        # --- POST-RUN: Learn from experience (update memory + extract skills) ---
+        if self._personalizer:
+            try:
+                score_history = [r.score for r in state.iterations]
+                feedback_list = [r.failure_reason for r in state.iterations if r.failure_reason]
+                self._personalizer.learn_from_run(
+                    run_id=run_id,
+                    idea=idea_text,
+                    category=profile.category,
+                    scenario_id=profile.scenario_id,
+                    final_score=state.best_score,
+                    iteration_count=state.iteration_count,
+                    score_history=score_history,
+                    feedback_history=feedback_list,
+                )
+                logger.info("Post-run learning: memory + skills updated")
+            except Exception as e:
+                logger.debug("Post-run learning failed: %s", e)
 
         logger.info("Loop finished: status=%s, best=%.3f (iter %d), %d iterations, %.1fs",
                      state.status, state.best_score, state.best_iteration,
@@ -544,3 +706,69 @@ class ResearchLoop:
             failures.append(f"Composite {composite:.2f} < {profile.min_score:.2f} minimum")
 
         return "; ".join(failures)
+
+    def _is_plateaued(self, state: LoopState) -> bool:
+        """Detect if score improvement has plateaued.
+
+        Returns True if the last `plateau_patience` accepted iterations
+        showed less than `plateau_threshold` improvement.
+        """
+        accepted = [r for r in state.iterations if r.accepted]
+        if len(accepted) < self.plateau_patience + 1:
+            return False
+        recent = accepted[-self.plateau_patience:]
+        baseline = accepted[-(self.plateau_patience + 1)].score
+        max_recent = max(r.score for r in recent)
+        improvement = max_recent - baseline
+        return improvement < self.plateau_threshold
+
+    @staticmethod
+    def _save_checkpoint(state: LoopState, run_dir: Path) -> None:
+        """Save checkpoint to disk for crash recovery."""
+        try:
+            ckpt_path = run_dir / "checkpoint.json"
+            ckpt_path.write_text(
+                json.dumps(state.to_dict(), indent=2, ensure_ascii=False),
+                encoding="utf-8",
+            )
+            logger.debug("Checkpoint saved → %s", ckpt_path)
+        except Exception as e:
+            logger.warning("Checkpoint save failed: %s", e)
+
+    @staticmethod
+    def load_checkpoint(run_dir: Path) -> Optional[LoopState]:
+        """Load a checkpoint from disk for warm restart.
+
+        Args:
+            run_dir: Path to the run directory.
+
+        Returns:
+            LoopState if checkpoint exists, None otherwise.
+        """
+        ckpt_path = run_dir / "checkpoint.json"
+        if not ckpt_path.exists():
+            return None
+        try:
+            data = json.loads(ckpt_path.read_text(encoding="utf-8"))
+            state = LoopState(
+                run_id=data["run_id"],
+                profile_id=data["profile_id"],
+                status=data.get("status", "running"),
+                best_score=data.get("best_score", 0.0),
+                best_iteration=data.get("best_iteration", -1),
+                started_at=data.get("started_at", ""),
+            )
+            for it_data in data.get("iterations", []):
+                state.iterations.append(IterationResult(
+                    iteration=it_data.get("iteration", 0),
+                    score=it_data.get("score", 0.0),
+                    scores_detail=it_data.get("scores_detail", {}),
+                    accepted=it_data.get("accepted", False),
+                    failure_reason=it_data.get("failure_reason", ""),
+                ))
+            logger.info("Loaded checkpoint: %d iterations, best=%.3f",
+                        len(state.iterations), state.best_score)
+            return state
+        except Exception as e:
+            logger.warning("Checkpoint load failed: %s", e)
+            return None

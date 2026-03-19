@@ -8,12 +8,17 @@ Surpasses ARC's novelty.py by providing:
 """
 
 from __future__ import annotations
+import logging
 
 import re
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional, Set, Tuple
 
 from ideaclaw.source.collector import SourceResult
+
+logger = logging.getLogger(__name__)
+
+__all__ = ["NoveltyScore", "METHOD_KEYWORDS", "assess_novelty", "novelty_report", "NoveltyChecker"]
 
 
 @dataclass
@@ -251,3 +256,45 @@ def novelty_report(score: NoveltyScore) -> str:
             )
 
     return "\n".join(lines)
+
+
+class NoveltyChecker:
+    """Class wrapper for novelty assessment — used by orchestrator loop.
+
+    Wraps the functional assess_novelty() API into a class interface
+    with .check() and .is_novel properties expected by ResearchLoop.
+    """
+
+    def check(self, idea: str, sources: list, threshold: float = 0.5) -> NoveltyScore:
+        """Check novelty of an idea against sources.
+
+        Args:
+            idea: The idea text (used as both title and description).
+            sources: List of SourceResult-like objects or dicts.
+            threshold: Novelty threshold (not used directly, for compatibility).
+
+        Returns:
+            NoveltyScore with verdict and similarity analysis.
+        """
+        # Convert dict sources to SourceResult if needed
+        clean_sources = []
+        for s in sources:
+            if isinstance(s, SourceResult):
+                clean_sources.append(s)
+            elif isinstance(s, dict):
+                clean_sources.append(SourceResult(
+                    title=s.get("title", ""),
+                    url=s.get("url", ""),
+                    abstract=s.get("abstract", ""),
+                    year=s.get("year", 0),
+                    source_api=s.get("source_api", "unknown"),
+                ))
+            elif hasattr(s, "title"):
+                clean_sources.append(s)
+
+        return assess_novelty(
+            idea_title=idea[:200],
+            idea_description=idea,
+            existing_papers=clean_sources,
+        )
+

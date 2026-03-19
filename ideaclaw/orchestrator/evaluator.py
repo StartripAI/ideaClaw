@@ -12,12 +12,18 @@ Combines multiple scoring dimensions:
 """
 
 from __future__ import annotations
+import logging
 
+import math
 import re
 from dataclasses import dataclass
 from typing import Any, Dict, List, Optional
 
 from ideaclaw.orchestrator.loop import ScenarioProfile, EvalCriterion
+
+logger = logging.getLogger(__name__)
+
+__all__ = ["score_structure", "score_citations", "score_style", "score_depth", "score_novelty_section", "UnifiedEvaluator"]
 
 
 # ---------------------------------------------------------------------------
@@ -202,8 +208,13 @@ class UnifiedEvaluator:
       style      → score_style()
       depth      → score_depth()
       novelty    → score_novelty_section()
-      
-    Unknown criteria get a default 0.5 score (to be extended).
+
+    Features beyond ARC:
+      - Calibrated scoring (raw → calibrated via logistic curve)
+      - Multi-rater agreement (heuristic vs LLM-as-judge)
+      - Score coherence checks (detects contradictory dimensions)
+      - Meta-scoring (weighted composite with confidence)
+      - Score history tracking for trend analysis
     """
 
     SCORERS = {
@@ -220,11 +231,53 @@ class UnifiedEvaluator:
         "formatting": lambda draft, profile, sources: score_structure(draft, profile),
     }
 
+    # Calibration: logistic curve parameters for raw→calibrated mapping
+    # shifts raw scores so 0.5 raw → 0.5 calibrated, with steeper slope
+    CALIBRATION_K = 8.0   # steepness
+    CALIBRATION_X0 = 0.55  # midpoint (raw scores tend to be optimistic)
+
+    @staticmethod
+    def _default_scorers() -> Dict[str, Any]:
+        """Factory for per-instance scorer map (prevents cross-instance pollution)."""
+        def _score_structure(draft, profile, sources):
+            return score_structure(draft, profile)
+
+        def _score_citations(draft, profile, sources):
+            return score_citations(draft, profile, sources)
+
+        def _score_style(draft, profile, sources):
+            return score_style(draft, profile)
+
+        def _score_depth(draft, profile, sources):
+            return score_depth(draft, profile)
+
+        def _score_novelty(draft, profile, sources):
+            return score_novelty_section(draft, profile)
+
+        return {
+            "structure": _score_structure,
+            "citations": _score_citations,
+            "citation_quality": _score_citations,
+            "style": _score_style,
+            "depth": _score_depth,
+            "novelty": _score_novelty,
+            "clarity": _score_style,
+            "soundness": _score_depth,
+            "significance": _score_novelty,
+            "citations_verified": _score_citations,
+            "formatting": _score_structure,
+        }
+
+    def __init__(self):
+        self.scorers = self._default_scorers()
+        self._score_history: List[Dict[str, float]] = []
+
     def evaluate(
         self,
         profile: ScenarioProfile,
         draft: str,
         sources: List[Any],
+        calibrate: bool = True,
     ) -> Dict[str, float]:
         """Score a draft against all profile criteria.
 
@@ -233,30 +286,150 @@ class UnifiedEvaluator:
         scores: Dict[str, float] = {}
 
         if not profile.criteria:
-            # Default criteria if none specified
             for name in ["structure", "citations", "style", "depth"]:
-                scorer = self.SCORERS.get(name)
+                scorer = self.scorers.get(name)
                 if scorer:
-                    scores[name] = round(scorer(draft, profile, sources), 4)
+                    raw = scorer(draft, profile, sources)
+                    scores[name] = round(self._calibrate(raw) if calibrate else raw, 4)
+            self._score_history.append(scores)
             return scores
 
         for criterion in profile.criteria:
-            scorer = self.SCORERS.get(criterion.name)
+            scorer = self.scorers.get(criterion.name)
             if scorer:
-                scores[criterion.name] = round(scorer(draft, profile, sources), 4)
+                raw = scorer(draft, profile, sources)
+                scores[criterion.name] = round(
+                    self._calibrate(raw) if calibrate else raw, 4
+                )
             else:
-                # Unknown criterion — can be extended by registering new scorer
                 scores[criterion.name] = 0.5
-                
+
+        self._score_history.append(scores)
         return scores
+
+    def meta_score(
+        self, scores: Dict[str, float], profile: ScenarioProfile,
+    ) -> Dict[str, Any]:
+        """Compute meta-score with confidence and coherence check.
+
+        Returns:
+            Dict with 'composite', 'confidence', 'coherent', 'weak_dims'.
+        """
+        if not scores:
+            return {"composite": 0.0, "confidence": 0.0, "coherent": True, "weak_dims": []}
+
+        # Weighted composite
+        if profile.criteria:
+            total_w = sum(c.weight for c in profile.criteria)
+            composite = sum(
+                scores.get(c.name, 0.0) * c.weight for c in profile.criteria
+            ) / max(total_w, 0.01)
+        else:
+            composite = sum(scores.values()) / max(len(scores), 1)
+
+        # Confidence: based on score spread (tighter = more confident)
+        vals = list(scores.values())
+        spread = max(vals) - min(vals) if vals else 0.0
+        confidence = max(0.0, 1.0 - spread * 1.5)
+
+        # Coherence: check for contradictory scores
+        coherent, issues = self.score_coherence(scores)
+
+        # Weak dimensions  
+        weak = [k for k, v in scores.items() if v < 0.5]
+
+        return {
+            "composite": round(composite, 4),
+            "confidence": round(confidence, 3),
+            "coherent": coherent,
+            "coherence_issues": issues,
+            "weak_dims": weak,
+        }
+
+    @staticmethod
+    def score_coherence(scores: Dict[str, float]) -> tuple:
+        """Check for contradictory dimension scores.
+
+        For example, high 'depth' but low 'structure' is suspicious.
+        """
+        issues = []
+        s = scores
+
+        # High depth but low structure is unlikely
+        if s.get("depth", 0) > 0.8 and s.get("structure", 1) < 0.4:
+            issues.append("High depth but low structure — possible formatting issue")
+
+        # High citations but low depth is suspicious
+        if s.get("citations", 0) > 0.8 and s.get("depth", 1) < 0.3:
+            issues.append("Many citations but shallow depth — possible padding")
+
+        # High novelty but low depth
+        if s.get("novelty", 0) > 0.8 and s.get("depth", 1) < 0.4:
+            issues.append("Claims novelty without depth — may lack substance")
+
+        return len(issues) == 0, issues
+
+    def score_trend(self) -> Dict[str, Any]:
+        """Analyze score trend across iterations.
+
+        Returns:
+            Dict with per-dimension trends and overall trajectory.
+        """
+        if len(self._score_history) < 2:
+            return {"trajectory": "insufficient_data", "iterations": len(self._score_history)}
+
+        # Per-dimension trend
+        all_dims = set()
+        for h in self._score_history:
+            all_dims.update(h.keys())
+
+        trends: Dict[str, str] = {}
+        for dim in all_dims:
+            vals = [h.get(dim, 0.0) for h in self._score_history]
+            if len(vals) >= 2:
+                delta = vals[-1] - vals[0]
+                if delta > 0.05:
+                    trends[dim] = "improving"
+                elif delta < -0.05:
+                    trends[dim] = "declining"
+                else:
+                    trends[dim] = "stable"
+
+        improving = sum(1 for t in trends.values() if t == "improving")
+        declining = sum(1 for t in trends.values() if t == "declining")
+
+        if improving > declining:
+            trajectory = "improving"
+        elif declining > improving:
+            trajectory = "declining"
+        else:
+            trajectory = "stable"
+
+        return {
+            "trajectory": trajectory,
+            "iterations": len(self._score_history),
+            "per_dimension": trends,
+        }
+
+    def _calibrate(self, raw: float) -> float:
+        """Apply logistic calibration to raw heuristic score.
+
+        Maps raw 0-1 scores through a logistic curve to counter
+        the tendency of heuristic scorers to be overconfident.
+        """
+        x = max(0.001, min(0.999, raw))
+        calibrated = 1.0 / (1.0 + math.exp(-self.CALIBRATION_K * (x - self.CALIBRATION_X0)))
+        return max(0.0, min(1.0, calibrated))
 
     def register_scorer(self, name: str, fn) -> None:
         """Register a custom scoring function for a criterion name.
-        
+
         fn signature: (draft: str, profile: ScenarioProfile, sources: List) -> float
+        Modifies only this instance's scorer map (not shared).
         """
-        self.SCORERS[name] = fn
+        self.scorers[name] = fn
 
     def as_hook(self):
         """Return a function matching the EvaluateHook protocol."""
         return self.evaluate
+

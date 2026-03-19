@@ -4,6 +4,7 @@ Retention housekeeping for run artifacts.
 """
 
 from __future__ import annotations
+import logging
 
 import argparse
 import shutil
@@ -23,6 +24,11 @@ from ideaclaw.pipeline.run_artifact_utils import (
     write_tsv,
 )
 from ideaclaw.pipeline.update_run_index import upsert_run_record
+
+logger = logging.getLogger(__name__)
+
+__all__ = ["main"]
+
 
 
 DELETED_FIELDS = ["marker", "run_id", "reason", "status_before", "status_after", "path", "deleted_at"]

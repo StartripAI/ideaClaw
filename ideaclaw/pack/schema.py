@@ -1,9 +1,14 @@
 """Pack type schema definitions."""
 
 from __future__ import annotations
+import logging
 
 from enum import Enum
 from typing import NamedTuple
+
+logger = logging.getLogger(__name__)
+
+__all__ = ['PackTypeInfo', 'PackType']
 
 
 class PackTypeInfo(NamedTuple):

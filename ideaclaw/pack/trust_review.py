@@ -4,6 +4,7 @@ Bridges the quality/ system into the pipeline's Stage 14 (TRUST_REVIEW).
 """
 
 from __future__ import annotations
+import logging
 
 import json
 from dataclasses import dataclass, field
@@ -12,6 +13,10 @@ from typing import Any, Dict, List, Optional
 from ideaclaw.quality.loader import load_profile, auto_detect_profile, Profile
 from ideaclaw.quality.scorer import PackScorer, ScoreResult
 from ideaclaw.quality.reviewer import PackReviewer, ReviewResult
+
+logger = logging.getLogger(__name__)
+
+__all__ = ['ClaimAudit', 'TrustReviewResult', 'TrustReviewer']
 
 
 @dataclass
@@ -70,6 +75,7 @@ class TrustReviewer:
         draft: str,
         profile_id: Optional[str] = None,
         idea_text: str = "",
+        review_form: Optional[Dict[str, Any]] = None,
     ) -> TrustReviewResult:
         """Audit a pack draft for trust and evidence quality.
 
@@ -77,6 +83,9 @@ class TrustReviewer:
             draft: The pack draft content (markdown).
             profile_id: Quality profile to use. Auto-detects if not provided.
             idea_text: Original idea text for auto-detection.
+            review_form: Optional domain-specific review criteria from
+                         TemplateLoader (e.g., CONSORT, NeurIPS scoring).
+                         Dict with 'venue', 'criteria' keys.
 
         Returns:
             TrustReviewResult with PQS score, verdict, and detailed feedback.
@@ -118,6 +127,28 @@ class TrustReviewer:
             if not cr.passed:
                 required_actions.append(f"Fix: {cr.item}")
         required_actions.extend(review_result.suggestions)
+
+        # Incorporate domain-specific review form criteria if available
+        if review_form and review_form.get("criteria"):
+            venue = review_form.get("venue", "Domain")
+            form_criteria = review_form["criteria"]
+            # Check draft against each criterion (heuristic presence check)
+            for criterion in form_criteria:
+                crit_name = criterion.get("name", "")
+                crit_desc = criterion.get("description", crit_name)
+                crit_weight = criterion.get("weight", 5)
+                # Heuristic: check if the draft addresses this criterion
+                has_mention = (
+                    crit_name.lower().replace("_", " ") in draft.lower()
+                    or crit_desc.lower() in draft.lower()
+                )
+                if not has_mention and crit_weight >= 7:
+                    weaknesses.append(
+                        f"[{venue}] Missing: {crit_name} — {crit_desc}"
+                    )
+                    required_actions.append(
+                        f"Add {crit_name} content per {venue} standards"
+                    )
 
         return TrustReviewResult(
             overall_score=score_result.pqs,

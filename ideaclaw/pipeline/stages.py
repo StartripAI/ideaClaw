@@ -1,9 +1,14 @@
 """Pipeline stage definitions."""
 
 from __future__ import annotations
+import logging
 
 from enum import Enum
 from typing import NamedTuple, Optional
+
+logger = logging.getLogger(__name__)
+
+__all__ = ['Phase', 'StageInfo', 'Stage']
 
 
 class Phase(Enum):

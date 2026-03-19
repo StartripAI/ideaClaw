@@ -6,6 +6,7 @@ DeepSeek, local models, etc.
 """
 
 from __future__ import annotations
+import logging
 
 import json
 import os
@@ -15,7 +16,19 @@ from typing import Any, Dict, List, Optional
 
 from rich.console import Console
 
+logger = logging.getLogger(__name__)
+
+__all__ = ['LLMClient', 'NoLLMConfigured']
+
 console = Console()
+
+
+class NoLLMConfigured(RuntimeError):
+    """Raised when no LLM API key is available.
+
+    In IDE-agent mode, the agent itself serves as the LLM.
+    This error signals that the standalone pipeline cannot run without an API key.
+    """
 
 
 class LLMClient:
@@ -32,10 +45,12 @@ class LLMClient:
         self.primary_model = config.get("primary_model", "gpt-4o")
         self.fallback_models = config.get("fallback_models", ["gpt-4o-mini"])
 
-        if not self.api_key:
-            console.print(
-                f"[yellow]⚠ No API key found. Set {config.get('api_key_env', 'OPENAI_API_KEY')} "
-                f"or provide llm.api_key in config.[/yellow]"
+        if not self.api_key or self.api_key == "demo-mode":
+            raise NoLLMConfigured(
+                "No LLM API key configured. Either:\n"
+                f"  1. Set {config.get('api_key_env', 'OPENAI_API_KEY')} environment variable\n"
+                "  2. Provide llm.api_key in your config.yaml\n"
+                "  3. Use IDE-agent mode (the AI agent in your IDE serves as the LLM)"
             )
 
     def chat(

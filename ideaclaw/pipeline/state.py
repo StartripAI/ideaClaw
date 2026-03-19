@@ -1,6 +1,7 @@
 """Pipeline state machine — tracks progress, checkpoints, and artifacts."""
 
 from __future__ import annotations
+import logging
 
 import json
 from dataclasses import dataclass, field
@@ -8,6 +9,10 @@ from pathlib import Path
 from typing import Any, Dict, Optional
 
 from ideaclaw.pipeline.stages import Stage, STAGE_ORDER
+
+logger = logging.getLogger(__name__)
+
+__all__ = ['StageResult', 'PipelineState']
 
 
 @dataclass

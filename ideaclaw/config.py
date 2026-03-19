@@ -19,6 +19,8 @@ from typing import Any, Dict, List, Optional, Tuple
 
 import yaml
 
+__all__ = ["IdeaClawConfig", "load_config", "resolve_config_path", "validate_config"]
+
 
 # ---------------------------------------------------------------------------
 # Constants

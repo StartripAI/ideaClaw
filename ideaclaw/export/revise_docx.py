@@ -7,6 +7,7 @@ across legal, consulting, medical, IR, and operations workflows.
 """
 
 from __future__ import annotations
+import logging
 
 import argparse
 import csv
@@ -22,6 +23,10 @@ from typing import Dict, Iterable, List, Tuple
 import xml.etree.ElementTree as ET
 
 from ideaclaw.pipeline.run_artifact_utils import is_valid_run_id
+
+logger = logging.getLogger(__name__)
+
+__all__ = ["W_NS", "XML_NS", "W", "XML_SPACE", "qn", "ParagraphPatch", "TOKEN_PATTERN", "paragraph_text", "load_patch_spec", "tokenize_replacement", "collect_used_footnote_keys", "assert_patch_policy", "max_footnote_id", "existing_footnote_ids", "footnote_text_map", "add_footnote", "next_change_id", "tracked_change_counts", "make_regular_run", "make_footnote_ref_run", "apply_tracked_replacement", "load_xml_from_docx", "write_docx_with_replacements", "main"]
 
 
 W_NS = "http://schemas.openxmlformats.org/wordprocessingml/2006/main"

@@ -234,6 +234,9 @@ class TestOrchestrator:
                 evaluate_fn=lambda p, d, s: {"structure": 0.5, "depth": 0.3,
                                               "citations": 0.4, "style": 0.6},
                 output_dir=Path(td),
+                enable_memory=False,
+                enable_library=False,
+                enable_novelty=False,
             )
             loop.run(profile)
 

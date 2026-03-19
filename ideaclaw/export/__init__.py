@@ -34,6 +34,9 @@ class Exporter:
 
         Args:
             pack_data: Dict with 'markdown', 'json', 'metadata' from PackBuilder.
+                       When using deliverable templates, may also contain:
+                       - 'latex': Pre-filled LaTeX from deliverable template
+                       - metadata.deliverable_format: 'latex' or 'markdown'
             output_dir: Directory to write outputs.
 
         Returns:
@@ -43,11 +46,18 @@ class Exporter:
         exported = []
 
         markdown_content = pack_data.get("markdown", "")
+        latex_content = pack_data.get("latex")  # Pre-filled from deliverable template
         json_data = pack_data.get("json", {})
         metadata = pack_data.get("metadata", {})
 
-        # Always export markdown (primary format)
-        if "markdown" in self.formats:
+        # Auto-detect deliverable format
+        deliverable_format = metadata.get("deliverable_format", "")
+        active_formats = list(self.formats)
+        if deliverable_format == "latex" and "latex" not in active_formats:
+            active_formats.append("latex")
+
+        # Export markdown (primary format for non-LaTeX deliverables)
+        if "markdown" in active_formats:
             md_path = output_dir / "pack.md"
             MarkdownExporter().export(markdown_content, md_path)
             exported.append(md_path)
@@ -73,7 +83,7 @@ class Exporter:
         exported.append(pack_json_path)
 
         # DOCX
-        if "docx" in self.formats:
+        if "docx" in active_formats:
             docx_path = output_dir / "pack.docx"
             try:
                 DocxExporter().export(markdown_content, docx_path)
@@ -81,21 +91,28 @@ class Exporter:
             except ImportError:
                 pass  # python-docx not installed
 
-        # LaTeX (NeurIPS/ICML/ICLR/generic)
-        if "latex" in self.formats:
-            from ideaclaw.export.latex import LaTeXExporter
-            template = self.config.get("export", {}).get("latex_template", "generic")
+        # LaTeX — use pre-filled template content if available
+        if "latex" in active_formats:
             latex_path = output_dir / "pack.tex"
-            tex_meta = {
-                "title": metadata.get("idea", "IdeaClaw Pack"),
-                "authors": metadata.get("authors", ["IdeaClaw"]),
-                "abstract": metadata.get("abstract", ""),
-            }
-            sources = json_data.get("sources", [])
-            LaTeXExporter(template=template).export(
-                markdown_content, latex_path,
-                metadata=tex_meta, sources=sources,
-            )
+
+            if latex_content:
+                # Deliverable template already filled — write directly
+                latex_path.write_text(latex_content, encoding="utf-8")
+            else:
+                # Convert from markdown using LaTeX exporter
+                from ideaclaw.export.latex import LaTeXExporter
+                template = self.config.get("export", {}).get("latex_template", "generic")
+                tex_meta = {
+                    "title": metadata.get("idea", "IdeaClaw Pack"),
+                    "authors": metadata.get("authors", ["IdeaClaw"]),
+                    "abstract": metadata.get("abstract", ""),
+                }
+                sources = json_data.get("sources", [])
+                LaTeXExporter(template=template).export(
+                    markdown_content, latex_path,
+                    metadata=tex_meta, sources=sources,
+                )
+
             exported.append(latex_path)
             bib_path = latex_path.with_suffix(".bib")
             if bib_path.exists():

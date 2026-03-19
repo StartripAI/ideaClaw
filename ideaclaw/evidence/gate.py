@@ -5,6 +5,7 @@ Supports: URL text, remote PDF, local PDF/DOCX/PPTX/image sources.
 """
 
 from __future__ import annotations
+import logging
 
 import json
 import re
@@ -18,6 +19,10 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 from ideaclaw.evidence.extractors import extract_local_source_text, ExtractResult
+
+logger = logging.getLogger(__name__)
+
+__all__ = ["GateCheckResult", "fetch_url_text", "fetch_url_bytes", "fetch_remote_pdf_text", "check_one_source", "run_evidence_gate"]
 
 
 @dataclass

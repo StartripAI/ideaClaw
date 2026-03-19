@@ -1,8 +1,13 @@
 """Hashing utilities."""
 
 from __future__ import annotations
+import logging
 
 import hashlib
+
+logger = logging.getLogger(__name__)
+
+__all__ = ['sha256_bytes', 'sha256_string']
 
 
 def sha256_bytes(data: bytes) -> str:

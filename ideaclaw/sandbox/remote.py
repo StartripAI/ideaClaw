@@ -4,11 +4,16 @@ Surpasses ARC's colab_sandbox.py + ssh_sandbox.py by unifying into
 a single interface with pluggable backends.
 """
 from __future__ import annotations
+import logging
 import json, subprocess, time, tempfile
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 from ideaclaw.sandbox.executor import ExecResult
+
+logger = logging.getLogger(__name__)
+
+__all__ = ['RemoteConfig', 'RemoteSandbox']
 
 
 @dataclass

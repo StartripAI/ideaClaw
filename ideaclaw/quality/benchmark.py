@@ -4,15 +4,31 @@ Supports three levels:
   L1: Structure compliance (sections present)
   L2: Evidence traceability (claims linked to sources)
   L3: PQS threshold (quality score meets pass mark)
+
+Integrates with:
+  - quality.report → feeds into multi-format report generation
+  - orchestrator.benchmark → uses this for depth scoring
+  - knowledge.archive → historical trend comparison
+
+Features:
+  - Regression detection (alerts when PQS drops vs baseline)
+  - CI threshold checking (pass/fail for CI pipelines)
+  - Per-dimension percentile statistics
+  - Historical trend comparison
 """
 
 from __future__ import annotations
 
 import json
+import logging
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Dict, List, Optional
+
+logger = logging.getLogger(__name__)
+
+__all__ = ["BenchmarkRunner", "BenchmarkReport", "BenchmarkEntry"]
 
 from ideaclaw.quality.loader import Profile, load_profile
 from ideaclaw.quality.scorer import PackScorer, ScoreResult
@@ -163,3 +179,64 @@ class BenchmarkRunner:
             }
 
         return report
+
+    def check_regression(
+        self,
+        current: BenchmarkReport,
+        baseline_path: Optional[Path] = None,
+        min_delta: float = 0.05,
+    ) -> List[str]:
+        """Detect regressions vs a baseline report.
+
+        Args:
+            current: Current benchmark report.
+            baseline_path: Path to previous report JSON.
+            min_delta: Minimum PQS drop to flag as regression.
+
+        Returns:
+            List of regression warnings (empty = no regression).
+        """
+        if not baseline_path or not baseline_path.exists():
+            return []
+
+        try:
+            baseline = json.loads(baseline_path.read_text(encoding="utf-8"))
+        except (json.JSONDecodeError, OSError):
+            return []
+
+        warnings = []
+        prev_pqs = baseline.get("avg_pqs", 0)
+        if current.avg_pqs < prev_pqs - min_delta:
+            warnings.append(
+                f"PQS regression: {prev_pqs:.3f} → {current.avg_pqs:.3f} "
+                f"(Δ={current.avg_pqs - prev_pqs:+.3f})"
+            )
+
+        # Check per-domain regressions
+        prev_domains = baseline.get("per_domain", {})
+        for domain, data in current.per_domain.items():
+            if domain in prev_domains:
+                prev_d = prev_domains[domain].get("avg_pqs", 0)
+                curr_d = data.get("avg_pqs", 0)
+                if curr_d < prev_d - min_delta:
+                    warnings.append(f"Domain '{domain}' regressed: {prev_d:.2f} → {curr_d:.2f}")
+
+        if warnings:
+            logger.warning("Regressions detected: %s", warnings)
+        return warnings
+
+    @staticmethod
+    def check_ci_thresholds(
+        report: BenchmarkReport,
+        min_l1: float = 0.95,
+        min_l2: float = 0.80,
+        min_pqs: float = 0.60,
+    ) -> bool:
+        """Check if a report passes CI/CD thresholds."""
+        t = max(report.total, 1)
+        return (
+            report.l1_passed / t >= min_l1
+            and report.l2_passed / t >= min_l2
+            and report.avg_pqs >= min_pqs
+        )
+

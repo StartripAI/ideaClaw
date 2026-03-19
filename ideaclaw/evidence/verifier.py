@@ -5,6 +5,7 @@ Classifies claims into: PASS_AUTO_REVISE | NEEDS_MANUAL_REVIEW | BLOCKED.
 """
 
 from __future__ import annotations
+import logging
 
 import difflib
 import json
@@ -12,6 +13,10 @@ import re
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Sequence, Set
+
+logger = logging.getLogger(__name__)
+
+__all__ = ['SourceState', 'ClaimVerifyResult', 'is_material_update', 'verify_claims']
 
 
 MATERIAL_CHANGE_INTENTS: Set[str] = {

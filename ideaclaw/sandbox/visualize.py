@@ -8,11 +8,16 @@ Surpasses ARC's visualize.py by providing:
 """
 
 from __future__ import annotations
+import logging
 
 import json
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
+
+logger = logging.getLogger(__name__)
+
+__all__ = ['MetricSeries', 'AblationRow', 'ExperimentVisualizer']
 
 
 @dataclass

@@ -5,12 +5,17 @@ For LLM-powered review, use PackScorer.build_llm_prompt() instead.
 """
 
 from __future__ import annotations
+import logging
 
 import re
 from dataclasses import dataclass, field
 from typing import Any, Dict, List
 
 from ideaclaw.quality.loader import Profile
+
+logger = logging.getLogger(__name__)
+
+__all__ = ['CheckResult', 'ReviewResult', 'PackReviewer']
 
 
 @dataclass

@@ -5,11 +5,16 @@ orchestrator with codegen→render→critique→refine loop.
 Works with LLM (real code generation) and heuristic (matplotlib templates).
 """
 from __future__ import annotations
+import logging
 import json, textwrap
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional
 from ideaclaw.sandbox.executor import SandboxExecutor, SandboxConfig, ExecResult
+
+logger = logging.getLogger(__name__)
+
+__all__ = ['FigureSpec', 'FigureResult', 'TEMPLATES', 'FigureAgent']
 
 
 @dataclass

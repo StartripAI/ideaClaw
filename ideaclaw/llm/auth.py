@@ -13,6 +13,7 @@ Token resolution order:
 """
 
 from __future__ import annotations
+import logging
 
 import json
 import os
@@ -22,6 +23,10 @@ from pathlib import Path
 from typing import Any, Dict, Optional
 
 from rich.console import Console
+
+logger = logging.getLogger(__name__)
+
+__all__ = ["CREDENTIALS_DIR", "CREDENTIALS_FILE", "PROVIDERS", "Credentials", "store_api_key", "remove_stored_key", "list_stored_providers", "resolve_credentials", "interactive_login"]
 
 console = Console()
 

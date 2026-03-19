@@ -369,7 +369,7 @@ class LLMHooks:
                         temperature=temperature,
                         max_tokens=max_tokens,
                     )
-                    model_name = "ide-native"
+                    model_name = "antigravity"
                 else:
                     # BYOK mode: call LLMClient
                     result = self.llm.chat_with_fallback(

@@ -19,9 +19,14 @@ Protocol:
 """
 
 from __future__ import annotations
+import logging
 
 from dataclasses import dataclass, field
 from typing import Any, Callable, Dict, List, Optional
+
+logger = logging.getLogger(__name__)
+
+__all__ = ["AgentPersona", "DebateMessage", "DebateResult", "STANDARD_DEBATE_TEAM", "DebateOrchestrator"]
 
 
 @dataclass

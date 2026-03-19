@@ -11,6 +11,7 @@ It is designed to be used after source gate, but can also run standalone.
 """
 
 from __future__ import annotations
+import logging
 
 import argparse
 import csv
@@ -22,6 +23,10 @@ import sys
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, Iterable, List, Sequence
+
+logger = logging.getLogger(__name__)
+
+__all__ = ["MATERIAL_CHANGE_INTENTS", "RISK_TERMS", "REGULATORY_TERMS", "RECOMMENDATION_TERMS", "SourceState", "ClaimResult", "run_sop_gate", "main"]
 
 
 MATERIAL_CHANGE_INTENTS = {

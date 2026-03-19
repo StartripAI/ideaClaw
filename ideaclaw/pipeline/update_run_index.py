@@ -4,6 +4,7 @@ Maintain global run index.
 """
 
 from __future__ import annotations
+import logging
 
 import argparse
 import fcntl
@@ -12,6 +13,10 @@ from pathlib import Path
 from typing import Dict, List
 
 from ideaclaw.pipeline.run_artifact_utils import read_tsv, write_tsv
+
+logger = logging.getLogger(__name__)
+
+__all__ = ['upsert_run_record', 'main']
 
 
 RUN_INDEX_FIELDS: List[str] = [

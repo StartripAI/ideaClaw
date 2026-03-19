@@ -20,6 +20,7 @@ ARC baseline:
 """
 
 from __future__ import annotations
+import logging
 
 import json
 from dataclasses import dataclass, field
@@ -27,6 +28,10 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 
 from ideaclaw.orchestrator.loop import ScenarioProfile, load_profile, load_all_profiles
+
+logger = logging.getLogger(__name__)
+
+__all__ = ["DimensionScore", "ProfileBenchmark", "DOMAIN_SECTION_TARGETS", "DOMAIN_STANDARDS", "score_criteria_completeness", "score_section_depth", "score_source_requirements", "score_style_specification", "score_iteration_policy", "score_domain_authority", "score_prompt_readiness", "score_config_richness", "SCORE_FUNCTIONS", "benchmark_profile", "benchmark_all", "generate_report", "bootstrap_ci", "compare_versions"]
 
 
 # ---------------------------------------------------------------------------
@@ -466,6 +471,90 @@ def generate_report(results: List[ProfileBenchmark]) -> str:
 
 
 # ---------------------------------------------------------------------------
+# Bootstrap Confidence Interval
+# ---------------------------------------------------------------------------
+
+def bootstrap_ci(
+    results: List[ProfileBenchmark],
+    n_bootstrap: int = 1000,
+    ci: float = 0.95,
+) -> Dict[str, float]:
+    """Compute bootstrap confidence interval on mean depth percentage.
+
+    Samples profiles with replacement and computes mean depth_pct
+    for each bootstrap sample. Returns the mean and CI bounds.
+
+    Args:
+        results: List of benchmark results.
+        n_bootstrap: Number of bootstrap samples.
+        ci: Confidence level (default 0.95 for 95% CI).
+
+    Returns:
+        Dict with 'mean', 'lower', 'upper', 'n_profiles', 'n_bootstrap'.
+    """
+    import random
+    if not results:
+        return {"mean": 0.0, "lower": 0.0, "upper": 0.0, "n_profiles": 0}
+
+    depths = [r.depth_pct for r in results]
+    boot_means = []
+    for _ in range(n_bootstrap):
+        sample = random.choices(depths, k=len(depths))
+        boot_means.append(sum(sample) / len(sample))
+
+    boot_means.sort()
+    alpha = (1 - ci) / 2
+    lower_idx = int(alpha * n_bootstrap)
+    upper_idx = int((1 - alpha) * n_bootstrap) - 1
+
+    return {
+        "mean": round(sum(depths) / len(depths), 2),
+        "lower": round(boot_means[lower_idx], 2),
+        "upper": round(boot_means[upper_idx], 2),
+        "n_profiles": len(results),
+        "n_bootstrap": n_bootstrap,
+    }
+
+
+def compare_versions(
+    current: List[ProfileBenchmark],
+    baseline: List[ProfileBenchmark],
+) -> Dict[str, Any]:
+    """Compare two benchmark runs (e.g. before/after upgrade).
+
+    Returns per-profile and aggregate comparison.
+    """
+    base_map = {r.scenario_id: r for r in baseline}
+    deltas = []
+    per_profile = []
+
+    for cr in current:
+        br = base_map.get(cr.scenario_id)
+        if br:
+            delta = cr.depth_pct - br.depth_pct
+            deltas.append(delta)
+            per_profile.append({
+                "scenario_id": cr.scenario_id,
+                "current": round(cr.depth_pct, 1),
+                "baseline": round(br.depth_pct, 1),
+                "delta": round(delta, 1),
+                "improved": delta > 0,
+            })
+
+    improved = sum(1 for d in deltas if d > 0)
+    regressed = sum(1 for d in deltas if d < -0.5)
+    avg_delta = sum(deltas) / max(len(deltas), 1)
+
+    return {
+        "compared": len(deltas),
+        "improved": improved,
+        "regressed": regressed,
+        "avg_delta": round(avg_delta, 2),
+        "per_profile": per_profile,
+    }
+
+
+# ---------------------------------------------------------------------------
 # CLI entry point
 # ---------------------------------------------------------------------------
 
@@ -475,3 +564,8 @@ if __name__ == "__main__":
     results = benchmark_all(profiles_dir)
     report = generate_report(results)
     print(report)
+
+    # Print bootstrap CI
+    ci = bootstrap_ci(results)
+    print(f"\n95% CI: {ci['lower']:.1f}% – {ci['upper']:.1f}% (mean={ci['mean']:.1f}%)")
+

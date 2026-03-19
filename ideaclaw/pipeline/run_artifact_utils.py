@@ -4,6 +4,7 @@ Shared utilities for run-scoped artifact management.
 """
 
 from __future__ import annotations
+import logging
 
 import csv
 import datetime as dt
@@ -15,6 +16,10 @@ import tempfile
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, Iterable, List
+
+logger = logging.getLogger(__name__)
+
+__all__ = ["DEFAULT_MARKER", "DEFAULT_POLICY_VERSION", "RUN_ID_RE", "RunContext", "ArtifactRecord", "PurgeRecord", "utc_now", "to_iso_z", "make_run_id", "is_valid_run_id", "parse_run_id_time", "ensure_non_empty_marker", "ensure_run_layout", "sha256_file", "write_tsv", "read_tsv", "safe_copy2"]
 
 
 DEFAULT_MARKER = "REVISE_DOCX_PURGED_20260214"

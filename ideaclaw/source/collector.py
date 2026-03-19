@@ -11,6 +11,7 @@ Design: ARC-style parallel collection with IdeaClaw source registry integration.
 """
 
 from __future__ import annotations
+import logging
 
 import json
 import re
@@ -21,6 +22,10 @@ import urllib.request
 import xml.etree.ElementTree as ET
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional
+
+logger = logging.getLogger(__name__)
+
+__all__ = ["SourceResult", "search_arxiv", "search_semantic_scholar", "search_pubmed", "search_openalex", "collect_sources"]
 
 
 @dataclass

@@ -28,6 +28,8 @@ import yaml
 
 logger = logging.getLogger(__name__)
 
+__all__ = ["CheckResult", "DoctorReport", "check_python_version", "check_yaml_import", "check_config_valid", "check_llm_connectivity", "check_network", "check_disk_space", "check_dependencies", "check_orchestrator_profiles", "check_cache_dir", "check_api_keys", "check_git", "run_doctor"]
+
 
 # ---------------------------------------------------------------------------
 # Data structures
@@ -169,7 +171,7 @@ def check_llm_connectivity(config_path: Optional[str] = None) -> CheckResult:
         path = resolve_config_path(config_path)
         cfg = load_config(path)
         base_url = cfg.llm.base_url
-    except Exception:
+    except Exception:  # noqa: BLE001
         base_url = "https://api.openai.com/v1"
 
     if not base_url:
@@ -207,8 +209,8 @@ def check_network() -> CheckResult:
             sock = socket.create_connection((host, port), timeout=5)
             sock.close()
             ok += 1
-        except Exception:
-            pass
+        except Exception as exc:  # noqa: BLE001
+            logger.debug("Suppressed: %s", exc)
 
     if ok == len(targets):
         return CheckResult("network", "pass", f"All {ok} APIs reachable")
