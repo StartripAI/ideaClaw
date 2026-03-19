@@ -27,6 +27,8 @@ from typing import Any, Dict, List, Optional, Tuple
 
 logger = logging.getLogger(__name__)
 
+__all__ = ["UsageStats", "build_system_prompt", "build_user_prompt", "build_judge_prompt", "LLMHooks", "create_hooks"]
+
 
 # ---------------------------------------------------------------------------
 # Token / Cost tracking
@@ -242,6 +244,12 @@ class LLMHooks:
     # Max retries for LLM calls
     MAX_RETRIES = 3
     RETRY_DELAY = 2.0  # seconds
+    DEFAULT_BUDGET_USD = 10.0  # max cost per run
+    MAX_SINGLE_CALL_USD = 2.0  # max estimated cost per single LLM call
+
+    class BudgetExceededError(RuntimeError):
+        """Raised when LLM cost budget is exceeded."""
+        pass
 
     def __init__(
         self,
@@ -325,13 +333,30 @@ class LLMHooks:
         temperature: float = 0.7,
         max_tokens: int = 4096,
         purpose: str = "generate",
+        budget_usd: Optional[float] = None,
     ) -> str:
-        """Call LLM with retry logic and usage tracking.
+        """Call LLM with retry logic, usage tracking, and budget enforcement.
 
         Supports two modes:
         1. IDE-native: routes through self._llm_callable (IDE is the LLM)
         2. BYOK: routes through self.llm (LLMClient with API key)
+
+        Raises:
+            BudgetExceededError: If cumulative cost exceeds budget_usd.
         """
+        # Budget enforcement
+        budget = budget_usd or self.DEFAULT_BUDGET_USD
+        if self.usage.total_cost_usd >= budget:
+            raise self.BudgetExceededError(
+                f"Budget exceeded: ${self.usage.total_cost_usd:.4f} >= ${budget:.2f} "
+                f"after {self.usage.total_calls} calls"
+            )
+        # Single-call limit (prevent anomalous large requests)
+        estimated_cost = max_tokens * 0.00006  # rough upper bound
+        if estimated_cost > self.MAX_SINGLE_CALL_USD:
+            logger.warning("Single call estimate $%.2f exceeds limit $%.2f — capping tokens",
+                           estimated_cost, self.MAX_SINGLE_CALL_USD)
+            max_tokens = int(self.MAX_SINGLE_CALL_USD / 0.00006)
         last_error = None
         for attempt in range(self.MAX_RETRIES):
             try:
@@ -402,6 +427,40 @@ class LLMHooks:
             logger.warning("Search error: %s — continuing without sources", e)
             return []
 
+    def _validate_structure(self, content: str, profile: Any) -> Tuple[bool, str]:
+        """Validate if the generated content structurally satisfies the profile.
+        
+        This prevents silent truncation or ignored sections from passing to PackBuilder.
+        """
+        if not hasattr(profile, "style") or not profile.style.required_sections:
+            return True, ""
+            
+        missing_sections = []
+        content_lower = content.lower()
+        for sec in profile.style.required_sections:
+            # Check if the section name appears as a Markdown header
+            sec_clean = sec.strip().lower()
+            # Simple check: does the string loosely exist near header markers?
+            if sec_clean not in content_lower:
+                missing_sections.append(sec)
+                
+        if missing_sections:
+            return False, f"CRITICAL STRUCTURAL ERROR: The generated draft is missing the following mandatory sections: {', '.join(missing_sections)}. You MUST include these exact section headers in your output."
+            
+        # Check for obvious truncation (ends without punctuation or ends mid-markdown)
+        valid_endings = (
+            # English punctuation
+            ".", "!", "?", 
+            # Asian/Multilingual punctuation
+            "。", "！", "？", "”", "’", "》", "】",
+            # Markdown/Code closers
+            "```", ">", "*", "_", "]", ")", "}"
+        )
+        if not content.strip().endswith(valid_endings):
+            return False, "CRITICAL ERROR: The output appears severely truncated and ends mid-sentence. You must generate the complete document to the very end."
+            
+        return True, ""
+
     def generate(
         self,
         profile: Any,
@@ -409,26 +468,45 @@ class LLMHooks:
         previous_draft: Optional[str],
         feedback: str,
     ) -> str:
-        """Generate document content using LLM.
+        """Generate document content using LLM with Self-Healing Structural Retries.
 
         INPUT:  profile + sources + previous_draft + feedback
         OUTPUT: complete document text (markdown)
-
-        This is the core content generation — equivalent to AR's
-        LLM editing train.py based on program.md instructions.
         """
         system_prompt = self._get_system_prompt(profile)
-        user_prompt = build_user_prompt(sources, previous_draft, feedback, self.idea)
+        base_user_prompt = build_user_prompt(sources, previous_draft, feedback, self.idea)
 
-        content = self._call_llm(
-            system_prompt=system_prompt,
-            user_prompt=user_prompt,
-            temperature=0.7 if not previous_draft else 0.5,  # Lower temp for revisions
-            max_tokens=4096,
-            purpose="generate",
-        )
+        max_self_healing_retries = 3
+        current_prompt = base_user_prompt
+        content = ""
 
-        logger.info("Generated: %d chars, %d lines", len(content), content.count("\n"))
+        for attempt in range(max_self_healing_retries):
+            content = self._call_llm(
+                system_prompt=system_prompt,
+                user_prompt=current_prompt,
+                temperature=0.7 if not previous_draft else 0.5,  # Lower temp for revisions
+                max_tokens=4096,
+                purpose=f"generate_attempt_{attempt+1}",
+            )
+            
+            # Self-Healing Structural Check (The IdeaClaw edge over ARC)
+            is_valid, validation_error = self._validate_structure(content, profile)
+            if is_valid:
+                logger.info("Generated %d chars, structure looks solid.", len(content))
+                break
+                
+            logger.warning("Generation structural failure on attempt %d: %s", attempt+1, validation_error)
+            # Feed the error back to the LLM for immediate self-correction
+            current_prompt = (
+                f"{base_user_prompt}\n\n"
+                f"--- YOUR LAST OUTPUT FAILED VALIDATION ---\n"
+                f"Error: {validation_error}\n"
+                f"Previous Output snippet: {content[-500:]}\n\n"
+                f"Please completely rewrite the document and carefully ensure ALL sections are present and the text is not truncated."
+            )
+        else:
+            logger.warning("Failing gracefully after %d structure retries.", max_self_healing_retries)
+
         return content
 
     def evaluate(
@@ -439,46 +517,64 @@ class LLMHooks:
     ) -> Dict[str, float]:
         """Hybrid evaluation: heuristic + LLM-as-judge.
 
-        Heuristic (free, instant):
-        - structure: section count, heading hierarchy
-        - citations: reference density
-        - depth: word count, detail level
-        - clarity: readability metrics
-        - style: formality match
-        - formatting: markdown quality
-
-        LLM-as-judge (costs tokens, accurate):
-        - novelty: originality of ideas
-        - significance: importance of contribution
-        - soundness: technical correctness
-        - ethics: ethical considerations
+        Delegates to _heuristic_eval() for free instant scoring,
+        then _llm_judge() for subjective dimensions that need LLM.
         """
-        # 1. Heuristic scores (always available, free)
-        scores = self.evaluator.evaluate(profile, draft, sources)
+        scores = self._heuristic_eval(profile, draft, sources)
+        scores = self._llm_judge(profile, draft, scores)
+        return scores
 
-        # 2. LLM judge for subjective dimensions
+    def _heuristic_eval(
+        self, profile: Any, draft: str, sources: List[Any],
+    ) -> Dict[str, float]:
+        """Free, instant heuristic scoring: structure, citations, style, depth."""
+        return self.evaluator.evaluate(profile, draft, sources)
+
+    def _llm_judge(
+        self, profile: Any, draft: str, scores: Dict[str, float],
+    ) -> Dict[str, float]:
+        """LLM-as-judge for subjective dimensions (novelty, significance, etc).
+
+        Includes JSON schema validation: only known dimension names
+        with float values in [0, 1] are accepted.
+        """
         criteria_names = [c.name for c in profile.criteria] if hasattr(profile, "criteria") else []
         llm_dims = [n for n in criteria_names if n in self.LLM_JUDGE_DIMS]
 
-        if llm_dims and draft.strip():
-            try:
-                sys_prompt, user_prompt = build_judge_prompt(profile, draft, llm_dims)
-                raw = self._call_llm(
-                    system_prompt=sys_prompt,
-                    user_prompt=user_prompt,
-                    json_mode=True,
-                    temperature=0.1,
-                    max_tokens=256,
-                    purpose="evaluate",
-                )
-                llm_scores = json.loads(raw)
-                for dim in llm_dims:
-                    if dim in llm_scores:
-                        scores[dim] = max(0.0, min(1.0, float(llm_scores[dim])))
-            except json.JSONDecodeError as e:
-                logger.warning("Judge returned invalid JSON: %s", e)
-            except Exception as e:
-                logger.warning("LLM judge failed (keeping heuristic): %s", e)
+        if not llm_dims or not draft.strip():
+            return scores
+
+        try:
+            sys_prompt, user_prompt = build_judge_prompt(profile, draft, llm_dims)
+            raw = self._call_llm(
+                system_prompt=sys_prompt,
+                user_prompt=user_prompt,
+                json_mode=True,
+                temperature=0.1,
+                max_tokens=256,
+                purpose="evaluate",
+            )
+            llm_scores = json.loads(raw)
+
+            # Schema validation: only accept known dims with float 0-1 values
+            if not isinstance(llm_scores, dict):
+                logger.warning("LLM judge returned non-dict: %s", type(llm_scores).__name__)
+                return scores
+
+            for dim in llm_dims:
+                if dim in llm_scores:
+                    val = llm_scores[dim]
+                    if isinstance(val, (int, float)) and 0.0 <= float(val) <= 1.0:
+                        scores[dim] = round(float(val), 4)
+                    else:
+                        logger.warning("LLM judge dim '%s' invalid value: %s", dim, val)
+
+        except json.JSONDecodeError as e:
+            logger.warning("Judge returned invalid JSON: %s", e)
+        except self.BudgetExceededError:
+            logger.info("Budget exceeded — skipping LLM judge, keeping heuristic scores")
+        except Exception as e:  # noqa: BLE001
+            logger.warning("LLM judge failed (keeping heuristic): %s", e)
 
         return scores
 
